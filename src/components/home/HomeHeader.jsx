@@ -1,8 +1,7 @@
 import React from 'react'
-import alarm from '../../assets/img/home/alarm.svg'
-import my from '../../assets/img/home/my.svg'
+import alarm from '../../assets/img/Home/alarm.svg'
+import my from '../../assets/img/Home/my.svg'
 import Logo from '../../assets/img/logo.svg'
-import '../../assets/sass/section/home/homeheader.scss'
 
 const HomeHeader = () => {
   return (

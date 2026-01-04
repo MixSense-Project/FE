@@ -1,13 +1,14 @@
 import React from 'react'
-import AisearchHeader from './AisearchHeader'
+import Header from '../Header'
 import Nav from '../Nav'
-const AiSearch = () => {
+
+const Ai_Search = () => {
   return (
     <div className='container aisearch_wrap'>
-      <AisearchHeader/>
+      <Header title={"AI Search"}/>
       <Nav/>
     </div>
   )
 }
 
-export default AiSearch
+export default Ai_Search

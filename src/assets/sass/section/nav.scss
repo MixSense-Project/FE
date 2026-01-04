@@ -1,11 +1,11 @@
-.nav_wrap {
+#Nav_Wrap {
   position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;
   min-width: 393px;
   max-width: 420px;
-  height: 69px;
+  height: 80px;
   background-color: var(--gray02);
   display: flex;
   justify-content: space-between;
@@ -13,7 +13,7 @@
   padding: 0 40px;
   box-sizing: border-box;
   z-index: 9999;
-}
+
 
 .nav_item {
   display: flex;
@@ -53,4 +53,6 @@
   font-size: 12px;
   font-weight: 500;
   color: inherit;
+}
+
 }

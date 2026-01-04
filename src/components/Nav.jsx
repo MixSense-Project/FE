@@ -1,5 +1,4 @@
 import { NavLink } from "react-router-dom";
-import "../assets/sass/section/nav.scss";
 import dj_g from "../assets/img/nav/dj_g.svg";
 import dj_p from "../assets/img/nav/dj_p.svg";
 import home_g from "../assets/img/nav/home_g.svg";
@@ -11,7 +10,7 @@ import search_p from "../assets/img/nav/search_p.svg";
 
 const Nav = () => {
   return (
-    <nav className="nav_wrap">
+    <nav id="Nav_Wrap">
       <NavLink
         to="/home"
         className={({ isActive }) => `nav_item ${isActive ? "active" : ""}`}

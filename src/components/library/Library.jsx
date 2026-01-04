@@ -1,11 +1,11 @@
 import React from 'react'
-import LibraryHeader from './LibraryHeader'
+import Header from '../Header'
 import Nav from '../Nav'
 const Library = () => {
   return (
     <div className='container library_wrap'>
+      <Header title={"Library"}/>
       <Nav/>
-      <LibraryHeader/>
     </div>
   )
 }

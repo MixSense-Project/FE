@@ -1,41 +1,43 @@
-.header_wrap {
+#Header_Wrap {
   position: absolute;
-  left: 0;
-  top: 0;
+  left: 0; top: 0;
   width: 100%;
   height: 80px;
   display: flex;
   justify-content: center; 
-  align-items: center;
+  align-items: center; 
   background-color: var(--gray02);
   z-index: 9999;
-  padding-left: 0;
-  padding-right: 0;
   box-sizing: border-box;
 
-  .back_btn {
+  a { 
     position: absolute;
-    left: 34px; 
+    left: 34px;
+    display: flex;       
+    align-items: center; 
+    height: 100%;        
+  }
+
+  .back_btn {
     width: 10px;
     height: 17px;
     background: none;
     border: none;
     padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+    cursor: pointer;
 
-  .back_btn img {
-    width: 100%;
-    height: 100%;
-    display: block;
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
   }
 
   h1 {
-    margin: 0;
     color: var(--white);
     font-size: 18px;
     font-weight: 700;
+    margin: 0; 
+    line-height: 80px; 
   }
 }

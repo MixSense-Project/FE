@@ -1,14 +1,14 @@
 import React from 'react'
-import AidjHeader from './AidjHeader'
+import Header from '../Header'
 import Nav from '../Nav'
 
-const Aidj = () => {
+const Ai_Dj = () => {
   return (
     <div className='container aidj_wrap'>
-      <AidjHeader/>
+      <Header title={"AI DJ"}/>
       <Nav/>
     </div>
   )
 }
 
-export default Aidj
+export default Ai_Dj

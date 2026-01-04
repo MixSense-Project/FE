@@ -4,12 +4,11 @@ import '../assets/sass/section/splash.scss'
 
 const Splash = () => {
     return (
-        <div className='container splash_wrap'>
+        <div className='container Splash_Wrap'>
             <div className="main_logo">
                 <img src={Logo} alt="" />
                 <h1>MixSense</h1>
             </div>
-
             <div className="splash_btns">
                 <button className="login">
                     <p>Login</p>
