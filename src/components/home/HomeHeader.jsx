@@ -1,5 +1,4 @@
 import React from 'react'
-import alarm from '../../assets/img/Home/alarm.svg'
 import my from '../../assets/img/Home/my.svg'
 import Logo from '../../assets/img/logo.svg'
 import { Link } from 'react-router-dom'

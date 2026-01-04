@@ -31,7 +31,7 @@
 }
 
 .nav_item.active {
-  color: #ff2bd0;
+  color: var(--main);
 }
 
 .nav_item.active .nav_p {
@@ -41,7 +41,7 @@
 .nav_item.active:hover,
 .nav_item.active:focus,
 .nav_item.active:visited {
-  color: #ff2bd0;
+  color: var(--main);
 }
 
 .nav_icon {
