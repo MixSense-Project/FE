@@ -1,0 +1,47 @@
+
+
+button,
+a {
+  cursor: pointer;
+  background-color: var(--none);
+}
+
+body {
+  background-color: var(--white);
+  margin: 0;
+
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  font-family: 'Overpass', sans-serif;
+  width: 100%;
+  min-width: 393px;
+  max-width: 420px;
+  height: 852px;
+  background-color: var(--black);
+  margin: 0 auto;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 60px;
+  padding-bottom: 69px;
+  padding-left: 26px;
+  padding-right: 26px;
+  box-sizing: border-box;
+}
+
+
+.container::-webkit-scrollbar {
+  display: none;
+}
+
+
+.none {
+  display: none !important;
+}
+
+input {
+  outline: none;
+}

@@ -1,0 +1,41 @@
+.header_wrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  background-color: var(--gray02);
+  z-index: 9999;
+  padding-left: 0;
+  padding-right: 0;
+  box-sizing: border-box;
+
+  .back_btn {
+    position: absolute;
+    left: 34px; 
+    width: 10px;
+    height: 17px;
+    background: none;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .back_btn img {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  h1 {
+    margin: 0;
+    color: var(--white);
+    font-size: 18px;
+    font-weight: 700;
+  }
+}

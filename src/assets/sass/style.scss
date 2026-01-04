@@ -1,0 +1,11 @@
+@charset "UTF-8";
+
+// setting
+@import "setting/reset";
+@import "setting/common";
+@import "setting/var";
+
+
+// section
+@import 'section/nav.scss';
+@import 'section/splash.scss';

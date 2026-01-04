@@ -1,0 +1,49 @@
+.container.splash_wrap {
+    position: relative;
+
+    .main_logo {
+        position: absolute;
+        top: 237px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        img {
+            width: 67px;
+            height: 56px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--white);
+        }
+    }
+
+    .splash_btns {
+        position: absolute;
+        top: 514px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .login, .account {
+            width: 340px;
+            height: 59px;
+            background-color: var(--gray02);
+            margin-bottom: 25px;
+            p {
+                color: var(--white);
+                font-size: 18px;
+                font-weight: 500;
+            }
+        }
+    }
+}
