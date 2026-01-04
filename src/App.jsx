@@ -4,6 +4,7 @@ import Home from "./components/Home/Home";
 import Ai_Search from "./components/Ai_Search/Ai_Search";
 import Ai_Dj from "./components/Ai_Dj/Ai_Dj";
 import Library from "./components/Library/Library";
+import Mypage from "./components/Mypage/Mypage"
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Route path="/ai_search" element={<Ai_Search/>}/>
       <Route path="/ai_dj" element={<Ai_Dj/>}/>
       <Route path="/library" element={<Library/>}/>
+      <Route path="/mypage" element={<Mypage/>}/>
     </Routes>
   );
 }
