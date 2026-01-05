@@ -1,4 +1,4 @@
-//홈 헤더
+//Homeheader.jsx
 .container.homeheader_wrap {
     position: absolute;
     left: 0;
@@ -30,7 +30,169 @@
     }
 }
 
-//홈 화면
+//Home.jsx
 .container.home_wrap{
+    .banner{
+        margin-top: 20px;
+        width: 100%;
+        height: 113px;
+        background-color: var(--gray02);
+        border-radius: 5px;
+    }
+
+    .Recommend_track{
+        margin-top: 25px;
+
+        .text{
+            color: var(--white);
+            font-size: 18px;
+        }
+
+        .track_container{
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+
+        }
+    }
+
+    .Trending_now{
+        margin-top: 25px;
+
+        .text_container{
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            .text{
+                color: var(--white);
+                font-size: 18px;
+            }
+
+            img{
+                width: 7px;
+                height: 13px;
+            }
+        }
+    }
     
+}
+
+//Track.jsx
+#Track_Wrap{
+    width: 107px;
+    height: 107px;
+    background-color: var(--gray02);
+    border-radius: 3px;
+}
+
+//Musiclist.jsx
+#Musiclist_Wrap{
+    margin-top: 15px;
+    width: 100%;
+    height: 60px;
+    background-color: var(--gray02);
+    border-radius: 3px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 11px;
+    padding-right: 11px;
+
+    .musiclist_container{
+        display: flex;
+        gap: 15px;
+        align-items: center;
+
+        .album_cover{
+            width: 40px;
+            height: 40px;
+            background-color: var(--gray01);
+            border-radius: 3px;
+        }
+
+        .music_info{
+            display: flex;
+            flex-direction: column;
+
+            .title{
+                color: var(--white);
+                font-size: 16px;
+                font-weight: 600;
+            }
+
+            .artist{
+                color: var(--white);
+                font-size: 14px;
+                font-weight: 300;
+            }
+        }
+        
+    }
+
+    img{
+        width: 22px;
+        height: 22px;
+    }
+    
+}
+
+//Home_search.jsx
+.home_searchbar_wrap{
+  font-family: 'Overpass', sans-serif;
+  width: 100%;
+  min-width: 393px;
+  max-width: 420px;
+  height: 852px;
+  background-color: var(--black);
+  margin: 0 auto;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 30px;
+  padding-bottom: 80px;
+  padding-left: 26px;
+  padding-right: 26px;
+  box-sizing: border-box;
+
+    .search{
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        
+        .searchbar{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            padding-left: 70px;
+
+
+            width: 280px;
+            height: 40px;
+            background-color: var(--gray02);
+            border-radius: 5px;
+
+            
+            img{
+                width: 24px;
+                height: 24px;
+            }
+
+            input{
+                background: none;
+                color: var(--white);
+            }
+        }
+
+        p{
+            color: var(--white);
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+            
+        }
 }
