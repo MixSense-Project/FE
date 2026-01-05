@@ -10,7 +10,7 @@ import search_p from "../assets/img/nav/search_p.svg";
 
 const Nav = () => {
   return (
-    <nav id="Nav_Wrap">
+    <div id="Nav_Wrap">
       <NavLink
         to="/home"
         className={({ isActive }) => `nav_item ${isActive ? "active" : ""}`}
@@ -62,7 +62,7 @@ const Nav = () => {
           </>
         )}
       </NavLink>
-    </nav>
+    </div>
   );
 };
 
