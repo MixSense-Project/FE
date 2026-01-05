@@ -1,0 +1,23 @@
+#Searchbar_Wrap{
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding-left: 12px;
+
+    width: 100%;
+    height: 40px;
+    background-color: var(--gray02);
+    border-radius: 5px;
+
+    img{
+        width: 24px;
+        height: 24px;
+    }
+
+    input{
+        background: none;
+        color: var(--white);
+    }
+}

@@ -1,10 +1,10 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import Splash from './components/Splash'
-import Home from "./components/Home/Home";
-import Ai_Search from "./components/Ai_Search/Ai_Search";
-import Ai_Dj from "./components/Ai_Dj/Ai_Dj";
-import Library from "./components/Library/Library";
-import Mypage from "./components/Mypage/Mypage"
+import Splash from './page/Splash/Splash'
+import Home from "./page/Home/Home";
+import Ai_Search from "./page/Ai_Search/Ai_Search";
+import Ai_Dj from "./page/Ai_Dj/Ai_Dj";
+import Library from "./page/Library/Library";
+import Mypage from "./page/Mypage/Mypage";
 
 function App() {
   return (

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import '../assets/sass/section/header.scss'
-import back_btn from '../assets/img/header/back_btn.svg'
+import back_btn from '../assets/img/Header/back_btn.svg'
 
 const Header = ({title}) => {
   return (

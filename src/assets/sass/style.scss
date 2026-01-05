@@ -6,6 +6,11 @@
 @import "setting/var";
 
 
-// section
-@import 'section/Nav.scss';
-@import 'section/Splash.scss';
+// section // page
+@import 'section/page/Splash.scss';
+@import 'section/page/Home.scss';
+
+// section // components
+@import 'section/components/Nav.scss';
+@import 'section/components/Header.scss';
+@import 'section/components/Searchbar.scss';

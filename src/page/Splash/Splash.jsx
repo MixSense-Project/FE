@@ -1,6 +1,5 @@
 import React from 'react'
-import Logo from '../assets/img/logo.svg'
-import '../assets/sass/section/splash.scss'
+import Logo from '../../assets/img/logo.svg'
 
 const Splash = () => {
     return (
