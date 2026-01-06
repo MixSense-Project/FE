@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import plus_btn from "../../assets/img/library/plus_btn.svg";
-import camera_icon from "../../assets/img/library/camera_icon.svg"; 
+import camera_icon from "../../assets/img/library/camera_icon.svg";
+import Library_myplaylist from "../../components/Library/Library_myplaylist";
+
 
 const Library = () => {
   const navigate = useNavigate();
@@ -46,23 +48,29 @@ const Library = () => {
   };
 
   return (
-    <div className="container library_wrap">
-      <Header title={"Library"} />
+    <div className="library_wrap">
+      <div className="container">
+        <Header title={"Library"} />
 
-      <div className="category">
-        <button className="playlist" type="button">
-          <p>Playlist</p>
-        </button>
+        <div className="category">
+          <button className="playlist" type="button">
+            <p>Playlist</p>
+          </button>
 
-        <button className="liked" type="button" onClick={() => navigate("/library/liked")}>
-          <p>Liked Songs</p>
+          <button className="liked" type="button" onClick={() => navigate("/library/liked")}>
+            <p>Liked Songs</p>
+          </button>
+        </div>
+        <Library_myplaylist />
+        <Library_myplaylist />
+        <Library_myplaylist />
+        <Library_myplaylist />
+        <Library_myplaylist />
+        
+        <button className="plus_btn" type="button" onClick={openModal} aria-label="플레이리스트 추가">
+          <img src={plus_btn} alt="" />
         </button>
       </div>
-
-      <button className="plus_btn" type="button" onClick={openModal} aria-label="플레이리스트 추가">
-        <img src={plus_btn} alt="" />
-      </button>
-
       <Nav />
 
       {isModalOpen && (

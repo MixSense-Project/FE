@@ -12,14 +12,14 @@ import LibraryLikedSongs from "./page/Library/Library_likedsongs";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Splash/>}/>
-      <Route path="/home" element={<Home/>}/>
-      <Route path="/home_search" element={<Home_search/>}/>
-      <Route path="/home_trending_now" element={<Home_trending_now/>}/>
-      <Route path="/ai_search" element={<Ai_Search/>}/>
-      <Route path="/ai_dj" element={<Ai_Dj/>}/>
-      <Route path="/library" element={<Library/>}/>
-      <Route path="/mypage" element={<Mypage/>}/>
+      <Route path="/" element={<Splash />} />
+      <Route path="/home" element={<Home />} />
+      <Route path="/home_search" element={<Home_search />} />
+      <Route path="/home_trending_now" element={<Home_trending_now />} />
+      <Route path="/ai_search" element={<Ai_Search />} />
+      <Route path="/ai_dj" element={<Ai_Dj />} />
+      <Route path="/library" element={<Library />} />
+      <Route path="/mypage" element={<Mypage />} />
       <Route path="/" element={<Splash />} />
       <Route path="/home" element={<Home />} />
       <Route path="/ai_search" element={<Ai_Search />} />
