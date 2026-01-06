@@ -19,14 +19,14 @@ body {
   width: 100%;
   min-width: 393px;
   max-width: 420px;
-  height: 852px;
+  height: calc(852px - 80px);
   background-color: var(--black);
   margin: 0 auto;
   position: relative;
   overflow-y: auto;
   overflow-x: hidden;
   padding-top: 80px;
-  padding-bottom: 80px;
+  // padding-bottom: 80px;
   padding-left: 26px;
   padding-right: 26px;
   box-sizing: border-box;

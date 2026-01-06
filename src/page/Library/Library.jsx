@@ -3,8 +3,10 @@ import Header from '../../components/Header'
 import Nav from '../../components/Nav'
 const Library = () => {
   return (
-    <div className='container library_wrap'>
-      <Header title={"Library"}/>
+    <div className='library_wrap'>
+      <div className="container">
+        <Header title={"Library"}/>
+      </div>
       <Nav/>
     </div>
   )

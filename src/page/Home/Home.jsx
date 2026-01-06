@@ -9,9 +9,10 @@ import more_btn from '../../assets/img/Home/more_btn.svg'
 
 const Home = () => {
   return (
-    <div className='container home_wrap'>
-        <HomeHeader/>
-        <Link to='/home_search'>
+    <div className='home_wrap'>
+        <div className="container">
+          <HomeHeader/>
+          <Link to='/home_search'>
           <Searchbar/>
         </Link>
         <div className="banner"></div>
@@ -42,6 +43,7 @@ const Home = () => {
           <Musiclist/>
         </div>
         
+        </div>
         <Nav/>
     </div>
   )

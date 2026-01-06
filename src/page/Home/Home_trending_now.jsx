@@ -5,9 +5,11 @@ import Nav from '../../components/Nav'
 
 const Home_trending_now = () => {
   return (
-    <div className="container home_trendging_now">
-        <Header title="Trending Now"/>
-        <Searchbar/>
+    <div className="home_trendging_now">
+        <div className="container">
+          <Header title="Trending Now"/>
+          <Searchbar/>
+        </div>
         <Nav/>
     </div>
   )

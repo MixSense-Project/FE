@@ -4,8 +4,10 @@ import Nav from '../../components/Nav'
 
 const Ai_Dj = () => {
   return (
-    <div className='container aidj_wrap'>
-      <Header title={"AI DJ"}/>
+    <div className='aidj_wrap'>
+      <div className="container">
+        <Header title={"AI DJ"}/>
+      </div>
       <Nav/>
     </div>
   )
