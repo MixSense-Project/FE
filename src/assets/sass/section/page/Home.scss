@@ -1,5 +1,5 @@
 //Homeheader.jsx
-.container.homeheader_wrap {
+.container.homeheader_wrap{
     position: absolute;
     left: 0;
     top: 0;
@@ -31,7 +31,7 @@
 }
 
 //Home.jsx
-.container.home_wrap{
+.home_wrap{
     .banner{
         margin-top: 20px;
         width: 100%;
@@ -59,6 +59,7 @@
 
     .Trending_now{
         margin-top: 25px;
+        margin-bottom: 35px;
 
         .text_container{
             display: flex;
@@ -141,27 +142,13 @@
 
 //Home_search.jsx
 .home_searchbar_wrap{
-  font-family: 'Overpass', sans-serif;
-  width: 100%;
-  min-width: 393px;
-  max-width: 420px;
-  height: 852px;
-  background-color: var(--black);
-  margin: 0 auto;
-  position: relative;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-top: 30px;
-  padding-bottom: 80px;
-  padding-left: 26px;
-  padding-right: 26px;
-  box-sizing: border-box;
-
     .search{
+        position: absolute;
+        top: 30px;
         display: flex;
         align-items: center;
         gap: 30px;
-        
+
         .searchbar{
             display: flex;
             justify-content: center;
@@ -175,7 +162,7 @@
             background-color: var(--gray02);
             border-radius: 5px;
 
-            
+
             img{
                 width: 24px;
                 height: 24px;
@@ -192,7 +179,9 @@
             font-size: 14px;
             font-weight: 400;
         }
-
-            
-        }
+    }
+  
 }
+
+
+

@@ -2,7 +2,6 @@ import React from 'react'
 import my from '../../assets/img/Home/my.svg'
 import Logo from '../../assets/img/logo.svg'
 import { Link } from 'react-router-dom'
-import MyPage from '../Mypage/MyPage'
 
 const HomeHeader = () => {
   return (

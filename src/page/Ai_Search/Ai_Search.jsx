@@ -4,10 +4,13 @@ import Nav from '../../components/Nav'
 
 const Ai_Search = () => {
   return (
-    <div className='container aisearch_wrap'>
-      <Header title={"AI Search"}/>
+    <div className="aisearch_wrap">
+      <div className='container'>
+        <Header title={"AI Search"}/>
+      </div>
       <Nav/>
     </div>
+    
   )
 }
 
