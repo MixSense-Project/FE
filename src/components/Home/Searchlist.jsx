@@ -1,21 +1,20 @@
-import React, { useState} from 'react'
+import React, {useState} from 'react'
 import add_btn from '../../assets/img/Home/add_btn.svg'
 import check_btn from '../../assets/img/Home/check.svg'
 
-const Musiclist = () => {
-  
-  const [isAdd, setIsdAdd]=useState(false);
+const Searchlist = () => {
+    const[isAdd, setIsAdd]=useState(false);
 
-  const Addplaylist = () => {
-    if (!isAdd){
-      setIsdAdd(true);
-    }else{
-      setIsdAdd(false);
+    const AddPlaylist=()=>{
+        if(!isAdd){
+            setIsAdd(true);
+        }else{
+            setIsAdd(false);
+        }
     }
-  }
 
   return (
-    <div id="Musiclist_Wrap">
+    <div id="Searchlist_Wrap">
         <div className="musiclist_container">
             <div className="album_cover"></div>
             <div className="music_info">
@@ -23,9 +22,9 @@ const Musiclist = () => {
                 <div className="artist">Artist</div>
             </div>
         </div>
-        <img src={isAdd ? check_btn : add_btn} alt="" onClick={Addplaylist}/>
+        <img src={isAdd ? check_btn : add_btn} alt="" onClick={AddPlaylist} />
     </div>
   )
 }
 
-export default Musiclist
+export default Searchlist

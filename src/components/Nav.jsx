@@ -9,15 +9,17 @@ import search_g from "../assets/img/nav/search_g.svg";
 import search_p from "../assets/img/nav/search_p.svg";
 
 const Nav = () => {
+  const isHomeActive = location.pathname === "/home" || location.pathname === "/home_search" || location.pathname === "/home_trending_now";
+
   return (
     <div id="Nav_Wrap">
       <NavLink
         to="/home"
-        className={({ isActive }) => `nav_item ${isActive ? "active" : ""}`}
+        className={({ isHomeActive }) => `nav_item ${isHomeActive ? "active" : ""}`}
       >
         {({ isActive }) => (
           <>
-            <img src={isActive ? home_p : home_g} className="nav_icon" alt="" />
+            <img src={isHomeActive ? home_p : home_g} className="nav_icon" alt="" />
             <p className="nav_p">Home</p>
           </>
         )}

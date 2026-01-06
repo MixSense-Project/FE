@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 const HomeHeader = () => {
   return (
-    <div className='container homeheader_wrap'>
+    <div className='homeheader_wrap'>
         <div className="hh_left">
       <img src={Logo} alt="" />
       </div>

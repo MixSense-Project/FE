@@ -1,8 +1,9 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
-import Searchbar from '../../components/Home/Searchbar'
+import Searchlist from '../../components/Home/Searchlist'
 import Nav from '../../components/Nav'
 import searchicon from '../../assets/img/Nav/search_g.svg'
+import Musicplay from '../../components/Home/Musicplay'
 
 const Home_search = () => {
   return (
@@ -17,6 +18,8 @@ const Home_search = () => {
                   <p>취소</p>
               </Link>
           </div>
+          <Searchlist/>
+          <Musicplay/>
         </div>
         <Nav/>
     </div>
