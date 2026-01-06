@@ -22,7 +22,9 @@ const Searchlist = () => {
                 <div className="artist">Artist</div>
             </div>
         </div>
-        <img src={isAdd ? check_btn : add_btn} alt="" onClick={AddPlaylist} />
+        <button className="add_btn" onClick={AddPlaylist}>
+            <img src={isAdd ? check_btn : add_btn} alt=""  />
+        </button>
     </div>
   )
 }
