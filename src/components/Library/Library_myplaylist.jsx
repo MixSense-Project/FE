@@ -72,7 +72,7 @@ const Library_myplaylist = () => {
               <span>playlist edit</span>
               <img src={pencil_icon} alt="" />
             </button>
-
+            <div className="pl_line"></div>
             <button
               type="button"
               className="pl_menu_item"
