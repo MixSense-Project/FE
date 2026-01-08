@@ -63,14 +63,12 @@ const Library = () => {
           </button>
         </div>
         <Library_myplaylist />
-      
         <Library_myplaylist />
-        <Library_deletesongs />
-      </div>
-      <button className="plus_btn" type="button" onClick={openModal} aria-label="플레이리스트 추가">
+        <Musicplay/>
+         <button className="plus_btn" type="button" onClick={openModal} aria-label="플레이리스트 추가">
         <img src={plus_btn} alt="" />
       </button>
-    <Musicplay/>
+      </div>
 
       <Nav />
 

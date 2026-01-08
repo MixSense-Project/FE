@@ -15,7 +15,7 @@ const Nav = () => {
     <div id="Nav_Wrap">
       <NavLink
         to="/home"
-        className={({ isHomeActive }) => `nav_item ${isHomeActive ? "active" : ""}`}
+        className={({ isActive }) => `nav_item ${isHomeActive ? "active" : ""}`}
       >
         {({ isActive }) => (
           <>
