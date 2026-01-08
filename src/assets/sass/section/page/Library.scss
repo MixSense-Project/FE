@@ -1,5 +1,6 @@
 //Library.jsx
 .library_wrap {
+
     position: relative;
 
     .container {
@@ -45,10 +46,9 @@
                 }
             }
         }
-    }
+
 
     .plus_btn {
-        position: fixed;
         position: fixed;
         top: 672px;
         left: 50%;
@@ -65,6 +65,7 @@
         img {
             width: 24px;
             height: 24px;
+
         }
     }
 
@@ -201,6 +202,7 @@
             gap: 14px;
             margin-bottom: 24px;
 
+
             button {
                 border: none;
                 padding: 0;
@@ -227,9 +229,7 @@
             .liked {
                 width: 113px;
                 height: 33px;
-
                 background-color: var(--main);
-
                 p {
                     font-size: 16px;
                     color: var(--white);
@@ -240,6 +240,7 @@
         }
     }
 }
+
 
 //Library_myplaylist.jsx
 .myplaylist_wrap {
@@ -276,6 +277,8 @@
             font-family: var(--mainfont);
         }
     }
+}
+
 
     .edit_area {
         position: relative;

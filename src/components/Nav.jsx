@@ -26,7 +26,7 @@ const Nav = () => {
       </NavLink>
 
       <NavLink
-        to="/ai_search"
+        to="/ai_search_onboarding"
         className={({ isActive }) => `nav_item ${isActive ? "active" : ""}`}
       >
         {({ isActive }) => (

@@ -7,6 +7,7 @@ import camera_icon from "../../assets/img/library/camera_icon.svg";
 import Library_myplaylist from "../../components/Library/Library_myplaylist";
 import Library_deletesongs from "../../components/Library/Library_deletesongs";
 import Musicplay from "../../components/Home/Musicplay";
+
 const Library = () => {
   const navigate = useNavigate();
 
@@ -70,6 +71,7 @@ const Library = () => {
         <img src={plus_btn} alt="" />
       </button>
     <Musicplay/>
+
       <Nav />
 
       {isModalOpen && (

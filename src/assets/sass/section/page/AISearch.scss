@@ -1,0 +1,141 @@
+//Ai_Search_Onboarding.jsx
+.Ai_Search_Onboarding_wrap{
+    .container{
+        header{
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            img{
+                width: 27px;
+            }
+
+            p{
+                color: var(--white);
+            }
+        }
+
+        main{
+            margin-top: 55px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            h1{
+                text-align: center;
+                color: var(--white);
+                font-weight: bold;
+            }
+
+            p{
+                text-align: center;
+                color: var(--white);
+                font-weight: 400;
+            }
+
+            img{
+                width: 225px;
+                height: 273px;
+            }
+        }
+        
+        .chat{
+            width: 344px;
+            position: absolute;
+            z-index: 2;
+            bottom: 30px;
+
+            .chat_btn{
+                position: absolute;
+                z-index: 1;
+                top: calc(50% - 16px);
+                right: 8px;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                width: 32px;
+                height: 32px;
+                background-color: var(--main);
+                border-radius: 50%;
+
+                img{
+                    width: 15px;
+                    height: 15px;
+                }
+            }
+
+            input{
+                width: 100%;
+                height: 50px;
+                background-color: var(--gray02);
+                border-radius: 20px;
+                box-shadow: 0px 0px 3px 1px var(--main);
+                padding-left: 15px;
+                color: var(--white);
+            }
+        }
+            
+    }
+}
+
+//Ai_Search.jsx
+.Ai_Search_Wrap{
+    .container{
+        header{
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            img{
+                width: 27px;
+            }
+
+            p{
+                color: var(--white);
+            }
+        }
+
+        .chat{
+            width: 344px;
+            position: absolute;
+            z-index: 2;
+            bottom: 30px;
+
+            .chat_btn{
+                position: absolute;
+                z-index: 1;
+                top: calc(50% - 16px);
+                right: 8px;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                width: 32px;
+                height: 32px;
+                background-color: var(--main);
+                border-radius: 50%;
+
+                img{
+                    width: 15px;
+                    height: 15px;
+                }
+            }
+
+            input{
+                width: 100%;
+                height: 50px;
+                background-color: var(--gray02);
+                border-radius: 20px;
+                box-shadow: 0px 0px 3px 1px var(--main);
+                padding-left: 15px;
+                color: var(--white);
+            }
+        }
+            
+    }
+}
