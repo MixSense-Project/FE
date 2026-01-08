@@ -1,7 +1,19 @@
-import React from 'react'
+import React, { useState} from 'react'
 import add_btn from '../../assets/img/Home/add_btn.svg'
+import check_btn from '../../assets/img/Home/check.svg'
 
 const Musiclist = () => {
+  
+  const [isAdd, setIsdAdd]=useState(false);
+
+  const Addplaylist = () => {
+    if (!isAdd){
+      setIsdAdd(true);
+    }else{
+      setIsdAdd(false);
+    }
+  }
+
   return (
     <div id="Musiclist_Wrap">
         <div className="musiclist_container">
@@ -11,7 +23,7 @@ const Musiclist = () => {
                 <div className="artist">Artist</div>
             </div>
         </div>
-        <img src={add_btn} alt="" />
+        <img src={isAdd ? check_btn : add_btn} alt="" onClick={Addplaylist}/>
     </div>
   )
 }

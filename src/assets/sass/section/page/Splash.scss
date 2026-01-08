@@ -6,9 +6,22 @@
 }
 
 .Splash_Wrap {
+    width: 100%;
+    min-width: 393px;
+    max-width: 420px;
+    height: 852px;
+    background-color: var(--black);
+    margin: 0 auto;
     position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 80px;
+    // padding-bottom: 80px;
+    padding-left: 26px;
+    padding-right: 26px;
+    box-sizing: border-box;
 
-    .main_logo {
+        .main_logo {
         position: absolute;
         top: 237px;
         left: 50%;
@@ -52,5 +65,6 @@
                 font-weight: 600;
             }
         }
+
     }
 }

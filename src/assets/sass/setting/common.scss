@@ -19,7 +19,7 @@ body {
   width: 100%;
   min-width: 393px;
   max-width: 420px;
-  height: calc(852px - 80px);
+  min-height: calc(852px - 80px);
   background-color: var(--black);
   margin: 0 auto;
   position: relative;

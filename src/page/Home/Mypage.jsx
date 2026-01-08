@@ -1,13 +1,15 @@
 import React from 'react'
 import Header from '../../components/Header'
 import Nav from '../../components/Nav'
+import edit_btn from '../../assets/img/Home/edit_btn.svg'
 
-const MyPage = () => {
+const Mypage = () => {
   return (
     <div className='mypage_wrap'>
         <div className="container">
           <Header title={"MyPage"}/>
           <div className="profile">
+            <img src={edit_btn} alt="" />
             <input type="image" src="" alt="" />
           </div>
           <div className="name">
@@ -17,10 +19,11 @@ const MyPage = () => {
             <button className="logout">Logout</button>
             <button className="logout">Unsubscribe</button>
           </div>
+          <div className="area"></div>
         </div>
-        <Nav />
+        <div className="area"></div>
     </div>
   )
 }
 
-export default MyPage
+export default Mypage
