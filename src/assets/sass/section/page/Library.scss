@@ -1,5 +1,7 @@
 //Library.jsx
 .library_wrap {
+    position: relative;
+
     .container {
         .category {
             margin-top: 27px;
@@ -43,26 +45,30 @@
                 }
             }
         }
+    }
 
-        .plus_btn {
-            position: absolute;
-            top: 672px;
-            right: 32px;
-            width: 60px;
-            height: 60px;
-            background-color: var(--main);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+    .plus_btn {
+        position: fixed;
+        position: fixed;
+        top: 672px;
+        left: 50%;
+        transform: translateX(calc(min(210px, 196.5px) - 33px - 60px));
+        width: 60px;
+        height: 60px;
+        background-color: var(--main);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
 
-            img {
-                width: 24px;
-                height: 24px;
-            }
+        img {
+            width: 24px;
+            height: 24px;
         }
     }
+
+
 }
 
 //modal
@@ -72,6 +78,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: -80px;
     z-index: 2000;
 
 
@@ -81,7 +88,7 @@
         background: var(--black);
         border-radius: 15px;
         padding: 18px 18px 22px 18px;
-
+        box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.25);
 
         .pl_modal_top {
             display: flex;
@@ -231,63 +238,166 @@
                 }
             }
         }
-
-        .plus_btn {
-            position: absolute;
-            top: 672px;
-            right: 32px;
-            width: 60px;
-            height: 60px;
-            background-color: var(--main);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-
-            img {
-                width: 24px;
-                height: 24px;
-            }
-        }
     }
 }
 
 //Library_myplaylist.jsx
 .myplaylist_wrap {
-  width: 340px;
-  height: 70px;
-  background-color: var(--gray02);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0 auto 20px;
-  padding-left: 11px;
-  padding-right: 15px;
-  border-radius: 5px;
-
-  .c_pl_left {
+    width: 340px;
+    height: 70px;
+    background-color: var(--gray02);
     display: flex;
-    align-items: center; 
-    gap: 15px;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto 20px;
+    padding-left: 11px;
+    padding-right: 15px;
+    border-radius: 5px;
+    position: relative;
 
-    .c_pl_cover {
-      width: 45px;
-      height: 45px;
-      border-radius: 3px;
-      background-color: var(--gray01);
+    .c_pl_left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        .c_pl_cover {
+            width: 45px;
+            height: 45px;
+            border-radius: 3px;
+            background-color: var(--gray01);
+        }
+
+        .c_pl_name {
+            color: var(--white);
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 1;
+            margin-top: -5px;
+            font-family: var(--mainfont);
+        }
     }
 
-    .c_pl_name {
-      color: var(--white);
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 1;
-      margin-top: -5px;
+    .edit_area {
+        position: relative;
     }
-  }
 
-  .edit img {
-    display: block;
-  }
+    .edit_btn {
+        border: none;
+        padding: 0;
+        background: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+
+    .pl_menu {
+        position: absolute;
+        top: -10px;
+        right: 0;
+        transform: translateY(-100%);
+        /* 버튼 위로 띄우기 */
+
+        width: 220px;
+        border-radius: 14px;
+        background: rgba(0, 0, 0, 0.85);
+        box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        z-index: 9999;
+        backdrop-filter: blur(8px);
+    }
+
+    .pl_menu_item {
+        width: 100%;
+        height: 52px;
+        padding: 0 16px;
+
+        border: none;
+        background: transparent;
+        cursor: pointer;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        color: #fff;
+        font-size: 14px;
+        font-weight: 400;
+        text-align: left;
+    }
+
+    .pl_menu_item+.pl_menu_item {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .pl_menu_item img {
+        width: 18px;
+        height: 18px;
+        display: block;
+    }
+
+}
+
+
+//Library_deletesongs.jsx + Library_likesongs.jsx
+.deletesongs_wrap {
+    width: 337px;
+    height: 60px;
+    background-color: var(--gray02);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto 20px;
+    padding-left: 11px;
+    padding-right: 15px;
+    border-radius: 5px;
+
+    .c_pl_left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        .c_pl_cover {
+            width: 45px;
+            height: 45px;
+            border-radius: 3px;
+            background-color: var(--gray01);
+        }
+
+        .song_detail {
+            .c_song_name {
+                color: var(--white);
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 1;
+                margin-top: 1px;
+                font-family: var(--mainfont);
+            }
+
+            .c_artist_name {
+                color: var(--white);
+                font-weight: 200;
+                font-size: 14px;
+                line-height: 1;
+                margin-top: 4px;
+                font-family: var(--mainfont);
+            }
+        }
+    }
+
+    .delete img {
+        display: block;
+        width: 13px;
+        height: 13px;
+    }
+
+    .heart img {
+        width: 15px;
+        height: 12px;
+        margin-top: 5px;
+    }
+}
+
+.libraryplaylist_wrap {
+    position: relative;
+
 }

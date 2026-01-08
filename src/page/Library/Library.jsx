@@ -5,8 +5,8 @@ import Nav from "../../components/Nav";
 import plus_btn from "../../assets/img/library/plus_btn.svg";
 import camera_icon from "../../assets/img/library/camera_icon.svg";
 import Library_myplaylist from "../../components/Library/Library_myplaylist";
-
-
+import Library_deletesongs from "../../components/Library/Library_deletesongs";
+import Musicplay from "../../components/Home/Musicplay";
 const Library = () => {
   const navigate = useNavigate();
 
@@ -62,15 +62,14 @@ const Library = () => {
           </button>
         </div>
         <Library_myplaylist />
+      
         <Library_myplaylist />
-        <Library_myplaylist />
-        <Library_myplaylist />
-        <Library_myplaylist />
-        
-        <button className="plus_btn" type="button" onClick={openModal} aria-label="플레이리스트 추가">
-          <img src={plus_btn} alt="" />
-        </button>
+        <Library_deletesongs />
       </div>
+      <button className="plus_btn" type="button" onClick={openModal} aria-label="플레이리스트 추가">
+        <img src={plus_btn} alt="" />
+      </button>
+    <Musicplay/>
       <Nav />
 
       {isModalOpen && (
