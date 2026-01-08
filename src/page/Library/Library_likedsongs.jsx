@@ -2,8 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../../components/Header'
 import Nav from '../../components/Nav'
-import plus_btn from '../../assets/img/library/plus_btn.svg'
-
+import Library_likesongs from '../../components/Library/Library_likesongs'
 const Library_likedsongs = () => {
     const navigate = useNavigate()
     return (
@@ -24,6 +23,14 @@ const Library_likedsongs = () => {
                         <p>Liked Songs</p>
                     </button>
                 </div>
+                <Library_likesongs />
+                <Library_likesongs />
+                <Library_likesongs />
+                <Library_likesongs />
+                <Library_likesongs />
+                <Library_likesongs />
+                <Library_likesongs />
+
             </div>
             <Nav />
         </div>
