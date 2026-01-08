@@ -10,6 +10,7 @@ import search_p from "../assets/img/nav/search_p.svg";
 
 const Nav = () => {
   const isHomeActive = location.pathname === "/home" || location.pathname === "/home_search" || location.pathname === "/home_trending_now";
+  const isSearchActive = location.pathname === "/ai_search" || location.pathname === "/ai_search_onboarding";
 
   return (
     <div id="Nav_Wrap">
@@ -27,11 +28,11 @@ const Nav = () => {
 
       <NavLink
         to="/ai_search_onboarding"
-        className={({ isActive }) => `nav_item ${isActive ? "active" : ""}`}
+        className={({ isActive }) => `nav_item ${isSearchActive ? "active" : ""}`}
       >
         {({ isActive }) => (
           <>
-            <img src={isActive ? search_p : search_g} className="nav_icon" alt="" />
+            <img src={isSearchActive ? search_p : search_g} className="nav_icon" alt="" />
             <p className="nav_p">AI Search</p>
           </>
         )}
