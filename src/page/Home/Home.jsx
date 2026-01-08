@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import HomeHeader from '../Home/HomeHeader'
+import Header from '../../components/Header'
 import Searchbar from '../../components/Home/Searchbar'
 import Nav from '../../components/Nav'
 import Track from '../../components/Home/Track'
@@ -12,10 +12,7 @@ const Home = () => {
   return (
     <div className='home_wrap'>
         <div className="container">
-            <HomeHeader/>
-            <Link to='/home_search'>
-              <Searchbar/>
-          </Link>
+            <Header/>
           <div className="banner"></div>
           <div className="Recommend_track">
             <div className="text">Recommend Track</div>

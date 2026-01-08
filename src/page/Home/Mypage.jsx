@@ -1,5 +1,5 @@
 import React from 'react'
-import Header from '../../components/Header'
+import SubHeader from '../../components/SubHeader'
 import Nav from '../../components/Nav'
 import edit_btn from '../../assets/img/Home/edit_btn.svg'
 
@@ -7,7 +7,7 @@ const Mypage = () => {
   return (
     <div className='mypage_wrap'>
         <div className="container">
-          <Header title={"MyPage"}/>
+          <SubHeader title={"MyPage"}/>
           <div className="profile">
             <img src={edit_btn} alt="" />
             <input type="image" src="" alt="" />
