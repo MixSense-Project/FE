@@ -26,7 +26,6 @@ function App() {
       <Route path="/home" element={<Home />} />
       <Route path="/ai_search" element={<Ai_Search />} />
       <Route path="/ai_dj" element={<Ai_Dj />} />
-      <Route path="/library" element={<Library />} />
       <Route path="/library/playlist" element={<Library_playlist/>} />
       <Route path="/library/liked" element={<LibraryLikedSongs />} />
       <Route path="/mypage" element={<Mypage />} />
