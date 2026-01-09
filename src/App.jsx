@@ -10,6 +10,7 @@ import Library from "./page/Library/Library";
 import Mypage from "./page/Home/Mypage";
 import LibraryLikedSongs from "./page/Library/Library_likedsongs";
 import Library_playlist from "./page/Library/Library_playlist";
+import Library_addplaylist from "./page/Library/Library_addplaylist";
 function App() {
   return (
     <Routes>
@@ -27,6 +28,7 @@ function App() {
       <Route path="/ai_search" element={<Ai_Search />} />
       <Route path="/ai_dj" element={<Ai_Dj />} />
       <Route path="/library/playlist" element={<Library_playlist/>} />
+       <Route path="/library/add/playlist" element={<Library_addplaylist/>} />
       <Route path="/library/liked" element={<LibraryLikedSongs />} />
       <Route path="/mypage" element={<Mypage />} />
     </Routes>
