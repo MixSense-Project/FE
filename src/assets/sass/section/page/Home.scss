@@ -235,6 +235,9 @@
         align-items: center;
 
         .profile{
+             
+            .profile_img{
+            position: relative;
             margin-top: 60px;
             display: flex;
             justify-content: center;
@@ -246,9 +249,13 @@
             background-color: var(--gray02);
 
             img{
+                position: absolute;
+                top: calc(50% - 15px);
+                left: calc(50% - 15px);
                 width: 30px;
                 height: 30px;
             }
+        }
         }
 
         .name{
