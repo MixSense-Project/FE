@@ -71,7 +71,6 @@ const Library = () => {
         </div>
         <Library_myplaylist />
         <Library_myplaylist />
-        <Library_deletesongs />
         <Musicplay />
 
       </div>
