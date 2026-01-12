@@ -1,0 +1,99 @@
+.aidjonboarding_wrap {
+    .container {
+        background:
+            linear-gradient(to top, var(--main) 0%, rgba(255, 43, 208, 0) 20%), //피그마기준 70%
+            var(--black);
+        background-repeat: no-repeat;
+        background-size: 100% 220px;
+        background-position: left 100%;
+
+        .aidj_on_header {
+            .logo img {
+                width: 27px;
+                height: 23px;
+                margin-top: 61px;
+            }
+
+            .detail {
+                display: flex;
+
+                .hp1 {
+                    color: var(--white);
+                    font-weight: 500;
+                    font-size: 25px;
+                    margin-top: 5px;
+                }
+
+                .hp2 {
+                    color: var(--white);
+                    font-weight: 500;
+                    font-size: 19px;
+                    margin-top: 45px;
+                    margin-left: 6px;
+                }
+            }
+        }
+
+        main {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+
+            .p1,
+            .p2 {
+                color: var(--white);
+                font-size: 14px;
+                font-weight: 400;
+            }
+
+            .p2 {
+                margin-top: 20px;
+                z-index: 9999;
+            }
+
+            .graphic {
+                width: 225px;
+                height: 273px;
+                align-items: center;
+                justify-self: center;
+                display: flex;
+                margin: 0 auto;
+                margin-top: -40px;
+                box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
+            }
+
+            .p3 {
+                color: var(--white);
+                font-size: 14px;
+                font-weight: 300;
+                text-align: center;
+            }
+
+            .gotodj {
+                width: 15px;
+                height: 30px;
+                align-items: center;
+                justify-self: center;
+                display: flex;
+                margin: 0 auto;
+                margin-top: 15px;
+            }
+
+            .aidj_btn {
+                width: 180px;
+                height: 45px;
+                background-color: var(--main);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+                margin-top: 15px;
+                border-radius: 50px;
+                color: var(--white);
+                font-weight: 600;
+                font-size: 18px;
+            }
+
+        }
+    }
+}
