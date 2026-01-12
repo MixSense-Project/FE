@@ -1,3 +1,4 @@
+//AI_Dj_Onboarding.jsx
 .aidjonboarding_wrap {
     .container {
         background:
@@ -94,6 +95,173 @@
                 font-size: 18px;
             }
 
+        }
+    }
+}
+
+//Ai_Dj.jsx
+.aidj_wrap {
+    .container {
+        .aidj_header {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            margin-left: -52px;
+            margin-right: -26px;
+            width: calc(100% + 78px);
+            box-sizing: border-box;
+            overflow: hidden;
+            .aidj_cover {
+                width: 160px;
+                height: 160px;
+                border-radius: 5px;
+                background-color: var(--gray02);
+                flex: 0 0 auto;
+            }
+        }
+
+        .aidj_main {
+            margin-top: 40px;
+
+            h1 {
+                font-weight: bold;
+                font-size: 18px;
+                color: var(--white);
+            }
+
+            p {
+                font-weight: 300;
+                font-size: 16px;
+                color: var(--white);
+            }
+
+            .mix {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                width: 340px;
+                height: 210px;
+                align-items: center;
+                margin: 30px auto 0;
+
+                .mix_left,
+                .mix_right {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+
+                    .mix_cover {
+                        width: 160px;
+                        height: 160px;
+                        display: flex;
+                        border-radius: 5px;
+                        margin: 10px 0px;
+                        background-color: var(--gray02);
+                        border: 1px solid var(--main);
+
+                        img {
+                            width: 17px;
+                            height: 17;
+                            justify-content: center;
+                            align-items: center;
+                            margin: 0 auto;
+
+                        }
+                    }
+
+                    h2 {
+                        font-weight: 400;
+                        font-size: 16px;
+                        color: var(--white);
+                    }
+
+                    p {
+                        font-weight: 300;
+                        font-size: 14px;
+                        color: var(--white);
+                    }
+                }
+            }
+
+            .mix_btn {
+                width: 207px;
+                height: 45px;
+                background-color: var(--gray02);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 56px auto;
+                border-radius: 50px;
+                color: var(--white);
+                font-weight: 500;
+                font-size: 18px;
+            }
+
+            .preview {
+
+                .pre_music {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 30px auto 0;
+                    width: 338px;
+                    height: 150px;
+                    border-radius: 5px;
+                    gap: 15px;
+                    background-color: var(--gray02);
+
+                    .pre_cover {
+                        width: 100px;
+                        height: 100px;
+                        border-radius: 5px;
+                        margin-left: -60px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        background-color: var(--black);
+
+                        img {
+                            width: 25px;
+                            height: 25px;
+
+                            margin: 0 auto;
+                        }
+                    }
+
+                    h3 {
+                        font-weight: 400;
+                        font-size: 16px;
+                        color: var(--white);
+                    }
+
+                    p {
+                        margin-top: 10px;
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+
+        .what {
+            display: flex;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 88px auto 30px;
+            cursor: pointer;
+
+            img {
+                width: 12px;
+                height: 12px;
+                margin-right: 5px;
+            }
+
+            p {
+                font-weight: 300;
+                font-size: 12px;
+                color: var(--white);
+            }
         }
     }
 }
