@@ -1,18 +1,22 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import back_btn from '../assets/img/Header/back_btn.svg'
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import back_btn from "../assets/img/Header/back_btn.svg";
 
-const SubHeader = ({title}) => {
+const SubHeader = ({ title }) => {
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate(-1); // 이전 페이지로 이동
+  };
+
   return (
-    <div id='SubHeader_Wrap'>
-        <Link to="/home">
-          <button className="back_btn">
-              <img src={back_btn} alt="" />
-          </button>
-        </Link>
-        <h1>{title}</h1>
+    <div id="SubHeader_Wrap">
+      <button className="back_btn" onClick={handleBack}>
+        <img src={back_btn} alt="" />
+      </button>
+      <h1>{title}</h1>
     </div>
-  )
-}
+  );
+};
 
-export default SubHeader
+export default SubHeader;
