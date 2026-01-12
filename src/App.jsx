@@ -11,6 +11,7 @@ import Mypage from "./page/Home/Mypage";
 import LibraryLikedSongs from "./page/Library/Library_likedsongs";
 import Library_playlist from "./page/Library/Library_playlist";
 import Library_addplaylist from "./page/Library/Library_addplaylist";
+import Ai_Dj_Onboarding from "./page/Ai_Dj/Ai_Dj_Onboarding";
 function App() {
   return (
     <Routes>
@@ -21,6 +22,7 @@ function App() {
       <Route path="/ai_search" element={<Ai_Search />} />
       <Route path="/ai_search_onboarding" element={<Ai_Search_Onboarding />} />
       <Route path="/ai_dj" element={<Ai_Dj />} />
+      <Route path="/ai_dj_onboarding" element={<Ai_Dj_Onboarding />} />
       <Route path="/library" element={<Library />} />
       <Route path="/mypage" element={<Mypage />} />
       <Route path="/" element={<Splash />} />
