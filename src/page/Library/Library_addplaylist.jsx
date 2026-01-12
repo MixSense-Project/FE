@@ -1,13 +1,13 @@
 import React from 'react'
 import Searchbar from '../../components/Home/Searchbar'
-import Header from '../../components/Header'
 import Nav from '../../components/Nav'
 import Musiclist from '../../components/Home/Musiclist'
+import SubHeader from '../../components/SubHeader'
 const Library_addplaylist = () => {
     return (
         <div className='libraryaddplaylist_wrap'>
             <div className="container">
-                <Header />
+                <SubHeader title={"Add to 'myplaylist'"}/>
                 <div className="lb_add_search">
                     <Searchbar />
                 </div>
