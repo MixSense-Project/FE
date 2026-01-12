@@ -1,17 +1,17 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import Header from '../../components/Header'
 import Nav from '../../components/Nav'
 import play_btn from '../../assets/img/library/play_btn.svg'
 import random_btn from '../../assets/img/library/random_btn.svg'
 import plus_btn from '../../assets/img/library/plus_btn.svg'
 import Library_deletesongs from '../../components/Library/Library_deletesongs'
+import SubHeader from '../../components/SubHeader'
 const Library_playlist = () => {
     const navigate = useNavigate();
     return (
         <div className='libraryplaylist_wrap'>
             <div className="container">
-                <Header />
+                <SubHeader title={"playlist"}/>
                 <div className="pl_header">
                     <div className="pl_h_left">
                         <div className="pl_h_cover"></div>
