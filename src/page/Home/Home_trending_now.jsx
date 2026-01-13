@@ -10,7 +10,18 @@ const Home_trending_now = () => {
         <div className="container">
           <SubHeader title="Trending Now"/>
           <Searchbar/>
-          <Musiclist/>
+          <div className="scroll_container">
+            <Musiclist/>
+            <Musiclist/>
+            <Musiclist/>
+            <Musiclist/>
+            <Musiclist/>
+            <Musiclist/>
+            <Musiclist/>
+            <Musiclist/>
+            <Musiclist/>
+            <Musiclist/>
+          </div>
         </div>
         <Nav/>
     </div>

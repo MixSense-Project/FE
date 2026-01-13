@@ -1,10 +1,29 @@
 //Library.jsx
 .library_wrap {
-
     position: relative;
+    height: 852px; 
+    display: flex;
+    flex-direction: column;
 
     .container {
-        .category {
+        flex: 1; 
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; 
+        
+        .scroll_container{
+            flex: 1; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
+
+            &::-webkit-scrollbar {
+                display: none; 
+            }
+
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+            
+            .category {
             margin-top: 27px;
             display: flex;
             gap: 14px;
@@ -73,10 +92,7 @@
                 }
             }
         }
-
-
-
-
+        }
 
     }
 
@@ -97,9 +113,10 @@
             background: var(--black);
             border-radius: 15px;
             padding: 18px 18px 22px 18px;
-            box-shadow: 0px 0px 3px 1px color-mix(in srgb,
-                    var(--main) 80%,
-                    transparent);
+            border: 1px solid var(--gray02);
+            // box-shadow: 0px 0px 3px 1px color-mix(in srgb,
+            //         var(--main) 80%,
+            //         transparent);
 
             .pl_modal_top {
                 display: flex;
@@ -206,8 +223,29 @@
 
 //Library_likedsongs.jsx
 .librarylikedsongs_wrap {
+    height: 852px; 
+    display: flex;
+    flex-direction: column;
+
     .container {
-        .category {
+        flex: 1; 
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; 
+
+        .scroll_container{
+            flex: 1; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
+
+            &::-webkit-scrollbar {
+                display: none; 
+            }
+
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+
+            .category {
             margin-top: 27px;
             display: flex;
             gap: 14px;
@@ -249,6 +287,7 @@
                     margin: 0;
                 }
             }
+        }
         }
     }
 

@@ -8,9 +8,9 @@ const Library_likedsongs = () => {
     return (
         <div className='librarylikedsongs_wrap'>
             <div className="container">
-                <Header title={"Library"} />
-
-                <div className="category">
+                <Header/>
+                <div className="scroll_container">
+                    <div className="category">
                     <button className="playlist"
                         onClick={() => navigate('/library')}>
                         <p>Playlist</p>
@@ -30,8 +30,8 @@ const Library_likedsongs = () => {
                 <Library_likesongs />
                 <Library_likesongs />
                 <Library_likesongs />
-
-            </div>
+                </div>
+                </div>
             <Nav />
         </div>
     )

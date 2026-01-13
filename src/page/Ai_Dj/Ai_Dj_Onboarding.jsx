@@ -1,8 +1,8 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import Header from '../../components/Header'
 import Nav from '../../components/Nav'
-import logo from '../../assets/img/logo.svg'
-import graphic from '../../assets/img/AIDJ/ai_dj_graphic.svg'
+import graphic from '../../assets/img/AISearch/graphic.png'
 import gotodj from '../../assets/img/AIDJ/gotodj.svg'
 
 function Ai_Dj_Onboarding() {
@@ -11,9 +11,6 @@ function Ai_Dj_Onboarding() {
             <div className="container">
                 <Header />
                 <div className="aidj_on_header">
-                    <div className="logo">
-                        <img src={logo} alt="" />
-                    </div>
                     <div className="detail">
                         <p className='hp1'>Create <br />
                             your own DJ set</p>
@@ -35,10 +32,11 @@ function Ai_Dj_Onboarding() {
                         Mix your songs right now
                     </p>
                     <img src={gotodj} alt="" className="gotodj" />
-                    <button className="aidj_btn">
-                        Go to AI DJ
-                    </button>
-
+                    <Link to='/ai_dj'>
+                        <button className="aidj_btn">
+                            Go to AI DJ
+                        </button>
+                    </Link>
                 </main>
             </div>
             <Nav />
