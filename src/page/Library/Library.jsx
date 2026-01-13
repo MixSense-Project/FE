@@ -51,9 +51,10 @@ const Library = () => {
   return (
     <div className="library_wrap">
       <div className="container">
-        <Header title={"Library"} />
+        <Header/>
 
-        <div className="category">
+        <div className="scroll_container">
+           <div className="category">
           <div className="lb_left_btns">
             <button className="playlist" type="button">
               <p>Playlist</p>
@@ -71,7 +72,10 @@ const Library = () => {
         </div>
         <Library_myplaylist />
         <Library_myplaylist />
+        <Library_myplaylist />
+        
         <Musicplay />
+        </div>
 
       </div>
 
@@ -132,3 +136,5 @@ const Library = () => {
 };
 
 export default Library;
+
+

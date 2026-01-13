@@ -14,6 +14,7 @@ import dj_w from '../assets/img/Nav/aidj_w.svg'
 const Nav = () => {
   const isHomeActive = location.pathname === "/home" || location.pathname === "/home_search" || location.pathname === "/home_trending_now";
   const isSearchActive = location.pathname === "/ai_search" || location.pathname === "/ai_search_onboarding";
+  const isAiDjActive = location.pathname === '/ai_dj' || location.pathname === "/ai_dj_onboarding" || location.pathname === "/ai_dj_trackselect";
 
   return (
     <div id="Nav_Wrap">
@@ -43,11 +44,11 @@ const Nav = () => {
 
       <NavLink
         to="/ai_dj"
-        className={({ isActive }) => `nav_item ${isActive ? "active" : ""}`}
+        className={({ isActive }) => `nav_item ${isAiDjActive ? "active" : ""}`}
       >
         {({ isActive }) => (
           <>
-            <img src={isActive ? dj_w : dj_g} className="nav_icon" alt="" />
+            <img src={isAiDjActive ? dj_w : dj_g} className="nav_icon" alt="" />
             <p className="nav_p">AI DJ</p>
           </>
         )}

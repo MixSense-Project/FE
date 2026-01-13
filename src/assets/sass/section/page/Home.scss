@@ -1,49 +1,74 @@
+//page
 //Home.jsx
 .home_wrap{
     position: relative;
-    
-    .banner{
-        margin-top: 20px;
-        width: 100%;
-        height: 113px;
-        background-color: var(--gray02);
-        border-radius: 5px;
-    }
+    height: 852px; 
+    display: flex;
+    flex-direction: column;
 
-    .Recommend_track{
-        margin-top: 25px;
+    .container{
+        flex: 1; 
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; 
 
-        .text{
-            color: var(--white);
-            font-size: 18px;
-        }
+        .scroll_container{
+            flex: 1; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
 
-        .track_container{
-            margin-top: 20px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-
-        }
-    }
-
-    .Trending_now{
-        margin-top: 25px;
-        margin-bottom: 35px;
-
-        .text_container{
-            display: flex;
-            align-items: center;
-            gap: 5px;
-
-            .text{
-                color: var(--white);
-                font-size: 18px;
+            &::-webkit-scrollbar {
+                display: none; 
             }
 
-            img{
-                width: 7px;
-                height: 13px;
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+
+            .banner{
+                margin-top: 20px;
+                width: 100%;
+                height: 113px;
+                background-color: var(--gray02);
+                border-radius: 5px;
+            }
+
+            .Recommend_track{
+                margin-top: 25px;
+
+                .text{
+                    color: var(--white);
+                    font-size: 18px;
+                }
+
+                .track_container{
+                    margin-top: 20px;
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 10px;
+
+                }
+            }
+
+            .Trending_now{
+                margin-top: 25px;
+                margin-bottom: 35px;
+
+                .text_container{
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                    margin-bottom: 20px;
+
+                    .text{
+                        color: var(--white);
+                        font-size: 18px;
+                    }
+
+                    img{
+                        width: 7px;
+                        height: 13px;
+                    }
+                }
             }
         }
     }
@@ -58,124 +83,32 @@
     border-radius: 3px;
 }
 
-//Musiclist.jsx
-#Musiclist_Wrap{
-    margin-top: 15px;
-    width: 100%;
-    height: 60px;
-    background-color: var(--gray02);
-    border-radius: 3px;
-
+//Home_trending_now.jsx
+.home_trendging_now {
+    height: 852px; 
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-left: 11px;
-    padding-right: 11px;
+    flex-direction: column;
 
-    .musiclist_container{
+    .container {
+        flex: 1; 
         display: flex;
-        gap: 15px;
-        align-items: center;
+        flex-direction: column;
+        overflow: hidden; 
 
-        .album_cover{
-            width: 40px;
-            height: 40px;
-            background-color: var(--gray01);
-            border-radius: 3px;
-        }
+        .scroll_container {
+            flex: 1; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
 
-        .music_info{
-            display: flex;
-            flex-direction: column;
-
-            .title{
-                color: var(--white);
-                font-size: 16px;
-                font-weight: 600;
+            &::-webkit-scrollbar {
+                display: none; 
             }
 
-            .artist{
-                color: var(--white);
-                font-size: 14px;
-                font-weight: 300;
-            }
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
         }
-        
+
     }
-
-    img{
-        width: 22px;
-        height: 22px;
-    }
-    
-}
-
-
-//Musicplay.jsx
-#Musicplay_Wrap{
-    position: absolute;
-    bottom: 1vh;
-    left: calc(50% - 172px);
-    box-sizing: border-box;
-    z-index: 10000;
-
-    width: 344px;
-    height: 60px;
-    background-color: var(--black);
-    border-radius: 3px;
-    box-shadow: 0px 0px 3px 1px var(--main);
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-left: 11px;
-    padding-right: 11px;
-    flex-shrink: 0;
-
-    .musiclist_container{
-        display: flex;
-        gap: 15px;
-        align-items: center;
-
-        .album_cover{
-            width: 40px;
-            height: 40px;
-            background-color: var(--gray01);
-            border-radius: 3px;
-        }
-
-        .music_info{
-            display: flex;
-            flex-direction: column;
-
-            .title{
-                color: var(--white);
-                font-size: 16px;
-                font-weight: 600;
-            }
-
-            .artist{
-                color: var(--white);
-                font-size: 14px;
-                font-weight: 300;
-            }
-        }
-        
-    }
-
-    .btn_container{
-        display: flex;
-        align-items: center;
-        gap: 20px;
-
-        .play_btn{
-            img{
-            width: 20px;
-            height: 20px;
-            }
-        }
-    }
-    
 }
 
 //Home_search.jsx
@@ -194,12 +127,10 @@
             gap: 5px;
             padding-left: 70px;
 
-
             width: 280px;
             height: 40px;
             background-color: var(--gray02);
             border-radius: 5px;
-
 
             img{
                 width: 24px;
@@ -298,6 +229,133 @@
     
 }
 
+
+
+//component
+
+//Musiclist.jsx
+#Musiclist_Wrap{
+    margin-bottom: 15px;
+    width: 100%;
+    height: 60px;
+    background-color: var(--gray02);
+    border-radius: 3px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 11px;
+    padding-right: 11px;
+
+    .musiclist_container{
+        display: flex;
+        gap: 15px;
+        align-items: center;
+
+        .album_cover{
+            width: 40px;
+            height: 40px;
+            background-color: var(--gray01);
+            border-radius: 3px;
+        }
+
+        .music_info{
+            display: flex;
+            flex-direction: column;
+
+            .title{
+                color: var(--white);
+                font-size: 16px;
+                font-weight: 600;
+            }
+
+            .artist{
+                color: var(--white);
+                font-size: 14px;
+                font-weight: 300;
+            }
+        }
+        
+    }
+
+    img{
+        width: 22px;
+        height: 22px;
+    }
+    
+}
+
+
+//Musicplay.jsx
+#Musicplay_Wrap{
+    position: absolute;
+    bottom: 1vh;
+    left: calc(50% - 172px);
+    box-sizing: border-box;
+    z-index: 10000;
+
+    width: 344px;
+    height: 60px;
+    background-color: var(--black);
+    border-radius: 3px;
+    box-shadow: 0px 0px 3px 1px color-mix(in srgb,
+        var(--main) 80%,
+        transparent);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 11px;
+    padding-right: 11px;
+    flex-shrink: 0;
+
+    .musiclist_container{
+        display: flex;
+        gap: 15px;
+        align-items: center;
+
+        .album_cover{
+            width: 40px;
+            height: 40px;
+            background-color: var(--gray01);
+            border-radius: 3px;
+        }
+
+        .music_info{
+            display: flex;
+            flex-direction: column;
+
+            .title{
+                color: var(--white);
+                font-size: 16px;
+                font-weight: 600;
+            }
+
+            .artist{
+                color: var(--white);
+                font-size: 14px;
+                font-weight: 300;
+            }
+        }
+        
+    }
+
+    .btn_container{
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .play_btn{
+            img{
+            width: 20px;
+            height: 20px;
+            }
+        }
+    }
+    
+}
+
+
 //Searchlist.jsx
 #Searchlist_Wrap{
     margin-top: 15px;
@@ -350,7 +408,7 @@
 
 
 //Searchedlist.jsx
-#Searchedlist_Wrap{
+#Searchedlist{
     margin-top: 15px;
     width: 100%;
     height: 60px;

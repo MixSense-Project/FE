@@ -8,7 +8,7 @@ const Ai_Search = () => {
   return (
     <div className="Ai_Search_Wrap">
       <div className='container'>
-        <Header title={"AI Search"}/>
+        <Header/>
         <header>
             <img src={logo_img} alt="" />
             <p>MixSense AI</p>
