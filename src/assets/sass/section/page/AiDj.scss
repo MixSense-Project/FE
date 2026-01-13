@@ -2,11 +2,11 @@
 .aidjonboarding_wrap {
     .container {
         background:
-            linear-gradient(to top, var(--main) 0%, rgba(255, 43, 208, 0) 20%), 
+            linear-gradient(to top, var(--main) 0%, rgba(255, 43, 208, 0) 20%),
             var(--black);
-            background-repeat: no-repeat;
-            background-size: 100% 220px;
-            background-position: left 100%;
+        background-repeat: no-repeat;
+        background-size: 100% 220px;
+        background-position: left 100%;
 
         .aidj_on_header {
 
@@ -97,220 +97,250 @@
 
 //Ai_Dj.jsx
 .aidj_wrap {
-    height: 852px; 
+    height: 852px;
     display: flex;
     flex-direction: column;
+    max-width: 393px;
+    margin: 0 auto;
+    overflow: hidden;
 
     .container {
-        flex: 1; 
+        flex: 1;
         display: flex;
         flex-direction: column;
-        overflow: hidden; 
+        overflow: hidden;
+        width: 100%;
+        max-width: 393px;
+        min-width: 0;
 
-        .scroll_container{
-            flex: 1; 
-            overflow-y: auto; 
-            overflow-x: hidden; 
+        .scroll_container {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            width: 100%;
+            min-width: 0;
 
             &::-webkit-scrollbar {
-                display: none; 
+                display: none;
             }
 
-            scrollbar-width: none; 
+            scrollbar-width: none;
             -ms-overflow-style: none;
 
             .aidj_header {
                 display: flex;
                 gap: 15px;
                 margin-top: 30px;
-                margin-left: -52px;
+
+                margin-left: -26px;
                 margin-right: -26px;
-                width: calc(100% + 78px);
-                box-sizing: border-box;
-                overflow: hidden;
+                width: calc(100% + 52px);
+
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+
+                &::-webkit-scrollbar {
+                    display: none;
+                }
+
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+
+                /* 양끝이 살짝 보이는 연출 */
+                padding-left: 0;
+                padding-right: 0;
+
+                &::before,
+                &::after {
+                    content: "";
+                    flex: 0 0 109px;
+                }
 
                 .aidj_cover {
+                    flex: 0 0 160px;
                     width: 160px;
                     height: 160px;
                     border-radius: 5px;
                     background-color: var(--gray02);
-                    flex: 0 0 auto;
-                }
-        }
-
-        .aidj_main {
-            margin-top: 40px;
-
-            h1 {
-                font-weight: bold;
-                font-size: 18px;
-                color: var(--white);
-            }
-
-            p {
-                font-weight: 300;
-                font-size: 16px;
-                color: var(--white);
-            }
-
-            .mix {
-                display: flex;
-                align-items: center;
-                gap: 20px;
-                width: 340px;
-                height: 210px;
-                align-items: center;
-                margin: 30px auto 0;
-
-                .mix_left,
-                .mix_right {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-
-                    .mix_cover {
-                        width: 160px;
-                        height: 160px;
-                        border-radius: 5px;
-                        margin: 10px 0px;
-                        background-color: var(--gray02);
-                        box-shadow: 0px 0px 3px 1px var(--main);
-
-                        .track_add_btn{
-                            width: 100%;
-                            height: 100%;
-                            
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-
-                            img{
-                                width: 22px;
-                                height: 22px;
-                            }
-                        }
-                    }
-
-                    h2 {
-                        font-weight: 400;
-                        font-size: 16px;
-                        color: var(--white);
-                    }
-
-                    p {
-                        font-weight: 300;
-                        font-size: 14px;
-                        color: var(--white);
-                    }
                 }
             }
 
-            .mix_btn {
-                width: 207px;
-                height: 45px;
-                background-color: var(--gray02);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin: 56px auto;
-                border-radius: 50px;
-                color: var(--white);
-                font-weight: 500;
-                font-size: 18px;
-            }
 
-            .preview {
+            .aidj_main {
+                margin-top: 40px;
 
-                .pre_music {
+                h1 {
+                    font-weight: bold;
+                    font-size: 18px;
+                    color: var(--white);
+                }
+
+                p {
+                    font-weight: 300;
+                    font-size: 16px;
+                    color: var(--white);
+                }
+
+                .mix {
                     display: flex;
                     align-items: center;
-                    justify-content: center;
+                    gap: 20px;
+                    width: 340px;
+                    height: 210px;
+                    align-items: center;
                     margin: 30px auto 0;
-                    height: 150px;
-                    border-radius: 5px;
-                    gap: 15px;
-                    background-color: var(--gray02);
 
-                    .pre_cover {
-                        padding-left: 0;
-                        width: 100px;
-                        height: 100px;
-                        border-radius: 5px;
-                        margin-left: -100px;
+                    .mix_left,
+                    .mix_right {
                         display: flex;
+                        flex-direction: column;
                         justify-content: center;
                         align-items: center;
-                        background-color: var(--black);
 
-                        img {
-                            width: 25px;
-                            height: 25px;
+                        .mix_cover {
+                            width: 160px;
+                            height: 160px;
+                            border-radius: 5px;
+                            margin: 10px 0px;
+                            background-color: var(--gray02);
+                            box-shadow: 0px 0px 3px 1px var(--main);
 
-                            margin: 0 auto;
+                            .track_add_btn {
+                                width: 100%;
+                                height: 100%;
+
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+
+                                img {
+                                    width: 22px;
+                                    height: 22px;
+                                }
+                            }
+                        }
+
+                        h2 {
+                            font-weight: 400;
+                            font-size: 16px;
+                            color: var(--white);
+                        }
+
+                        p {
+                            font-weight: 300;
+                            font-size: 14px;
+                            color: var(--white);
                         }
                     }
+                }
 
-                    h3 {
-                        font-weight: 400;
-                        font-size: 16px;
-                        color: var(--white);
-                    }
+                .mix_btn {
+                    width: 207px;
+                    height: 45px;
+                    background-color: var(--gray02);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 56px auto;
+                    border-radius: 50px;
+                    color: var(--white);
+                    font-weight: 500;
+                    font-size: 18px;
+                }
 
-                    p {
-                        margin-top: 10px;
-                        font-size: 14px;
+                .preview {
+
+                    .pre_music {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin: 30px auto 0;
+                        height: 150px;
+                        border-radius: 5px;
+                        padding-left: 26px;
+                        gap: 15px;
+                        background-color: var(--gray02);
+
+                        .pre_cover {
+                            padding-left: 0;
+                            width: 100px;
+                            height: 100px;
+                            border-radius: 5px;
+                            margin-left: -100px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            background-color: var(--black);
+
+                            img {
+                                width: 25px;
+                                height: 25px;
+
+                                margin: 0 auto;
+                            }
+                        }
+
+                        h3 {
+                            font-weight: 400;
+                            font-size: 16px;
+                            color: var(--white);
+                        }
+
+                        p {
+                            margin-top: 10px;
+                            font-size: 14px;
+                        }
                     }
                 }
             }
-        }
 
-        .what {
-            display: flex;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 88px auto 30px;
-            cursor: pointer;
+            .what {
+                display: flex;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 88px auto 30px;
+                cursor: pointer;
 
-            img {
-                width: 12px;
-                height: 12px;
-                margin-right: 5px;
+                img {
+                    width: 12px;
+                    height: 12px;
+                    margin-right: 5px;
+                }
+
+                p {
+                    font-weight: 300;
+                    font-size: 12px;
+                    color: var(--white);
+                }
             }
-
-            p {
-                font-weight: 300;
-                font-size: 12px;
-                color: var(--white);
-            }
-        }
         }
     }
 }
 
 //Ai_Dj_Trackselct
 #Ai_Dj_Trackselect {
-    height: 852px; 
+    height: 852px;
     display: flex;
     flex-direction: column;
 
     .container {
-        flex: 1; 
+        flex: 1;
         display: flex;
         flex-direction: column;
-        overflow: hidden; 
+        overflow: hidden;
 
         .scroll_container {
-            flex: 1; 
-            overflow-y: auto; 
-            overflow-x: hidden; 
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
 
             &::-webkit-scrollbar {
-                display: none; 
+                display: none;
             }
 
-            scrollbar-width: none; 
+            scrollbar-width: none;
             -ms-overflow-style: none;
         }
 
