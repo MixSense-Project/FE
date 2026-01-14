@@ -346,3 +346,99 @@
 
     }
 }
+
+//Ai_Dj_Result/jsx
+.aidjresult_wrap {
+    .container {
+        background:
+            linear-gradient(to top, var(--main) 0%, rgba(255, 43, 208, 0) 20%),
+            var(--black);
+        background-repeat: no-repeat;
+        background-size: 100% 220px;
+        background-position: left 100%;
+
+        .result_header {
+            margin-top: 50px;
+
+            h1 {
+                font-size: 25px;
+                font-weight: 500;
+                color: var(--white);
+            }
+
+            p {
+                font-size: 15px;
+                font-weight: 400;
+                color: var(--white);
+            }
+        }
+
+        .result_song {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px auto 0;
+            width: 337px;
+            height: 60px;
+            border-radius: 3px;
+            gap: 16px;
+            color: var(--white);
+            background-color: var(--gray02);
+
+            .rs_cover {
+                margin-left: -100px;
+                width: 40px;
+                height: 40px;
+                border-radius: 3px;
+                background-color: var(--gray01);
+            }
+
+            .rs_right {
+                .p1 {
+                    font-size: 16px;
+                    font-weight: 400;
+                    color: var(--white);
+                }
+
+                .p2 {
+                    font-size: 14px;
+                    font-weight: 300;
+                    color: var(--white);
+                }
+            }
+        }
+
+        .graphic {
+            width: 225px;
+            height: 273px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px auto 0;
+        }
+
+        .addpl_btn,
+        .backdj_btn {
+            width: 207px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            margin-top: 15px;
+            border-radius: 50px;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .addpl_btn {
+            background-color: var(--main);
+        }
+
+        .backdj_btn {
+            background-color: var(--gray02);
+
+        }
+    }
+}

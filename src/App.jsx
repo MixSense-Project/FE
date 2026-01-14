@@ -15,6 +15,7 @@ import Ai_Search_Onboarding from "./page/Ai_Search/Ai_Search_Onboarding";
 import Ai_Dj from "./page/Ai_Dj/Ai_Dj";
 import Ai_Dj_Onboarding from "./page/Ai_Dj/Ai_Dj_Onboarding";
 import Ai_Dj_Trackselect from "./page/Ai_Dj/Ai_Dj_Trackselect";
+import Ai_Dj_Result from "./page/Ai_Dj/Ai_Dj_Result";
 
 {/* Library */}
 import Library from "./page/Library/Library";
@@ -45,7 +46,8 @@ function App() {
       <Route path="/ai_dj" element={<Ai_Dj />} />
       <Route path="/ai_dj_onboarding" element={<Ai_Dj_Onboarding />} />
       <Route path="/ai_dj_trackselect" element={<Ai_Dj_Trackselect/>}/>
-
+      <Route path="/ai_dj_result" element={<Ai_Dj_Result/>}/>
+      
       {/* Library */}
       <Route path="/library" element={<Library />} />
       <Route path="/library/playlist" element={<Library_playlist/>} />
