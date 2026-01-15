@@ -4,7 +4,7 @@ import Nav from '../../components/Nav'
 import Header from '../../components/Header'
 import logo_img from '../../assets/img/logo.svg'
 import chat_btn from '../../assets/img/AISearch/chat_btn.svg'
-import graphic_img from '../../assets/img/AISearch/graphic.png'
+import main_img from '../../assets/img/AISearch/main.png'
 
 const Ai_Search_Onboarding = () => {
   return (
@@ -22,7 +22,7 @@ const Ai_Search_Onboarding = () => {
                     Describe the characteristics or mood 
                     <br />of the music you are looking for.
                 </p>
-                <img src={graphic_img} alt="" />
+                <img src={main_img} alt="" />
             </main>
             <Link to='/ai_search'>
                 <div className="chat">
