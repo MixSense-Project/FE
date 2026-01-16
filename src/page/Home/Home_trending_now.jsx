@@ -9,7 +9,7 @@ const Home_trending_now = () => {
     <div className="home_trendging_now">
         <div className="container">
           <SubHeader title="Trending Now"/>
-          <Searchbar/>
+          {/* <Searchbar/> */}
           <div className="scroll_container">
             <Musiclist/>
             <Musiclist/>
