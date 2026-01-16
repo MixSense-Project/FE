@@ -1,56 +1,66 @@
 //Ai_Search_Onboarding.jsx
-.Ai_Search_Onboarding_wrap{
-    .container{
-        header{
-            margin-top: 20px;
+.Ai_Search_Onboarding_wrap {
+    .container {
+        header {
+            margin-top: 24px;
             display: flex;
             align-items: center;
             gap: 10px;
 
-            img{
+            img {
                 width: 27px;
             }
 
-            p{
+            p {
                 color: var(--white);
+                font-weight: bold;
             }
         }
 
-        main{
-            margin-top: 55px;
+        main {
+            margin-top: 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
 
-            h1{
+            h1 {
                 text-align: center;
                 color: var(--white);
                 font-weight: bold;
+                font-size: 22px;
             }
 
-            p{
+            p {
                 text-align: center;
                 color: var(--white);
                 font-weight: 400;
+                font-size: 14px;
+                margin-top: 10px;
+
             }
 
-            img{
+
+
+            img {
                 position: absolute;
-                top: 323px;
+                top: 355px;
+                width: 389px;
+                height: 261px;
             }
         }
-        
-        .chat{
-            width: 344px;
+
+        .chat {
+            width: 361px;
+            height: 55px;
             position: absolute;
             z-index: 2;
-            bottom: 30px;
+            bottom: 16px;
 
-            .chat_btn{
+            .chat_btn {
                 position: absolute;
                 z-index: 1;
-                top: calc(50% - 16px);
-                right: 8px;
+                top: calc(50% - 18px);
+                right: 6px;
 
                 display: flex;
                 align-items: center;
@@ -58,57 +68,60 @@
 
                 width: 32px;
                 height: 32px;
-                background-color: var(--main);
+                background-color: var(--gray02);
                 border-radius: 50%;
 
-                img{
+                img {
                     width: 15px;
                     height: 15px;
                 }
             }
 
-            input{
+            input {
                 width: 100%;
                 height: 50px;
-                background-color: var(--gray02);
+                background-color: var(--black);
                 border-radius: 20px;
                 padding-left: 15px;
                 color: var(--white);
+                font-size: 14px;
+                border: 1px solid var(--gray02);
             }
         }
-            
+
     }
 }
 
 //Ai_Search.jsx
-.Ai_Search_Wrap{
-    .container{
-        header{
-            margin-top: 20px;
+.Ai_Search_Wrap {
+    .container {
+        header {
+            margin-top: 24px;
             display: flex;
             align-items: center;
             gap: 10px;
 
-            img{
+            img {
                 width: 27px;
             }
 
-            p{
+            p {
                 color: var(--white);
             }
         }
 
-        .chat{
-            width: 344px;
+        .chat {
+            width: 361px;
+            height: 55px;
             position: absolute;
             z-index: 2;
-            bottom: 30px;
+            bottom: 16px;
 
-            .chat_btn{
+            .chat_btn {
                 position: absolute;
                 z-index: 1;
-                top: calc(50% - 16px);
-                right: 8px;
+                top: calc(50% - 18px);
+                right: 6px;
 
                 display: flex;
                 align-items: center;
@@ -119,21 +132,23 @@
                 background-color: var(--main);
                 border-radius: 50%;
 
-                img{
+                img {
                     width: 15px;
                     height: 15px;
                 }
             }
 
-            input{
+            input {
                 width: 100%;
                 height: 50px;
-                background-color: var(--gray02);
+                background-color: var(--black);
                 border-radius: 20px;
                 padding-left: 15px;
                 color: var(--white);
+                font-size: 14px;
+                border: 1px solid var(--gray02);
             }
         }
-            
+
     }
 }
