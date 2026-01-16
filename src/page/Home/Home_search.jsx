@@ -19,10 +19,15 @@ const Home_search = () => {
                   <p>취소</p>
               </Link>
           </div>
-          <p className='history'>history</p>
-          <Searchedlist/>
-          <Searchedlist/>
-          <Searchedlist/>
+          <div className="scroll_container">
+            <p className='history'>History</p>
+            <Searchedlist/>
+            <Searchedlist/>
+            <Searchedlist/>
+            <Searchedlist/>
+            <Searchedlist/>
+        
+          </div>
           <Musicplay/>
         </div>
         <Nav/>

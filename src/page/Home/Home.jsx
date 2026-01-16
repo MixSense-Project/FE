@@ -12,8 +12,9 @@ const Home = () => {
   return (
     <div className='home_wrap'>
         <div className="container">
-            <Header/>
-          <div className="banner"></div>
+          <Header/>
+          <div className="scroll_container">
+            <div className="banner"></div>
           <div className="Recommend_track">
             <div className="text">Recommend Track</div>
             <div className="track_container">
@@ -42,6 +43,7 @@ const Home = () => {
           </div>
           <Musicplay/>
         </div>
+          </div>
         <Nav/>
     </div>
   )

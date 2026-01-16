@@ -51,23 +51,32 @@ const Library = () => {
   return (
     <div className="library_wrap">
       <div className="container">
-        <Header title={"Library"} />
+        <Header/>
 
-        <div className="category">
-          <button className="playlist" type="button">
-            <p>Playlist</p>
-          </button>
+        <div className="scroll_container">
+           <div className="category">
+          <div className="lb_left_btns">
+            <button className="playlist" type="button">
+              <p>Playlist</p>
+            </button>
 
-          <button className="liked" type="button" onClick={() => navigate("/library/liked")}>
-            <p>Liked Songs</p>
-          </button>
+            <button className="liked" type="button" onClick={() => navigate("/library/liked")}>
+              <p>Liked Songs</p>
+            </button>
+          </div>
+          <div className="lb_right_btn">
+            <button className="plus_btn" type="button" onClick={openModal} aria-label="플레이리스트 추가">
+              <img src={plus_btn} alt="" />
+            </button>
+          </div>
         </div>
         <Library_myplaylist />
         <Library_myplaylist />
-        <Musicplay/>
-         <button className="plus_btn" type="button" onClick={openModal} aria-label="플레이리스트 추가">
-        <img src={plus_btn} alt="" />
-      </button>
+        <Library_myplaylist />
+        
+        <Musicplay />
+        </div>
+
       </div>
 
       <Nav />
@@ -127,3 +136,5 @@ const Library = () => {
 };
 
 export default Library;
+
+

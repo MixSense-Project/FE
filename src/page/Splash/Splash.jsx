@@ -6,7 +6,7 @@ const Splash = () => {
     <div className='Splash_Wrap'>
         <div className="main_logo">
             <img src={Logo} alt="" />
-            <h1>MixSense</h1>
+            {/* <h1>MixSense</h1> */}
         </div>
         <div className="splash_btns">
             <button className="login">
