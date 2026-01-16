@@ -11,10 +11,12 @@ const SubHeader = ({ title }) => {
 
   return (
     <div id="SubHeader_Wrap">
-      <button className="back_btn" onClick={handleBack}>
-        <img src={back_btn} alt="" />
-      </button>
-      <h1>{title}</h1>
+      <div className="subheader_content">
+        <button className="back_btn" onClick={handleBack}>
+          <img src={back_btn} alt="" />
+        </button>
+        <h1>{title}</h1>
+      </div>
     </div>
   );
 };
