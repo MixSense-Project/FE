@@ -1,97 +1,97 @@
 //Library.jsx
 .library_wrap {
     position: relative;
-    height: 852px; 
+    height: 852px;
     display: flex;
     flex-direction: column;
 
     .container {
-        flex: 1; 
+        flex: 1;
         display: flex;
         flex-direction: column;
-        overflow: hidden; 
-        
-        .scroll_container{
-            flex: 1; 
-            overflow-y: auto; 
-            overflow-x: hidden; 
+        overflow: hidden;
+
+        .scroll_container {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
 
             &::-webkit-scrollbar {
-                display: none; 
+                display: none;
             }
 
-            scrollbar-width: none; 
+            scrollbar-width: none;
             -ms-overflow-style: none;
-            
-            .category {
-            margin-top: 27px;
-            display: flex;
-            gap: 14px;
-            margin-bottom: 24px;
 
-            .lb_left_btns {
+            .category {
+                margin-top: 25px;
                 display: flex;
                 gap: 14px;
+                margin-bottom: 24px;
 
-                button {
-                    border: none;
-                    padding: 0;
-                    cursor: pointer;
+                .lb_left_btns {
                     display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    border-radius: 60px;
-                }
+                    gap: 14px;
 
-                .playlist {
-                    width: 76px;
-                    height: 33px;
-                    background-color: var(--main);
+                    button {
+                        border: none;
+                        padding: 0;
+                        cursor: pointer;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border-radius: 50px;
+                    }
 
-                    p {
-                        font-size: 16px;
-                        color: var(--white);
-                        font-weight: 400;
-                        margin: 0;
+                    .playlist {
+                        width: 76px;
+                        height: 33px;
+                        background-color: var(--main);
+
+                        p {
+                            font-size: 16px;
+                            color: var(--white);
+                            font-weight: 400;
+                            margin: 0;
+                        }
+                    }
+
+                    .liked {
+                        width: 113px;
+                        height: 33px;
+                        background-color: var(--gray02);
+
+                        p {
+                            font-size: 16px;
+                            color: var(--white);
+                            font-weight: 400;
+                            margin: 0;
+                        }
                     }
                 }
 
-                .liked {
-                    width: 113px;
-                    height: 33px;
-                    background-color: var(--gray02);
+                .lb_right_btn {
+                    margin-left: auto;
+                    display: flex;
+                    align-items: center;
 
-                    p {
-                        font-size: 16px;
-                        color: var(--white);
-                        font-weight: 400;
-                        margin: 0;
+                    .plus_btn {
+                        width: 33px;
+                        height: 33px;
+                        background-color: var(--gray02);
+                        border-radius: 50%;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+
+                        img {
+                            width: 15px;
+                            height: 15px;
+
+                        }
                     }
                 }
             }
-
-            .lb_right_btn {
-                margin-left: auto;
-                display: flex;
-                align-items: center;
-
-                .plus_btn {
-                    width: 33px;
-                    height: 33px;
-                    background-color: var(--gray02);
-                    border-radius: 50%;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-
-                    img {
-                        width: 15px;
-                        height: 15px;
-
-                    }
-                }
-            }
-        }
         }
 
     }
@@ -223,71 +223,71 @@
 
 //Library_likedsongs.jsx
 .librarylikedsongs_wrap {
-    height: 852px; 
+    height: 852px;
     display: flex;
     flex-direction: column;
 
     .container {
-        flex: 1; 
+        flex: 1;
         display: flex;
         flex-direction: column;
-        overflow: hidden; 
+        overflow: hidden;
 
-        .scroll_container{
-            flex: 1; 
-            overflow-y: auto; 
-            overflow-x: hidden; 
+        .scroll_container {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
 
             &::-webkit-scrollbar {
-                display: none; 
+                display: none;
             }
 
-            scrollbar-width: none; 
+            scrollbar-width: none;
             -ms-overflow-style: none;
 
             .category {
-            margin-top: 27px;
-            display: flex;
-            gap: 14px;
-            margin-bottom: 24px;
-
-
-            button {
-                border: none;
-                padding: 0;
-                cursor: pointer;
+                margin-top: 27px;
                 display: flex;
-                justify-content: center;
-                align-items: center;
-                border-radius: 60px;
-            }
+                gap: 14px;
+                margin-bottom: 24px;
 
-            .playlist {
-                width: 76px;
-                height: 33px;
-                background-color: var(--gray02);
 
-                p {
-                    font-size: 16px;
-                    color: var(--white);
-                    font-weight: 400;
-                    margin: 0;
+                button {
+                    border: none;
+                    padding: 0;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 60px;
+                }
+
+                .playlist {
+                    width: 76px;
+                    height: 33px;
+                    background-color: var(--gray02);
+
+                    p {
+                        font-size: 16px;
+                        color: var(--white);
+                        font-weight: 400;
+                        margin: 0;
+                    }
+                }
+
+                .liked {
+                    width: 113px;
+                    height: 33px;
+                    background-color: var(--main);
+
+                    p {
+                        font-size: 16px;
+                        color: var(--white);
+                        font-weight: 400;
+                        margin: 0;
+                    }
                 }
             }
-
-            .liked {
-                width: 113px;
-                height: 33px;
-                background-color: var(--main);
-
-                p {
-                    font-size: 16px;
-                    color: var(--white);
-                    font-weight: 400;
-                    margin: 0;
-                }
-            }
-        }
         }
     }
 
@@ -295,13 +295,13 @@
 
 //Library_myplaylist.jsx
 .myplaylist_wrap {
-    width: 340px;
+    width: 361px;
     height: 70px;
     background-color: var(--gray02);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 0 auto 20px;
+    margin: 0 auto 12px;
     padding-left: 11px;
     padding-right: 15px;
     border-radius: 5px;
@@ -324,7 +324,6 @@
             font-weight: 400;
             font-size: 16px;
             line-height: 1;
-            margin-top: -5px;
             cursor: pointer;
             font-family: var(--mainfont);
         }
@@ -362,10 +361,9 @@
 
         .pl_line {
             width: 187px;
-            height: 0.5px;
-            flex-shrink: 0;
-            z-index: 9999;
+            height: 1px;
             background-color: var(--gray01);
+            opacity: 0.4;
         }
 
         .pl_menu_item {
@@ -396,14 +394,14 @@
 
 //Library_deletesongs.jsx + Library_likesongs.jsx
 .deletesongs_wrap {
-    width: 337px;
+    width: 361px;
     height: 60px;
     background-color: var(--gray02);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 0 auto 20px;
-    padding-left: 11px;
+    margin: 0 auto 12px;
+    padding-left: 12px;
     padding-right: 15px;
     border-radius: 5px;
 
@@ -434,7 +432,7 @@
                 font-weight: 200;
                 font-size: 14px;
                 line-height: 1;
-                margin-top: 4px;
+                margin-top: 2px;
                 font-family: var(--mainfont);
             }
         }
@@ -464,9 +462,10 @@
         .pl_header {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 30px;
             margin-top: 35px;
-            margin-bottom: 50px;
+            margin-bottom: 24px;
+
             .pl_h_left {
                 .pl_h_cover {
                     width: 160px;
@@ -484,6 +483,7 @@
                     color: var(--white);
                     font-size: 18px;
                     font-weight: bold;
+                    margin-bottom: 5px;
                 }
 
                 .pl_h_user {
@@ -495,7 +495,7 @@
                 .pl_h_btns {
                     display: flex;
                     align-items: center;
-                    gap: 10px; 
+                    gap: 10px;
                     margin-top: 30px;
 
                     .pl_h_playbtn,
@@ -505,7 +505,7 @@
                         height: 40px;
                         background-color: var(--main);
                         border-radius: 50%;
-                        display: flex; 
+                        display: flex;
                         justify-content: center;
                         align-items: center;
 
@@ -520,11 +520,15 @@
         }
     }
 }
+
 //Library_addplaylist.jsx
-.libraryaddplaylist_wrap{
-    .container{
-        .lb_add_search{
-            margin-bottom: 20px;
+.libraryaddplaylist_wrap {
+    .container {
+        .lb_add_search {
+            margin-top: -20px;
+        }
+        .lb_add_main{
+            margin-top: -4px;
         }
     }
 }
