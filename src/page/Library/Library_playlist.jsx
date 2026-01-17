@@ -11,7 +11,7 @@ const Library_playlist = () => {
     return (
         <div className='libraryplaylist_wrap'>
             <div className="container">
-                <SubHeader title={"playlist"}/>
+                <SubHeader title={"playlist"} />
                 <div className="pl_header">
                     <div className="pl_h_left">
                         <div className="pl_h_cover"></div>
@@ -32,6 +32,7 @@ const Library_playlist = () => {
                         </div>
                     </div>
                 </div>
+                <Library_deletesongs />
                 <Library_deletesongs />
             </div>
             <Nav />
