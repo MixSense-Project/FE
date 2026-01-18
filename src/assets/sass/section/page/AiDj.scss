@@ -1,35 +1,46 @@
 //AI_Dj_Onboarding.jsx
 .aidjonboarding_wrap {
+    height: 852px;
+    display: flex;
+    flex-direction: column;
+    max-width: 393px;
+    margin: 0 auto;
+    overflow: hidden;
+    
     .container {
-        background:
-            linear-gradient(to top, var(--main) 0%, rgba(255, 43, 208, 0) 20%),
-            var(--black);
-        background-repeat: no-repeat;
-        background-size: 100% 220px;
-        background-position: left 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        width: 100%;
+        max-width: 393px;
+        min-width: 0;
 
-        .aidj_on_header {
+        .bg_content{
+            width: 362px;
+            position: absolute;
+            z-index: 2;
 
-            .detail {
-                display: flex;
-                margin-top: 50px;
+            .aidj_on_header {
+                .detail {
+                    display: flex;
+                    margin-top: 72px;
 
-                .hp1 {
-                    color: var(--white);
-                    font-weight: bold;
-                    font-size: 24px;
-                    margin-top: 10px;
-                }
+                    .hp1 {
+                        color: var(--white);
+                        font-weight: bold;
+                        font-size: 30px;
+                    }
 
-                .hp2 {
-                    color: var(--white);
-                    font-weight: 600;
-                    font-size: 20px;
-                    margin-top: 45px;
-                    margin-left: 6px;
+                    .hp2 {
+                        color: var(--white);
+                        font-weight: 600;
+                        font-size: 20px;
+                        margin-top: 48px;
+                        margin-left: 6px;
+                    }
                 }
             }
-        }
 
         main {
             margin-top: 20px;
@@ -39,30 +50,24 @@
             .p1,
             .p2 {
                 color: var(--white);
-                font-size: 14px;
+                font-size: 16px;
                 font-weight: 400;
             }
 
+            .p1{
+                margin-top: 130px;
+            }
+
             .p2 {
-                margin-top: 20px;
+                margin-top: 16px;
                 z-index: 9999;
             }
 
-            .graphic {
-                width: 225px;
-                height: 273px;
-                align-items: center;
-                justify-self: center;
-                display: flex;
-                margin: 0 auto;
-                margin-top: -40px;
-                box-shadow: 0px 4px 4px 0 rgba(0, 0, 0, 0.25);
-            }
-
             .p3 {
+                margin-top: 56px;
                 color: var(--white);
                 font-size: 14px;
-                font-weight: 300;
+                font-weight: 200;
                 text-align: center;
             }
 
@@ -73,7 +78,7 @@
                 justify-self: center;
                 display: flex;
                 margin: 0 auto;
-                margin-top: 15px;
+                margin-top: 24px;
             }
 
             .aidj_btn {
@@ -84,13 +89,22 @@
                 align-items: center;
                 justify-content: center;
                 margin: 0 auto;
-                margin-top: 15px;
+                margin-top: 24px;
                 border-radius: 50px;
                 color: var(--white);
                 font-weight: 600;
                 font-size: 18px;
             }
 
+        }
+        }
+        
+        .bg_circle{
+            width: 100%;
+            position: absolute;
+            z-index: 1;
+            top: 0;
+            left: 0;
         }
     }
 }
@@ -127,45 +141,22 @@
             scrollbar-width: none;
             -ms-overflow-style: none;
 
-            .aidj_header {
-                display: flex;
-                gap: 15px;
-                margin-top: 30px;
+            .step{
+                position: relative;
+                margin-top: 32px;
+                width: 100%;
+                height: 2px;
+                border-radius: 2px;
+                background-color: var(--gray02);
 
-                margin-left: -26px;
-                margin-right: -26px;
-                width: calc(100% + 52px);
-
-                overflow-x: auto;
-                overflow-y: hidden;
-                -webkit-overflow-scrolling: touch;
-
-                &::-webkit-scrollbar {
-                    display: none;
-                }
-
-                scrollbar-width: none;
-                -ms-overflow-style: none;
-
-                /* 양끝이 살짝 보이는 연출 */
-                padding-left: 0;
-                padding-right: 0;
-
-                &::before,
-                &::after {
-                    content: "";
-                    flex: 0 0 109px;
-                }
-
-                .aidj_cover {
-                    flex: 0 0 160px;
-                    width: 160px;
-                    height: 160px;
-                    border-radius: 5px;
-                    background-color: var(--gray02);
+                .line{
+                    position: absolute;
+                    width: 120px;
+                    height: 2px;
+                    border-radius: 2px;
+                    background:linear-gradient(90deg,#4D003F,#E500BC)
                 }
             }
-
 
             .aidj_main {
                 margin-top: 40px;
@@ -183,14 +174,13 @@
                 }
 
                 .mix {
+                    margin-top: 88px;
+                    width: 100%;
                     display: flex;
+                    justify-content: center;
                     align-items: center;
                     gap: 20px;
-                    width: 340px;
-                    height: 210px;
-                    align-items: center;
-                    margin: 30px auto 0;
-
+                    
                     .mix_left,
                     .mix_right {
                         display: flex;
@@ -236,71 +226,29 @@
                 }
 
                 .mix_btn {
+                    margin-top: 104px;
+                    margin-left: calc(50% - 107px);
                     width: 207px;
                     height: 45px;
                     background-color: var(--gray02);
+                    
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    margin: 56px auto;
+                    
                     border-radius: 50px;
                     color: var(--white);
                     font-weight: 500;
                     font-size: 18px;
                 }
 
-                .preview {
-
-                    .pre_music {
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        margin: 30px auto 0;
-                        height: 150px;
-                        border-radius: 5px;
-                        padding-left: 26px;
-                        gap: 15px;
-                        background-color: var(--gray02);
-
-                        .pre_cover {
-                            padding-left: 0;
-                            width: 100px;
-                            height: 100px;
-                            border-radius: 5px;
-                            margin-left: -100px;
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            background-color: var(--black);
-
-                            img {
-                                width: 25px;
-                                height: 25px;
-
-                                margin: 0 auto;
-                            }
-                        }
-
-                        h3 {
-                            font-weight: 400;
-                            font-size: 16px;
-                            color: var(--white);
-                        }
-
-                        p {
-                            margin-top: 10px;
-                            font-size: 14px;
-                        }
-                    }
-                }
             }
 
             .what {
-                display: flex;
+                margin-top: 48px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                margin: 88px auto 30px;
                 cursor: pointer;
 
                 img {
@@ -349,152 +297,133 @@
 
 //Ai_Dj_Result.jsx
 .aidjresult_wrap {
+    height: 852px;
+    display: flex;
+    flex-direction: column;
+
     .container {
-        background: linear-gradient(to top, var(--main) 0%, rgba(255, 43, 208, 0) 20%),
-            var(--black);
-        background-repeat: no-repeat;
-        background-size: 100% 220px;
-        background-position: left 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+
+        .step{
+            position: relative;
+            margin-top: 32px;
+            width: 100%;
+            height: 2px;
+            border-radius: 2px;
+            background-color: var(--gray02);
+
+            .line{
+                position: absolute;
+                right: 0;
+                width: 120px;
+                height: 2px;
+                border-radius: 2px;
+                background:linear-gradient(90deg,#4D003F,#E500BC)
+            }
+        }
 
         .result_header {
-            margin-top: 50px;
+            margin-top: 40px;
 
             h1 {
-                font-size: 25px;
-                font-weight: 500;
+                font-size: 22px;
+                font-weight: bold;
                 color: var(--white);
             }
 
             p {
-                font-size: 15px;
+                font-size: 16px;
                 font-weight: 400;
                 color: var(--white);
             }
         }
 
         .result_song {
+            margin-top: 64px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            margin: 30px auto 0;
-            width: 337px;
-            height: 60px;
-            border-radius: 3px;
-            gap: 16px;
-            color: var(--white);
-            background-color: var(--gray02);
-
+            gap: 32px;
+    
             .rs_cover {
-                margin-left: -100px;
-                width: 40px;
-                height: 40px;
+                position: relative;
+                width: 170px;
+                height: 170px;
+                background-color: var(--gray02);
                 border-radius: 3px;
-                background-color: var(--gray01);
-            }
 
-            .rs_right {
-                .p1 {
-                    font-size: 16px;
-                    font-weight: 400;
-                    color: var(--white);
+                .rs_logo{
+                    width: 72px;
+                    height: 60px;
+
+                    position: absolute;
+                    z-index: 1;
+                    top: calc(50% - 40px);
+                    left: calc(50% - 35px);
                 }
 
-                .p2 {
-                    font-size: 14px;
-                    font-weight: 300;
-                    color: var(--white);
-                }
-            }
-        }
+                .play_btn{
+                    position: absolute;
+                    z-index: 2;
+                    top: calc(50% - 20px);
+                    left: calc(50% - 20px);
 
-        .graphic {
-            width: 225px;
-            height: 273px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 30px auto 0;
-        }
+                    width: 40px;
+                    height: 40px;
+                    background-color: var(--black);
+                    border-radius: 50%;
+                    opacity: 50%;
 
-        .addpl_btn,
-        .backdj_btn {
-            width: 207px;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-            margin-top: 15px;
-            border-radius: 50px;
-            color: var(--white);
-            font-weight: 600;
-            font-size: 18px;
-        }
+                    img{
+                        width: 12px;
+                        height: 14px;
 
-        .edit_area {
-            position: relative;
-            width: 207px;
-            margin: 0 auto;
-            margin-top: 15px;
-
-            .addpl_btn {
-                width: 100%;
-                height: 45px;
-                margin-top: 0;
-                background-color: var(--main);
-                border: none;
-                cursor: pointer;
-            }
-
-            .pl_menu {
-                position: absolute;
-                top: -10px;
-                right: 0;
-                transform: translateY(-100%);
-                width: 187px;
-                height: 310px;
-                border-radius: 10px;
-                background: rgba(0, 0, 0, 0.85);
-                box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.25);
-                overflow: hidden;
-                z-index: 9999;
-                display: flex;
-                flex-direction: column;
-
-                .pl_line {
-                    width: 187px;
-                    height: 0.5px;
-                    flex-shrink: 0;
-                    background-color: var(--gray01);
-                }
-
-                .pl_menu_item {
-                    width: 100%;
-                    height: 45px;
-                    padding: 0 16px;
-                    border: none;
-                    background: transparent;
-                    cursor: pointer;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    color: var(--white);
-                    font-size: 14px;
-                    font-weight: 400;
-                    text-align: left;
-                    flex-shrink: 0;
-
-                    img {
-                        width: 15px;
-                        height: 15px;
-                        display: block;
+                        position: absolute;
+                        top: calc(50% - 6px);
+                        left: calc(50% - 5px);
                     }
                 }
             }
+
+            .rs_text{
+                color: var(--white);
+                font-size: 18px;
+                font-weight: 500;
+            }
         }
 
-        .backdj_btn {
-            background-color: var(--gray02);
+
+        .btn_container{
+            margin-top: 100px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+
+            .addpl_btn{
+                background-color: var(--main);
+                border-radius: 50px;
+                padding: 12px 44px;
+
+                color: var(--white);
+                font-size: 18px;
+                font-weight: 600;
+            }
+
+            .backdj_btn{
+                background-color: var(--gray02);
+                border-radius: 50px;
+                padding: 12px 48px;
+
+                color: var(--white);
+                font-size: 18px;
+                font-weight: 600;
+            }
+
         }
     }
 }
