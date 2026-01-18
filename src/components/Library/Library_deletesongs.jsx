@@ -1,5 +1,7 @@
 import React from 'react'
-import delete_btn from '../../assets/img/library/delete_btn.svg'
+import delete_btn from '../../assets/img/library/cancel_g.svg'
+
+
 const Library_deletesongs = () => {
     return (
         <div className='deletesongs_wrap'>

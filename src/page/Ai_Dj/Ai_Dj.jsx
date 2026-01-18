@@ -49,7 +49,9 @@ const Ai_Dj = () => {
               </div>
             </div>
 
-            <button className="mix_btn">AI Mix</button>
+           <Link to='/ai_dj_loading'>
+              <button className="mix_btn">AI Mix</button>
+           </Link>
 
             <div className="what" onClick={() => navigate("/ai_dj_onboarding")}>
               <img src={question} alt="" className="question" />

@@ -1,5 +1,5 @@
 import React, { useState} from 'react'
-import add_btn from '../../assets/img/Home/add_btn.svg'
+import add_btn from '../../assets/img/AIDJ/gray_add_btn.svg'
 import check_btn from '../../assets/img/Home/check.svg'
 
 const Musiclist = () => {
