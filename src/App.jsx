@@ -27,6 +27,10 @@ import Library_addplaylist from "./page/Library/Library_addplaylist";
 {/* MyPage */}
 import Mypage from "./page/Home/Mypage";
 
+{/* Music */}
+import Music_songplay from "./page/Music/Music_songplay";
+import Music_songlyrics from "./page/Music/Music_songlyrics";
+
 
 function App() {
   return (
@@ -55,6 +59,10 @@ function App() {
       <Route path="/library/playlist" element={<Library_playlist/>} />
       <Route path="/library/add/playlist" element={<Library_addplaylist/>} />
       <Route path="/library/liked" element={<LibraryLikedSongs />} />
+
+      {/* Music */}
+      <Route path="/music/songplay" element={<Music_songplay/>} />
+      <Route path="/music/songlyrics" element={<Music_songlyrics/>} />
 
       {/* MyPage */}
       <Route path="/mypage" element={<Mypage />} />
