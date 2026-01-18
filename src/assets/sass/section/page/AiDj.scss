@@ -297,6 +297,7 @@
 
 //Ai_Dj_Result.jsx
 .aidjresult_wrap {
+    position: relative;
     height: 852px;
     display: flex;
     flex-direction: column;
@@ -422,6 +423,202 @@
                 color: var(--white);
                 font-size: 18px;
                 font-weight: 600;
+            }
+
+        }
+    }
+
+    .bottomsheet_wrap{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        
+        display: flex;
+        align-items: flex-end; 
+
+        #sheet_container {
+            position: relative;
+            width: 100%;
+            height: 800px; 
+            background-color: var(--black);
+            border-radius: 30px 30px 0 0; 
+            overflow-y: auto; 
+            padding-left: 16px;
+            padding-right: 16px;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+
+            header{
+                margin: 24px 0px;
+                display: flex;
+                justify-content: flex-start;
+                gap: 98px;
+
+                img{
+                    width: 22px;
+                    height: 22px;
+                }
+                
+                p{
+                    color: var(--white);
+                    font-size: 18px;
+                }
+            }
+
+            .select_btn{
+                position: fixed;
+                top: 595px;
+                left: calc(50% - 90px);
+
+                width: 180px;
+                height: 45px;
+                background-color: var(--main);
+                border-radius: 50px;
+
+                color: var(--white);
+                font-size: 18px;
+                font-weight: bold;
+            }
+        }
+    }
+}
+
+
+//Playlisy_add component
+
+.playlist_add_wrap{
+    width: 100%;
+    height: 70px;
+    background-color: var(--gray02);
+    border-radius: 5px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 12px;
+    margin-bottom: 8px;
+
+    .playlist_left{
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        
+        .album_cover{
+            width: 45px;
+            height: 45px;
+            background-color: var(--gray01);
+            border-radius: 3px;
+        }
+
+        .playlist_title{
+            color: var(--white);
+            font-size: 14px;
+            font-weight: 500;
+        }
+    }
+}
+
+#Ai_Dj_Loading_wrap{
+    height: 852px;
+    display: flex;
+    flex-direction: column;
+    max-width: 393px;
+    margin: 0 auto;
+    overflow: hidden;
+
+    .container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        width: 100%;
+        max-width: 393px;
+        min-width: 0;
+
+        .scroll_container {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            width: 100%;
+            min-width: 0;
+
+            .step{
+                position: relative;
+                margin-top: 32px;
+                width: 100%;
+                height: 2px;
+                border-radius: 2px;
+                background-color: var(--gray02);
+
+                .line{
+                    position: absolute;
+                    left: calc(50% - 60px);
+                    width: 120px;
+                    height: 2px;
+                    border-radius: 2px;
+                    background:linear-gradient(90deg,#4D003F,#E500BC)
+                }
+            }
+
+            header{
+                margin-top: 40px;
+
+                h1{
+                    color: var(--white);
+                    font-size: 22px;
+                    font-weight: bold;
+                }
+
+                p{
+                    color: var(--white);
+                    font-size: 16px;
+                    font-weight: 300;
+                }
+            }
+
+            main{
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                img{
+                    width: 225px;
+                    height: 273px;
+                }
+
+                .text{
+                    color: var(--white);
+                    font-size: 16px;
+                    font-weight: 300;
+                    text-align: center;
+                }
+
+                .gotodj{
+                    margin-top: 24px;
+                    height: 40px;
+                }
+
+                .remix_highlight_btn{
+                    margin-top: 24px;
+
+                    width: 258px;
+                    height: 44px;
+                    background-color: var(--main);
+                    border-radius: 50px;
+
+                    color: var(--white);
+                    font-weight: 600;
+                    font-size: 18px;
+                }
             }
 
         }

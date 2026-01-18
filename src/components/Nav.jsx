@@ -14,7 +14,7 @@ import dj_w from '../assets/img/Nav/aidj_w.svg'
 const Nav = () => {
   const isHomeActive = location.pathname === "/home" || location.pathname === "/home_search" || location.pathname === "/home_trending_now";
   const isSearchActive = location.pathname === "/ai_search" || location.pathname === "/ai_search_onboarding";
-  const isAiDjActive = location.pathname === '/ai_dj' || location.pathname === "/ai_dj_onboarding" || location.pathname === "/ai_dj_trackselect";
+  const isAiDjActive = location.pathname === '/ai_dj' || location.pathname === "/ai_dj_onboarding" || location.pathname === "/ai_dj_trackselect" || location.pathname === '/ai_dj_loading' || location.pathname === '/ai_dj_result';
 
   return (
     <div id="Nav_Wrap">
