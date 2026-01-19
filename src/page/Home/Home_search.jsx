@@ -26,7 +26,6 @@ const Home_search = () => {
             <Searchedlist/>
             <Searchedlist/>
             <Searchedlist/>
-        
           </div>
           <Musicplay/>
         </div>

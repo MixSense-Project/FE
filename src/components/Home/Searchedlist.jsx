@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import add_btn from '../../assets/img/AIDJ/gray_add_btn.svg'
 import check_btn from '../../assets/img/Home/check.svg'
-import del_btn from '../../assets/img/Home/del_btn.svg'
+import del_btn from '../../assets/img/library/cancel_g.svg'
 
 const Searchedlist = () => {
     const[isAdd, setIsAdd]=useState(false)
