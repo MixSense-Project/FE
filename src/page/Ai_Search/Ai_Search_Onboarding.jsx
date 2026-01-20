@@ -4,7 +4,7 @@ import Nav from '../../components/Nav'
 import Header from '../../components/Header'
 import logo_img from '../../assets/img/logo.svg'
 import chat_btn from '../../assets/img/AISearch/chat_btn.svg'
-import main_img from '../../assets/img/AISearch/aisearch_bgc.png'
+import main_img from '../../assets/img/AISearch/main.png'
 
 const Ai_Search_Onboarding = () => {
     return (

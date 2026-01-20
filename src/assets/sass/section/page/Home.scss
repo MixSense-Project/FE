@@ -40,34 +40,29 @@
                     font-size: 18px;
                 }
 
-                // .track_container{
-                //     margin-top: 16px;
-                //     display: grid;
-                //     grid-template-columns: repeat(3, 1fr);
-                //     gap: 8px;
-
-                // }
 
                 .track_container {
                     margin-top: 16px;
                     display: flex;
                     overflow-x: auto; 
                     scroll-snap-type: x mandatory; 
-                    -ms-overflow-style: none; /* 인터넷 익스플로러 스크롤바 숨기기 */
-                    scrollbar-width: none; /* 파이어폭스 스크롤바 숨기기 */
+                    gap: 8px;
+
+                        &::-webkit-scrollbar {
+                            display: none !important;
+                        }
+                        scrollbar-width: none !important;
+                        -ms-overflow-style: none !important;
                     }
 
-                    .track_container::-webkit-scrollbar {
-                    display: none; /* 크롬, 사파리 스크롤바 숨기기 */
-                    }
 
-                
                     .track_page {
                     min-width: 100%; 
                     display: grid;
                     grid-template-columns: repeat(3, 1fr); 
                     grid-template-rows: repeat(3, 1fr);   
                     gap: 8px; 
+                    box-sizing: border-box;
                     scroll-snap-align: start; 
                     }
 
