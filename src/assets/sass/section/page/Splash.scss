@@ -5,6 +5,7 @@
     font-display: swap;
 }
 
+//Splash.jsx
 .Splash_Wrap {
     width: 100%;
     min-width: 393px;
@@ -17,8 +18,8 @@
     overflow-x: hidden;
     padding-top: 80px;
     // padding-bottom: 80px;
-    padding-left: 26px;
-    padding-right: 26px;
+    padding-left: 16px;
+    padding-right: 16px;
     box-sizing: border-box;
 
         .main_logo {
@@ -33,7 +34,7 @@
 
         img {
             width: 67px;
-            height: 56px;
+            // height: 56px;
             margin-bottom: 15px;
         }
 
@@ -45,6 +46,7 @@
     }
 
     .splash_btns {
+        width: 100%;
         position: absolute;
         top: 514px;
         left: 50%;
@@ -53,16 +55,190 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        gap: 24px;
 
-        .login, .account {
-            width: 340px;
-            height: 59px;
+        padding-left: 16px;
+        padding-right: 16px;
+
+        .email_btn{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            height: 60px;
             background-color: var(--gray02);
-            margin-bottom: 25px;
-            p {
+            border-radius: 5px;
+
+            img{
+                width: 26px;
+                height: 26px;
+            }
+
+            p{
+                font-size: 16px;
                 color: var(--white);
-                font-size: 18px;
-                font-weight: 400;
+                font-weight: 500;
+            }
+        }
+
+        .google_btn{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            height: 60px;
+            background-color: var(--gray02);
+            border-radius: 5px;
+
+            img{
+                width: 24px;
+                height: 24px;
+            }
+
+            p{
+                font-size: 16px;
+                color: var(--white);
+                font-weight: 500;
+            }
+        }
+
+        .account_btn{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            height: 60px;   
+            border: 1px solid #4E4E4E;
+            border-radius: 5px;
+
+            p{
+                font-size: 16px;
+                color: var(--white);
+                font-weight: 500;
+            }
+        }
+
+    }
+}
+
+
+
+//Splash_account.jsx
+.Splash_account_Wrap{
+    width: 100%;
+    min-width: 393px;
+    max-width: 420px;
+    height: 852px;
+    background-color: var(--black);
+    margin: 0 auto;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 80px;
+    // padding-bottom: 80px;
+    padding-left: 16px;
+    padding-right: 16px;
+    box-sizing: border-box;
+
+        .main_logo {
+        position: absolute;
+        top: 237px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        img {
+            width: 67px;
+            // height: 56px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Aggravo';
+            font-size: 26px;
+            color: var(--white);
+        }
+    }
+
+    .splash_btns {
+        width: 100%;
+        position: absolute;
+        top: 514px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+
+        padding-left: 16px;
+        padding-right: 16px;
+
+        .email_btn{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            height: 60px;
+            background-color: var(--gray02);
+            border-radius: 5px;
+
+            img{
+                width: 26px;
+                height: 26px;
+            }
+
+            p{
+                font-size: 16px;
+                color: var(--white);
+                font-weight: 500;
+            }
+        }
+
+        .google_btn{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            height: 60px;
+            background-color: var(--gray02);
+            border-radius: 5px;
+
+            img{
+                width: 24px;
+                height: 24px;
+            }
+
+            p{
+                font-size: 16px;
+                color: var(--white);
+                font-weight: 500;
+            }
+        }
+
+        .account_btn{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            height: 60px;   
+            border: 1px solid #4E4E4E;
+            border-radius: 5px;
+
+            p{
+                font-size: 16px;
+                color: var(--white);
+                font-weight: 500;
             }
         }
 
