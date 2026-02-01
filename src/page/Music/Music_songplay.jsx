@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Nav from "../../components/Nav";
 import back_btn from "../../assets/img/Header/back_btn.svg";
 import edit_btn from "../../assets/img/library/edit_btn.svg";
@@ -14,9 +14,16 @@ import aidj from '../../assets/img/Music/aidj.svg';
 import plus_btn from '../../assets/img/library/plus_btn.svg';
 const Music_songplay = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const handleBack = () => navigate(-1);
+    const handleBack = () => {
+    if (location.pathname === "/music/songlyrics") {
+        navigate(-2);
+    } else {
+        navigate(-1);
+    }
+};
 
     const toggleMenu = () => setIsMenuOpen((prev) => !prev);
     const closeMenu = () => setIsMenuOpen(false);

@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 {/* Splash */}
 import Splash from './page/Splash/Splash'
 import Splash_account from "./page/Splash/Splash_account";
+import Splash_Login from "./page/Splash/Splash_Login";
+import Splash_Signup from "./page/Splash/Splash_Signup";
 
 {/* Home */}
 import Home from "./page/Home/Home";
@@ -33,13 +35,16 @@ import Music_songplay from "./page/Music/Music_songplay";
 import Music_songlyrics from "./page/Music/Music_songlyrics";
 
 
+
 function App() {
   return (
     <Routes>
       {/* Splash */}
       <Route path="/" element={<Splash />} />
       <Route path="/splash_account" element={<Splash_account />} />
-
+    <Route path="/splash_login" element={<Splash_Login />} />
+    <Route path="/splash_signup" element={<Splash_Signup />} />
+    
       {/* Home */}
       <Route path="/home" element={<Home />} />
       <Route path="/home_search" element={<Home_search />} />
