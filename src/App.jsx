@@ -34,7 +34,8 @@ import Mypage from "./page/Home/Mypage";
 import Music_songplay from "./page/Music/Music_songplay";
 import Music_songlyrics from "./page/Music/Music_songlyrics";
 
-
+{/*Preference */}
+import Preference_genre from "./page/Preference/Preference_genre";
 
 function App() {
   return (
@@ -73,6 +74,9 @@ function App() {
 
       {/* MyPage */}
       <Route path="/mypage" element={<Mypage />} />
+
+      {/*Prefence */}
+      <Route path="/preference_genre" element={<Preference_genre/>} />
     </Routes>
   );
 }
