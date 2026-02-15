@@ -11,6 +11,8 @@
 
     .pref_detail {
         background: none;
+        margin-bottom: 32px;
+
       h1 {
         color: var(--white);
         font-weight: bold;
@@ -37,7 +39,7 @@
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 18px;
-        margin-top: 56px;
+        margin-top: 8px;
         justify-items: center;
         padding-bottom: 120px;
       }
