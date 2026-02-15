@@ -1,3 +1,4 @@
+//Preference_genre.jsx
 .genre_wrap {
   height: 852px;
   display: flex;
@@ -7,31 +8,34 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden; 
+    overflow: hidden;
 
     .pref_detail {
-        background: none;
-        margin-bottom: 32px;
+      background: none;
+      margin-bottom: 32px;
 
       h1 {
         color: var(--white);
         font-weight: bold;
         font-size: 24px;
       }
+
       p {
         color: var(--white);
         font-weight: 400;
         font-size: 18px;
       }
     }
-    
+
     .genre_part {
-      flex: 1;               
-      overflow-y: auto;       
+      flex: 1;
+      overflow-y: auto;
       overflow-x: hidden;
+
       &::-webkit-scrollbar {
         display: none;
       }
+
       scrollbar-width: none;
       -ms-overflow-style: none;
 
@@ -47,6 +51,7 @@
   }
 }
 
+//Preference_genre_circle.jsx
 .genrecircle_wrap {
   position: relative;
   border: none;
@@ -89,13 +94,17 @@
 
   &.is-selected {
     .genrecircle_img {
-      outline: 5px solid var(--main);
+      outline: 5px solid color-mix(in srgb, var(--main) 50%, transparent);
     }
   }
+
 }
 
+//Preference_selectbtn.jsx
 .selectionbtn_wrap {
-  position: sticky;
+  position: absolute;
+  left: 0;
+  right: 0;
   bottom: 78px;
   display: flex;
   justify-content: center;
@@ -114,6 +123,134 @@
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+  }
+}
+
+//Preference_artist.jsx
+.artist_wrap {
+  height: 852px;
+  display: flex;
+  flex-direction: column;
+
+  .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .pref_detail {
+      background: none;
+      margin-bottom: 16px;
+
+      h1 {
+        color: var(--white);
+        font-weight: bold;
+        font-size: 24px;
+      }
+
+      p {
+        color: var(--white);
+        font-weight: 400;
+        font-size: 18px;
+      }
+    }
+
+    .selected_genre {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+
+      .sg {
+        height: 33px;
+        background: var(--main);
+        border-radius: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+        width: fit-content;
+        white-space: nowrap;
+
+        p {
+          margin-top: -3px;
+          font-size: 16px;
+          font-weight: 400;
+          color: var(--white);
+        }
+      }
+    }
+
+    .artist_part {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      padding-bottom: 140px;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      .artist_grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+        margin-top: 18px;
+        justify-items: center;
+        padding-bottom: 140px;
+      }
+    }
+  }
+}
+
+//Preference_artist_circle.jsx
+.artistcircle_wrap {
+  position: relative;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  width: 150px;
+  height: 150px;
+
+  .artistcircle_img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .artistcircle_overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    pointer-events: none;
+  }
+
+  .artistcircle_label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    pointer-events: none;
+    z-index: 2;
+    padding: 0 8px;
+  }
+
+  &.is-selected {
+    .artistcircle_img {
+      outline: 5px solid color-mix(in srgb, var(--main) 50%, transparent);
     }
   }
 }

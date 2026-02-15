@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import SubHeader from "../../components/SubHeader";
 import PreferenceGenreCircle from "../../components/Preference/Preference_genre_circle";
 import PreferenceSelectBtn from "../../components/Preference/Preference_selectbtn";
@@ -7,6 +8,7 @@ import { GENRES } from "../../data/Preference_genre";
 const MAX_SELECT = 20;
 
 const Preference_genre = () => {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState(() => new Set());
 
   const toggleGenre = (id) => {
@@ -24,8 +26,9 @@ const Preference_genre = () => {
   const selectedIds = useMemo(() => Array.from(selected), [selected]);
 
   const handleSubmit = () => {
-    console.log("selected:", selectedIds);
-  };
+  navigate("/preference_artist");
+};
+
 
   return (
     <div className="genre_wrap">
