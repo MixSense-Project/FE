@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import back_btn from "../assets/img/Header/back_btn.svg";
 
-const SubHeader = ({ title }) => {
+const SubHeader = ({ title, bgColor = "var(--gray02)" }) => {
   const navigate = useNavigate();
 
   const handleBack = () => {
@@ -10,7 +10,7 @@ const SubHeader = ({ title }) => {
   };
 
   return (
-    <div id="SubHeader_Wrap">
+    <div id="SubHeader_Wrap" style={{ backgroundColor: bgColor }}>
       <div className="subheader_content">
         <button className="back_btn" onClick={handleBack}>
           <img src={back_btn} alt="" />
