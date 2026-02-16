@@ -254,3 +254,95 @@
     }
   }
 }
+
+//Preference_artist_search.jsx
+.pre_art_search_wrap {
+  height: 852px;
+  display: flex;
+  flex-direction: column;
+
+  .container {
+    margin-top: 0;
+    padding-top: 0;
+    overflow: hidden;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .search_header {
+      display: flex;
+      margin-top: 50px;
+      margin-bottom: 40px;
+
+      .pre_searchbar {
+        position: relative;
+        width: 291px;
+        height: 40px;
+        background-color: var(--gray02);
+        border-radius: 5px;
+        margin-bottom: 16px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .searchbar_content {
+          position: absolute;
+          z-index: 1;
+          left: 12px;
+          display: flex;
+          width: 220px;
+          gap: 5px;
+
+          img {
+            width: 19px;
+            height: 19px;
+          }
+
+          input {
+            background: none;
+            color: var(--white);
+          }
+        }
+      }
+
+      .cancel {
+        width: 25px;
+        height: 17px;
+        margin-left: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 14px;
+        background: none;
+        border: none;
+        padding: 0;
+        margin-top: 10px;
+      }
+    }
+
+    .artist_part {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      padding-bottom: 140px;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      .artist_grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+        margin-top: 18px;
+        justify-items: center;
+      }
+    }
+  }
+}
