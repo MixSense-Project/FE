@@ -37,6 +37,7 @@ import Music_songlyrics from "./page/Music/Music_songlyrics";
 {/*Preference */}
 import Preference_genre from "./page/Preference/Preference_genre";
 import Preference_artist from "./page/Preference/Preference_artist";
+import Preference_artist_search from "./page/Preference/Preference_artist_search";
 
 function App() {
   return (
@@ -79,6 +80,7 @@ function App() {
       {/*Prefence */}
       <Route path="/preference_genre" element={<Preference_genre/>} />
       <Route path="/preference_artist" element={<Preference_artist/>}/>
+      <Route path="/preference_artist_search" element={<Preference_artist_search/>}/>
     </Routes>
   );
 }
