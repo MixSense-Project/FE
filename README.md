@@ -14,6 +14,7 @@
 │   │       └── style.scss
 │   ├── components/          # 공통 컴포넌트
 │   ├── page/                # 페이지 컴포넌트
+|   ├── data/                # 데이터 파일
 │   ├── App.jsx              # 메인 앱 컴포넌트
 │   └── main.jsx             # 엔트리 포인트
 ├── eslint.config.js
