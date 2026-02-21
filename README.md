@@ -13,7 +13,18 @@
 │   │       ├── setting/
 │   │       └── style.scss
 │   ├── components/          # 공통 컴포넌트
+|   |    ├── Ai_Dj/
+|   |    ├── Home/      
+|   |    ├── Library/
+│   │    └── Preference/
 │   ├── page/                # 페이지 컴포넌트
+|   |    ├── Ai_Dj/
+|   |    ├── Ai_search/
+|   |    ├── Home/      
+|   |    ├── Library/
+|   |    ├── Music/
+|   |    ├── Preference/
+│   │    └── Splash/
 |   ├── data/                # 데이터 파일
 │   ├── App.jsx              # 메인 앱 컴포넌트
 │   └── main.jsx             # 엔트리 포인트
