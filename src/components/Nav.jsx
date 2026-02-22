@@ -4,10 +4,10 @@ import home_g from "../assets/img/nav/home_g.svg";
 import library_g from "../assets/img/nav/library_g.svg";
 import search_g from "../assets/img/nav/search_g.svg";
 
-import home_w from '../assets/img/Nav/home_w.svg'
-import search_w from '../assets/img/Nav/aisearch_w.svg'
-import library_w from '../assets/img/Nav/library_w.svg'
-import dj_w from '../assets/img/Nav/aidj_w.svg'
+import home_w from '../assets/img/nav/home_w.svg'
+import search_w from '../assets/img/nav/aisearch_w.svg'
+import library_w from '../assets/img/nav/library_w.svg'
+import dj_w from '../assets/img/nav/aidj_w.svg'
 
 
 
