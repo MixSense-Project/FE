@@ -1,7 +1,7 @@
 import React from 'react'
-import my from '../assets/img/Home/my.svg'
+import my from '../assets/img/home/my.svg'
 import Logo from '../assets/img/logo.svg'
-import search_icon from '../assets/img/Nav/search_g.svg'
+import search_icon from '../assets/img/nav/search_g.svg'
 import { Link } from 'react-router-dom'
 
 
