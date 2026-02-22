@@ -13,11 +13,12 @@ const Splash = () => {
         <div className="splash_btns">
             <button className="email_btn">
                 <img src={email_icon} alt="" />
-                <p>Continue with Email</p>
+                <Link to='/splash_login'>
+                <p>Log in with Email</p></Link>
             </button>
             <button className="google_btn">
                 <img src={google_icon} alt="" />
-                <p>Continue with Google</p>
+                <p>Log in with Google</p>
             </button>
             <button className="account_btn">
                 <Link to='/splash_account'>

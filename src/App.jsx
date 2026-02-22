@@ -55,7 +55,6 @@ function App() {
 
       {/* Ai search */}
       <Route path="/ai_search" element={<Ai_Search />} />
-      <Route path="/ai_search_onboarding" element={<Ai_Search_Onboarding />} />
 
       {/* Ai Dj */}
       <Route path="/ai_dj" element={<Ai_Dj />} />

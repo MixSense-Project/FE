@@ -13,7 +13,9 @@ const Splash_account = () => {
         <div className="splash_btns">
             <button className="email_btn">
                 <img src={email_icon} alt="" />
+                <Link to='/splash_signup'>
                 <p>Sign in with Email</p>
+                </Link>
             </button>
             <button className="google_btn">
                 <img src={google_icon} alt="" />
