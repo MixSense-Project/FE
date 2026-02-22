@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import SubHeader from '../../components/SubHeader'
 import Nav from '../../components/Nav'
-import edit_btn from '../../assets/img/Home/edit_btn.svg'
+import edit_btn from '../../assets/img/home/edit_btn.svg'
 
 const Mypage = () => {
 
