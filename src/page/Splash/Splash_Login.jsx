@@ -1,16 +1,24 @@
 import React, { useMemo, useState } from "react";
 import SubHeader from "../../components/SubHeader";
+import { login } from "../../api/auth";
+// import { useNavigate } from "react-router-dom";
 
 const Splash_Login = () => {
+  // const navigate = useNavigate();
+
   const [form, setForm] = useState({
-    username: "",
+    username: "", // UI용(백엔드 안 받으면 유지/삭제 선택)
     email: "",
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState("");
+
   const onChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    setMsg("");
   };
 
   const isEnabled = useMemo(() => {
@@ -21,12 +29,36 @@ const Splash_Login = () => {
     );
   }, [form]);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     if (!isEnabled) return;
 
-    // TODO: 여기서 로그인 API 호출하면 됨
-    console.log("login submit", form);
+    try {
+      setLoading(true);
+      setMsg("");
+
+      const tokenOrMessage = await login({
+        email: form.email.trim(),
+        password: form.password.trim(),
+      });
+
+      // ✅ 200 응답이 "string" 이니까 보통 토큰이라고 가정하고 저장
+      if (typeof tokenOrMessage === "string" && tokenOrMessage.length > 0) {
+        localStorage.setItem("access_token", tokenOrMessage);
+      }
+
+      setMsg("로그인 성공!");
+      // navigate("/home");
+    } catch (err) {
+      const apiMsg =
+        err?.response?.data?.detail?.[0]?.msg ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "로그인 실패";
+      setMsg(apiMsg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -34,7 +66,8 @@ const Splash_Login = () => {
       <div className="container">
         <SubHeader title={"Log in"} />
 
-        <div className="login_form" onSubmit={onSubmit}>
+        {/* ✅ div -> form 으로 변경 */}
+        <form className="login_form" onSubmit={onSubmit}>
           <label className="field">
             <span className="label">Username</span>
             <input
@@ -70,14 +103,16 @@ const Splash_Login = () => {
             />
           </label>
 
+          {msg && <p style={{ marginTop: 8 }}>{msg}</p>}
+
           <button
             type="submit"
             className={`login_btn ${isEnabled ? "active" : ""}`}
-            disabled={!isEnabled}
+            disabled={!isEnabled || loading}
           >
-            Log in
+            {loading ? "Logging in..." : "Log in"}
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );
