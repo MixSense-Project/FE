@@ -1,0 +1,125 @@
+//Header.jsx
+.header_wrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  min-width: 393px;
+  max-width: 420px;
+  height: 105px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  box-sizing: border-box;
+  z-index: 9999;
+  background-color: var(--gray02);
+
+  .header_content{
+    padding-top: 53px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    .hh_left {
+      img {
+        width: 30px;
+        height: 30px;
+      }
+    }
+
+    .hh_right {
+      display: flex;
+      gap: 20px;
+
+      img {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+}
+
+#SubHeader_Wrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 90px;
+
+  display: flex;
+  justify-content: center;
+
+  background-color: var(--gray02);
+  z-index: 9999;
+  box-sizing: border-box;
+
+  .subheader_content {
+    padding-top: 53px;
+
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center; 
+
+    .back_btn {
+      position: absolute;
+      left: 16px;
+
+      width: 10px;
+      height: 17px;
+
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+    }
+
+    .right_btn {
+      position: absolute;
+      right: 18px;
+      width: 20px;  
+      height: 20px;
+
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+    }
+
+    .right_btn_placeholder {
+      position: absolute;
+      right: 16px;
+      width: 20px;
+      height: 20px;
+    }
+
+    h1 {
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0;
+      line-height: 1;
+    }
+  }
+}

@@ -1,17 +1,26 @@
 import React from 'react'
+import my from '../assets/img/Home/my.svg'
+import Logo from '../assets/img/logo.svg'
+import search_icon from '../assets/img/Nav/search_g.svg'
 import { Link } from 'react-router-dom'
-import '../assets/sass/section/header.scss'
-import back_btn from '../assets/img/header/back_btn.svg'
 
-const Header = ({title}) => {
+
+const Header = () => {
   return (
-     <div id='Header_Wrap'>
-        <Link to="/home">
-          <button className="back_btn">
-              <img src={back_btn} alt="" />
-          </button>
-        </Link>
-        <h1>{title}</h1>
+    <div className='header_wrap'>
+      <div className="header_content">
+        <div className="hh_left">
+          <img src={Logo} alt="" />
+        </div>
+        <div className="hh_right">
+            <Link to='/home_search'>
+              <img src={search_icon} alt="" />
+            </Link>
+            <Link to='/mypage'>
+              <img src={my} alt="" />
+            </Link>
+        </div>
+      </div>
     </div>
   )
 }

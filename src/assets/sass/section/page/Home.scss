@@ -1,0 +1,529 @@
+//page
+//Home.jsx
+.home_wrap{
+    position: relative;
+    height: 852px; 
+    display: flex;
+    flex-direction: column;
+
+    .container{
+        flex: 1; 
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; 
+
+        .scroll_container{
+            flex: 1; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
+
+            &::-webkit-scrollbar {
+                display: none; 
+            }
+
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+
+            .banner{
+                margin-top: 24px;
+                width: 100%;
+                height: 113px;
+                background-color: var(--gray02);
+                border-radius: 5px;
+            }
+
+            .Recommend_track{
+                margin-top: 24px;
+
+                .text{
+                    color: var(--white);
+                    font-size: 18px;
+                }
+
+
+                .track_container {
+                    margin-top: 16px;
+                    display: flex;
+                    overflow-x: auto; 
+                    scroll-snap-type: x mandatory; 
+                    gap: 8px;
+
+                        &::-webkit-scrollbar {
+                            display: none !important;
+                        }
+                        scrollbar-width: none !important;
+                        -ms-overflow-style: none !important;
+                    }
+
+
+                    .track_page {
+                    min-width: 100%; 
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr); 
+                    grid-template-rows: repeat(3, 1fr);   
+                    gap: 8px; 
+                    box-sizing: border-box;
+                    scroll-snap-align: start; 
+                    }
+
+                    .indicator_container {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        gap: 8px;
+                        margin-top: 16px;
+
+                        .dot {
+                        width: 7px;
+                        height: 7px;
+                        border-radius: 50%;
+                        background-color: var(--gray02);
+                        transition: all 0.3s ease; 
+
+                        &.active {
+                            background-color: var(--white); 
+                            transform: scale(1.1);
+                        }
+                        }
+                    }
+                                    }
+
+            .Trending_now{
+                margin-top: 24px;
+                margin-bottom: 94px;
+
+                .text_container{
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    margin-bottom: 16px;
+
+                    .text{
+                        color: var(--white);
+                        font-size: 18px;
+                    }
+
+                    img{
+                        width: 7px;
+                        height: 13px;
+                    }
+
+                }
+            }
+        }
+    }
+    
+}
+
+//Track.jsx
+#Track_Wrap{
+    width: 100%;  /* 그리드 셀 너비에 맞춤 */
+    aspect-ratio: 1 / 1; /* 정사각형 유지 */
+    background-color: var(--gray02);
+    border-radius: 3px;    
+}
+
+//Home_trending_now.jsx
+.home_trendging_now {
+    height: 852px; 
+    display: flex;
+    flex-direction: column;
+
+    .container {
+        flex: 1; 
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; 
+
+        .scroll_container {
+            flex: 1; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
+
+            &::-webkit-scrollbar {
+                display: none; 
+            }
+
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+        }
+
+    }
+}
+
+//Home_search.jsx
+.home_searchbar_wrap{
+    position: relative;
+    height: 852px; 
+    display: flex;
+    flex-direction: column;
+
+    .container{
+        flex: 1; 
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; 
+
+        .search{
+        position: absolute;
+        top: 50px;
+        display: flex;
+        align-items: center;
+        gap: 30px;
+
+        .searchbar{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding-left: 77px;
+
+            width: 290px;
+            height: 40px;
+            background-color: var(--gray02);
+            border-radius: 5px;
+
+            img{
+                width: 24px;
+                height: 24px;
+            }
+
+            input{
+                background: none;
+                color: var(--white);
+            }
+        }
+
+        p{
+            color: var(--white);
+            font-size: 14px;
+            font-weight: 400;
+        }
+    }
+
+    .history{
+        margin-bottom: 8px;
+        color: var(--white);
+        font-weight: 500;
+    }
+
+    .scroll_container{
+        flex: 1; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
+
+            &::-webkit-scrollbar {
+                display: none; 
+            }
+
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+    }
+    }
+  
+}
+
+//Mypage.jsx
+.mypage_wrap{
+    .container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .profile{
+             
+            .profile_img{
+            position: relative;
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            width: 100px;
+            height: 100px;
+            border-radius: 100px;
+            background-color: var(--gray02);
+
+            img{
+                position: absolute;
+                top: calc(50% - 15px);
+                left: calc(50% - 15px);
+                width: 30px;
+                height: 30px;
+            }
+        }
+        }
+
+        .name{
+            margin-top: 50px;
+            width: 100%;
+            border-bottom: 1px solid var(--white);
+
+            input{
+                background: none;
+                color: var(--white);
+                padding: 12px 10px;
+            }
+        }
+
+        .btn{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-top: 124px;
+
+            button{
+                width: 100%;
+                height: 53px;
+                background-color: var(--gray02);
+                color: var(--white);
+                font-size: 18px;
+                text-align: left;
+                padding-left: 11px;
+                border-radius: 5px;
+            }
+        }
+    }
+
+    .area{
+        width: 100%;
+        height: 80px;
+        background-color: var(--black);
+    }
+    
+}
+
+
+
+//component
+
+//Musiclist.jsx
+#Musiclist_Wrap{
+    margin-bottom: 8px;
+    width: 100%;
+    height: 60px;
+    background-color: var(--gray02);
+    border-radius: 3px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 12px;
+    padding-right: 12px;
+
+    .musiclist_container{
+        display: flex;
+        gap: 15px;
+        align-items: center;
+
+        .album_cover{
+            width: 40px;
+            height: 40px;
+            background-color: var(--gray01);
+            border-radius: 3px;
+        }
+
+        .music_info{
+            display: flex;
+            flex-direction: column;
+
+            .title{
+                color: var(--white);
+                font-size: 16px;
+                font-weight: 600;
+            }
+
+            .artist{
+                color: var(--white);
+                font-size: 14px;
+                font-weight: 300;
+            }
+        }
+        
+    }
+
+    img{
+        width: 22px;
+        height: 22px;
+    }
+    
+}
+
+
+//Musicplay.jsx
+#Musicplay_Wrap{
+    position: absolute;
+    bottom: 1vh;
+    left: calc(50% - 180px);
+    box-sizing: border-box;
+    z-index: 10000;
+
+    width: 361px;
+    height: 60px;
+    border-radius: 3px;
+    background-color: var(--black);
+    border: solid 1px var(--main);
+    // box-shadow: 0px 0px 3px 1px color-mix(in srgb,
+    //     var(--main) 80%,
+    //     transparent);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 12px;
+    padding-right: 12px;
+    flex-shrink: 0;
+
+    .musiclist_container{
+        display: flex;
+        gap: 15px;
+        align-items: center;
+
+        .album_cover{
+            width: 40px;
+            height: 40px;
+            background-color: var(--gray01);
+            border-radius: 3px;
+        }
+
+        .music_info{
+            display: flex;
+            flex-direction: column;
+
+            .title{
+                color: var(--white);
+                font-size: 16px;
+                font-weight: 600;
+            }
+
+            .artist{
+                color: var(--white);
+                font-size: 14px;
+                font-weight: 300;
+            }
+        }
+        
+    }
+
+    .btn_container{
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        .play_btn{
+            img{
+            width: 20px;
+            height: 20px;
+            }
+        }
+    }
+    
+}
+
+
+//Searchlist.jsx
+#Searchlist_Wrap{
+    margin-top: 15px;
+    width: 100%;
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 12px;
+    padding-right: 12px;
+
+    .musiclist_container{
+        display: flex;
+        gap: 15px;
+        align-items: center;
+
+        .album_cover{
+            width: 40px;
+            height: 40px;
+            background-color: var(--gray01);
+            border-radius: 3px;
+        }
+
+        .music_info{
+            display: flex;
+            flex-direction: column;
+
+            .title{
+                color: var(--white);
+                font-size: 16px;
+                font-weight: 600;
+            }
+
+            .artist{
+                color: var(--white);
+                font-size: 14px;
+                font-weight: 300;
+            }
+        }
+        
+    }
+
+    img{
+        width: 22px;
+        height: 22px;
+    }
+    
+}
+
+
+//Searchedlist.jsx
+#Searchedlist_Wrap{
+    margin-top: 8px;
+    width: 100%;
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 12px;
+    padding-right: 12px;
+
+    .musiclist_container{
+        display: flex;
+        gap: 15px;
+        align-items: center;
+
+        .album_cover{
+            width: 40px;
+            height: 40px;
+            background-color: var(--gray01);
+            border-radius: 3px;
+        }
+
+        .music_info{
+            display: flex;
+            flex-direction: column;
+
+            .title{
+                color: var(--white);
+                font-size: 16px;
+                font-weight: 600;
+            }
+
+            .artist{
+                color: var(--white);
+                font-size: 14px;
+                font-weight: 300;
+            }
+        }
+        
+    }
+
+    .icon_container{
+        display: flex;
+        gap: 8px;
+
+        img{
+            width: 22px;
+            height: 22px;
+        }
+    }
+    
+}

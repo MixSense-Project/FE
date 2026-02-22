@@ -1,16 +1,36 @@
-# React + Vite
+# 📂 폴더 구조
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```text
+/FE (Root Directory)
+├── node_modules/
+├── src/
+│   ├── assets/              # 정적 자원
+│   │   ├── img/             # 이미지 파일
+│   │   └── sass/            # 스타일 시트
+│   │       ├── section/
+│   │       │   ├── components/
+│   │       │   └── page/
+│   │       ├── setting/
+│   │       └── style.scss
+│   ├── components/          # 공통 컴포넌트
+|   |    ├── Ai_Dj/
+|   |    ├── Home/      
+|   |    ├── Library/
+│   │    └── Preference/
+│   ├── page/                # 페이지 컴포넌트
+|   |    ├── Ai_Dj/
+|   |    ├── Ai_search/
+|   |    ├── Home/      
+|   |    ├── Library/
+|   |    ├── Music/
+|   |    ├── Preference/
+│   │    └── Splash/
+|   ├── data/                # 데이터 파일
+│   ├── App.jsx              # 메인 앱 컴포넌트
+│   └── main.jsx             # 엔트리 포인트
+├── eslint.config.js
+├── index.html
+├── package-lock.json
+├── package.json
+├── README.md
+└── vite.config.js

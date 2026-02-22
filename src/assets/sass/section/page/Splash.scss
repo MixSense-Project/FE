@@ -1,0 +1,410 @@
+@font-face {
+    font-family: 'Aggravo';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
+    font-weight: 700;
+    font-display: swap;
+}
+
+//Splash.jsx
+.Splash_Wrap {
+    width: 100%;
+    min-width: 393px;
+    max-width: 420px;
+    height: 852px;
+    background-color: var(--black);
+    margin: 0 auto;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 80px;
+    // padding-bottom: 80px;
+    padding-left: 16px;
+    padding-right: 16px;
+    box-sizing: border-box;
+
+    .main_logo {
+        position: absolute;
+        top: 237px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        img {
+            width: 67px;
+            // height: 56px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Aggravo';
+            font-size: 26px;
+            color: var(--white);
+        }
+    }
+
+    .splash_btns {
+        width: 100%;
+        position: absolute;
+        top: 514px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+
+        padding-left: 16px;
+        padding-right: 16px;
+
+        .email_btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            height: 60px;
+            background-color: var(--gray02);
+            border-radius: 5px;
+
+            img {
+                width: 26px;
+                height: 26px;
+            }
+
+            p {
+                font-size: 16px;
+                color: var(--white);
+                font-weight: 500;
+            }
+        }
+
+        .google_btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            height: 60px;
+            background-color: var(--gray02);
+            border-radius: 5px;
+
+            img {
+                width: 24px;
+                height: 24px;
+            }
+
+            p {
+                font-size: 16px;
+                color: var(--white);
+                font-weight: 500;
+            }
+        }
+
+        .account_btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            height: 60px;
+            border: 1px solid #4E4E4E;
+            border-radius: 5px;
+
+            p {
+                font-size: 16px;
+                color: var(--white);
+                font-weight: 500;
+            }
+        }
+
+    }
+}
+
+
+
+//Splash_account.jsx
+.Splash_account_Wrap {
+    width: 100%;
+    min-width: 393px;
+    max-width: 420px;
+    height: 852px;
+    background-color: var(--black);
+    margin: 0 auto;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 80px;
+    // padding-bottom: 80px;
+    padding-left: 16px;
+    padding-right: 16px;
+    box-sizing: border-box;
+
+    .main_logo {
+        position: absolute;
+        top: 237px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        img {
+            width: 67px;
+            // height: 56px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Aggravo';
+            font-size: 26px;
+            color: var(--white);
+        }
+    }
+
+    .splash_btns {
+        width: 100%;
+        position: absolute;
+        top: 514px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+
+        padding-left: 16px;
+        padding-right: 16px;
+
+        .email_btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            height: 60px;
+            background-color: var(--gray02);
+            border-radius: 5px;
+
+            img {
+                width: 26px;
+                height: 26px;
+            }
+
+            p {
+                font-size: 16px;
+                color: var(--white);
+                font-weight: 500;
+            }
+        }
+
+        .google_btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            height: 60px;
+            background-color: var(--gray02);
+            border-radius: 5px;
+
+            img {
+                width: 24px;
+                height: 24px;
+            }
+
+            p {
+                font-size: 16px;
+                color: var(--white);
+                font-weight: 500;
+            }
+        }
+
+        .account_btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            height: 60px;
+            border: 1px solid #4E4E4E;
+            border-radius: 5px;
+
+            p {
+                font-size: 16px;
+                color: var(--white);
+                font-weight: 500;
+            }
+        }
+
+    }
+}
+
+//splash_login.jsx
+.splash_login_wrap {
+    height: 852px;
+
+    .container {
+        height: 852px;
+
+        .login_form {
+            margin-top: 64px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+
+
+            .field {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+
+
+                .label {
+                    font-size: 18px;
+                    color: var(--white);
+                    font-weight: 500;
+                }
+            }
+
+            .field input {
+                width: 100%;
+                height: 45px;
+                border-radius: 5px;
+                background: var(--gray02);
+                padding: 0 12px;
+                outline: none;
+
+                color: var(--white);
+                font-size: 18px;
+                font-weight: 400;
+            }
+
+
+            .field input::placeholder {
+                color: var(--gray01);
+                font-size: 18px;
+                font-weight: 400;
+            }
+        }
+
+
+        .login_btn {
+            margin-top: 200px;
+            height: 59px;
+            border-radius: 5px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            background: var(--gray02);
+            margin-bottom: 120px;
+            color: var(--white);
+
+            &.active {
+                background: var(--main);
+                color: var(--white);
+            }
+
+            &:disabled {
+                cursor: not-allowed;
+            }
+        }
+
+    }
+}
+
+//splash_signup.jsx
+.splash_signup_wrap {
+    height: 852px;
+
+    .container {
+        height: 852px;
+
+        .login_form {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+
+            .field {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+
+                .label {
+                    font-size: 18px;
+                    color: var(--white);
+                    font-weight: 500;
+                }
+
+                input {
+                    width: 100%;
+                    height: 45px;
+                    border-radius: 5px;
+                    background: var(--gray02);
+                    padding: 0 12px;
+                    outline: none;
+
+                    color: var(--white);
+                    font-size: 18px;
+                    font-weight: 400;
+                }
+
+                .input_with_icon {
+                    position: relative;
+                    width: 100%;
+
+                    input {
+                        padding-right: 41px;
+                    }
+
+                    .email_icon {
+                        position: absolute;
+                        right: 12px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        width: 21px;
+                        height: 16px;
+                        cursor: pointer;
+                        
+                    }
+                }
+
+                .input_with_icon+input {
+                    margin-top: 8px;
+                }
+
+                input::placeholder {
+                    color: var(--gray01);
+                    font-size: 18px;
+                    font-weight: 400;
+                }
+            }
+        }
+
+        .login_btn {
+            margin-top: 165px;
+            height: 59px;
+            border-radius: 5px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            background: var(--gray02);
+            margin-bottom: 120px;
+            color: var(--white);
+
+            &.active {
+                background: var(--main);
+            }
+
+            &:disabled {
+                cursor: not-allowed;
+            }
+        }
+    }
+}

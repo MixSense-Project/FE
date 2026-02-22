@@ -1,23 +1,30 @@
 import { NavLink } from "react-router-dom";
 import dj_g from "../assets/img/nav/dj_g.svg";
-import dj_p from "../assets/img/nav/dj_p.svg";
 import home_g from "../assets/img/nav/home_g.svg";
-import home_p from "../assets/img/nav/home_p.svg";
 import library_g from "../assets/img/nav/library_g.svg";
-import library_p from "../assets/img/nav/library_p.svg";
 import search_g from "../assets/img/nav/search_g.svg";
-import search_p from "../assets/img/nav/search_p.svg";
+
+import home_w from '../assets/img/Nav/home_w.svg'
+import search_w from '../assets/img/Nav/aisearch_w.svg'
+import library_w from '../assets/img/Nav/library_w.svg'
+import dj_w from '../assets/img/Nav/aidj_w.svg'
+
+
 
 const Nav = () => {
+  const isHomeActive = location.pathname === "/home" || location.pathname === "/home_search" || location.pathname === "/home_trending_now";
+  const isSearchActive = location.pathname === "/ai_search" || location.pathname === "/ai_search_onboarding";
+  const isAiDjActive = location.pathname === '/ai_dj' || location.pathname === "/ai_dj_onboarding" || location.pathname === "/ai_dj_trackselect" || location.pathname === '/ai_dj_loading' || location.pathname === '/ai_dj_result';
+
   return (
-    <nav id="Nav_Wrap">
+    <div id="Nav_Wrap">
       <NavLink
         to="/home"
-        className={({ isActive }) => `nav_item ${isActive ? "active" : ""}`}
+        className={({ isActive }) => `nav_item ${isHomeActive ? "active" : ""}`}
       >
         {({ isActive }) => (
           <>
-            <img src={isActive ? home_p : home_g} className="nav_icon" alt="" />
+            <img src={isHomeActive ? home_w : home_g} className="nav_icon" alt="" />
             <p className="nav_p">Home</p>
           </>
         )}
@@ -25,11 +32,11 @@ const Nav = () => {
 
       <NavLink
         to="/ai_search"
-        className={({ isActive }) => `nav_item ${isActive ? "active" : ""}`}
+        className={({ isActive }) => `nav_item ${isSearchActive ? "active" : ""}`}
       >
         {({ isActive }) => (
           <>
-            <img src={isActive ? search_p : search_g} className="nav_icon" alt="" />
+            <img src={isSearchActive ? search_w : search_g} className="nav_icon" alt="" />
             <p className="nav_p">AI Search</p>
           </>
         )}
@@ -37,11 +44,11 @@ const Nav = () => {
 
       <NavLink
         to="/ai_dj"
-        className={({ isActive }) => `nav_item ${isActive ? "active" : ""}`}
+        className={({ isActive }) => `nav_item ${isAiDjActive ? "active" : ""}`}
       >
         {({ isActive }) => (
           <>
-            <img src={isActive ? dj_p : dj_g} className="nav_icon" alt="" />
+            <img src={isAiDjActive ? dj_w : dj_g} className="nav_icon" alt="" />
             <p className="nav_p">AI DJ</p>
           </>
         )}
@@ -54,7 +61,7 @@ const Nav = () => {
         {({ isActive }) => (
           <>
             <img
-              src={isActive ? library_p : library_g}
+              src={isActive ? library_w : library_g}
               className="nav_icon"
               alt=""
             />
@@ -62,7 +69,7 @@ const Nav = () => {
           </>
         )}
       </NavLink>
-    </nav>
+    </div>
   );
 };
 
