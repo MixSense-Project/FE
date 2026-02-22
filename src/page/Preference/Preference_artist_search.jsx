@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PreferenceArtistCircle from "../../components/Preference/Preference_artist_circle";
 import PreferenceSelectBtn from "../../components/Preference/Preference_selectbtn";
-import searchicon from "../../assets/img/Nav/search_g.svg";
+import searchicon from "../../assets/img/nav/search_g.svg";
 
 const MAX_SELECT = 20;
 

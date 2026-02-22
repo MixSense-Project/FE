@@ -5,7 +5,7 @@ import Nav from "../../components/Nav";
 import logo_g from '../../assets/img/AIDJ/logo_g.svg'
 import play_icon from '../../assets/img/AIDJ/play_icon.svg'
 import cancel_icon from '../../assets/img/AIDJ/cancel_icon.svg'
-import Playlist_add from "../../components/Ai_Dj/playlist_add";
+import Playlist_add from "../../components/Ai_Dj/Playlist_add.jsx";
 
 
 const Ai_Dj_Result = () => {

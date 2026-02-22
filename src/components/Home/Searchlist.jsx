@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import add_btn from '../../assets/img/AIDJ/gray_add_btn.svg'
-import check_btn from '../../assets/img/Home/check.svg'
+import check_btn from '../../assets/img/home/check.svg'
 
 const Searchlist = () => {
     const[isAdd, setIsAdd]=useState(false);

@@ -7,7 +7,7 @@ import Nav from '../../components/Nav'
 import Track from '../../components/Home/Track'
 import Musiclist from '../../components/Home/Musiclist'
 import Musicplay from '../../components/Home/Musicplay'
-import more_btn from '../../assets/img/Home/more_btn.svg'
+import more_btn from '../../assets/img/home/more_btn.svg'
 
 const Home = () => {
   const tracks = Array.from({ length: 18 });

@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
-import music_play from '../../assets/img/Home/music_play.svg'
-import music_fast from '../../assets/img/Home/music_fast.svg'
-import music_stop from '../../assets/img/Home/music_stop.svg'
+import music_play from '../../assets/img/home/music_play.svg'
+import music_fast from '../../assets/img/home/music_fast.svg'
+import music_stop from '../../assets/img/home/music_stop.svg'
 
 const Musicplay = () => {
     const[isPlay, setIsPlay]=useState(false);

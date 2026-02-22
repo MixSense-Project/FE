@@ -2,7 +2,7 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 import Searchlist from '../../components/Home/Searchlist'
 import Nav from '../../components/Nav'
-import searchicon from '../../assets/img/Nav/search_g.svg'
+import searchicon from '../../assets/img/nav/search_g.svg'
 import Musicplay from '../../components/Home/Musicplay'
 import Searchedlist from '../../components/Home/Searchedlist'
 

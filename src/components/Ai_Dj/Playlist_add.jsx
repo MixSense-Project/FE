@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
-import check_icon from '../../assets/img/Home/check.svg'
+import check_icon from '../../assets/img/home/check.svg'
 import nocheck_icon from '../../assets/img/AIDJ/empty_circle.svg'
 
 const Playlist_add = () => {
