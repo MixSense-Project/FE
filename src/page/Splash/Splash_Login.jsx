@@ -8,7 +8,7 @@ const Splash_Login = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    username: "", // UI용(백엔드 안 받으면 유지/삭제 선택)
+    username: "",
     email: "",
     password: "",
   });
@@ -44,16 +44,16 @@ const Splash_Login = () => {
     });
 
     if (res.session && res.session.access_token) {
-      // ✅ 토큰 저장
+      // 토큰 저장
       localStorage.setItem("access_token", res.session.access_token);
 
-      // (선택) refresh token도 있다면 같이 저장
+      // refresh token도 있다면 같이 저장
       if (res.session.refresh_token) {
         localStorage.setItem("refresh_token", res.session.refresh_token);
       }
 
-      // ✅ 로그인 성공 후 홈으로 이동
-      navigate("/home", { replace: true });
+      // 로그인 성공 후 홈으로 이동
+      navigate("/preference_genre", { replace: true });
     }
 
   } catch (err) {
@@ -73,7 +73,6 @@ const Splash_Login = () => {
       <div className="container">
         <SubHeader title={"Log in"} />
 
-        {/* ✅ div -> form 으로 변경 */}
         <form className="login_form" onSubmit={onSubmit}>
           <label className="field">
             <span className="label">Username</span>
