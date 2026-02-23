@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import SubHeader from "../../components/SubHeader";
 import eamil_icon from "../../assets/img/Splash/signup_email.svg";
 import coloreamil_icon from "../../assets/img/Splash/coloremail_icon.svg";
 import { sendOtp, verifyOtp, signup } from "../../api/auth";
+
 
 const OTP_LEN = 6;
 
@@ -17,14 +19,14 @@ const Splash_Signup = () => {
     const [otpSent, setOtpSent] = useState(false);
     const [isVerified, setIsVerified] = useState(false);
     const [isEmailIconActive, setIsEmailIconActive] = useState(false);
+    const navigate = useNavigate();
+    const [accessToken, setAccessToken] = useState("");
 
     const [loading, setLoading] = useState({
         send: false,
         verify: false,
         signup: false,
     });
-
-    const [msg, setMsg] = useState("");
 
     // 자동 verify 제어용 Ref
     const verifyTimerRef = useRef(null);
@@ -50,7 +52,6 @@ const Splash_Signup = () => {
             // 번호를 수정하면 즉시 인증 상태 해제
             setIsVerified(false);
             setIsEmailIconActive(false);
-            setMsg("");
             return;
         }
 
@@ -58,7 +59,7 @@ const Splash_Signup = () => {
             setOtpSent(false);
             setIsVerified(false);
             setIsEmailIconActive(false);
-            setMsg("");
+            setAccessToken("");
             lastVerifiedTokenRef.current = "";
             setForm((prev) => ({ ...prev, email: value, authentication: "" }));
             return;
@@ -80,28 +81,22 @@ const Splash_Signup = () => {
     // 1) OTP 전송
     const handleSendOtp = async () => {
         const email = form.email.trim();
-        if (!email) {
-            setMsg("이메일을 먼저 입력해줘.");
-            return;
-        }
+        if (!email) return;
 
         try {
             setLoading((p) => ({ ...p, send: true }));
-            setMsg("");
 
-            // ✅ 재전송/재시도 시 상태 초기화 (구코드 입력 방지)
             setForm((prev) => ({ ...prev, authentication: "" }));
             setIsVerified(false);
             setIsEmailIconActive(false);
+            setAccessToken("");
             lastVerifiedTokenRef.current = "";
 
             await sendOtp({ email, type: "signup" });
 
             setOtpSent(true);
-            setMsg("인증코드를 전송했어. 메일의 가장 최신 코드를 입력해줘.");
         } catch (err) {
             setOtpSent(false);
-            setMsg(getErrorMsg(err, "OTP 전송 실패"));
         } finally {
             setLoading((p) => ({ ...p, send: false }));
         }
@@ -112,12 +107,9 @@ const Splash_Signup = () => {
         const email = form.email.trim();
         const token = form.authentication.trim();
 
-        // ✅ sendOtp 누른 후에만 verify
         if (!otpSent) return;
-
         if (!email) return;
         if (token.length !== OTP_LEN) return;
-
         if (verifyingRef.current) return;
         if (isVerified && lastVerifiedTokenRef.current === token) return;
 
@@ -128,28 +120,19 @@ const Splash_Signup = () => {
 
             try {
                 setLoading((p) => ({ ...p, verify: true }));
-                setMsg("");
 
-                await verifyOtp({ email, token, type: "signup" });
+                const res = await verifyOtp({ email, token, type: "email" });
+                if (res.session && res.session.access_token) {
+                    setAccessToken(res.session.access_token);
+                }
 
                 lastVerifiedTokenRef.current = token;
                 setIsVerified(true);
                 setIsEmailIconActive(true);
-                setMsg("이메일 인증이 완료됐어.");
             } catch (err) {
                 setIsVerified(false);
                 setIsEmailIconActive(false);
-
-                const serverMsg = getErrorMsg(err, "인증번호가 일치하지 않거나 만료됐어.");
-
-                // UX: 만료/무효면 재전송 유도 문구
-                if (typeof serverMsg === "string" && serverMsg.includes("expired")) {
-                    setMsg("인증코드가 만료됐어. '인증코드 받기'를 다시 눌러서 새 코드를 받아줘.");
-                } else if (typeof serverMsg === "string" && serverMsg.includes("invalid")) {
-                    setMsg("인증코드가 올바르지 않아. 메일의 최신 코드를 입력하거나 재전송해줘.");
-                } else {
-                    setMsg(serverMsg);
-                }
+                setAccessToken("");
             } finally {
                 verifyingRef.current = false;
                 setLoading((p) => ({ ...p, verify: false }));
@@ -167,18 +150,24 @@ const Splash_Signup = () => {
         const email = form.email.trim();
         const password = form.password.trim();
 
-        if (!isVerified) {
-            setMsg("이메일 인증을 먼저 완료해줘.");
+        if (!isVerified || !accessToken) {
             return;
         }
 
         try {
             setLoading((p) => ({ ...p, signup: true }));
-            await signup({ email, password });
-            setMsg("회원가입 완료! 이제 로그인 페이지로 이동할게.");
-            // 예: setTimeout(() => navigate("/login"), 1500);
+
+            await signup({
+                email,
+                password,
+                username: form.username.trim(),
+                token: accessToken
+            });
+
+            // ✅ 회원가입 성공 후 로그인 페이지로 이동
+            navigate("/splash_login", { replace: true });
+
         } catch (err) {
-            setMsg(getErrorMsg(err, "회원가입 실패"));
         } finally {
             setLoading((p) => ({ ...p, signup: false }));
         }
@@ -239,17 +228,8 @@ const Splash_Signup = () => {
                                 inputMode="numeric"
                                 maxLength={OTP_LEN}
                             />
-                            <span style={{ fontSize: 12, opacity: 0.8 }}>
-                                {!otpSent
-                                    ? "인증코드 받기를 눌러줘"
-                                    : loading.verify
-                                        ? "인증 확인 중..."
-                                        : isVerified
-                                            ? "✅ 인증 완료"
-                                            : `인증번호 ${OTP_LEN}자리를 입력해줘`}
-                            </span>
+                           
                         </div>
-                        {msg && <p style={{ marginTop: 8, color: isVerified ? "blue" : "red" }}>{msg}</p>}
                     </label>
 
                     <label className="field">

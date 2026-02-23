@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from "react";
 import SubHeader from "../../components/SubHeader";
 import { login } from "../../api/auth";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 
 const Splash_Login = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     username: "", // UI용(백엔드 안 받으면 유지/삭제 선택)
@@ -30,36 +31,42 @@ const Splash_Login = () => {
   }, [form]);
 
   const onSubmit = async (e) => {
-    e.preventDefault();
-    if (!isEnabled) return;
+  e.preventDefault();
+  if (!isEnabled) return;
 
-    try {
-      setLoading(true);
-      setMsg("");
+  try {
+    setLoading(true);
+    setMsg("");
 
-      const tokenOrMessage = await login({
-        email: form.email.trim(),
-        password: form.password.trim(),
-      });
+    const res = await login({
+      email: form.email.trim(),
+      password: form.password.trim(),
+    });
 
-      // ✅ 200 응답이 "string" 이니까 보통 토큰이라고 가정하고 저장
-      if (typeof tokenOrMessage === "string" && tokenOrMessage.length > 0) {
-        localStorage.setItem("access_token", tokenOrMessage);
+    if (res.session && res.session.access_token) {
+      // ✅ 토큰 저장
+      localStorage.setItem("access_token", res.session.access_token);
+
+      // (선택) refresh token도 있다면 같이 저장
+      if (res.session.refresh_token) {
+        localStorage.setItem("refresh_token", res.session.refresh_token);
       }
 
-      setMsg("로그인 성공!");
-      // navigate("/home");
-    } catch (err) {
-      const apiMsg =
-        err?.response?.data?.detail?.[0]?.msg ||
-        err?.response?.data?.message ||
-        err?.message ||
-        "로그인 실패";
-      setMsg(apiMsg);
-    } finally {
-      setLoading(false);
+      // ✅ 로그인 성공 후 홈으로 이동
+      navigate("/home", { replace: true });
     }
-  };
+
+  } catch (err) {
+    const apiMsg =
+      err?.response?.data?.detail?.[0]?.msg ||
+      err?.response?.data?.message ||
+      err?.message ||
+      "로그인 실패";
+    setMsg(apiMsg);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="splash_login_wrap">
