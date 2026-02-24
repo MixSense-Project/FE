@@ -109,7 +109,6 @@ const Splash_Login = () => {
             />
           </label>
 
-          {msg && <p style={{ marginTop: 8 }}>{msg}</p>}
 
           <button
             type="submit"
