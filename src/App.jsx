@@ -6,9 +6,9 @@ import Splash_Login from "./page/Splash/Splash_Login";
 import Splash_Signup from "./page/Splash/Splash_Signup";
 
 {/* Home */}
-import Home from "./page/Home/Home";
-import Home_search from "./page/Home/Home_search";
-import Home_trending_now from "./page/Home/Home_trending_now";
+import Home from "./page/home/Home";
+import Home_search from "./page/home/Home_search";
+import Home_trending_now from "./page/home/Home_trending_now";
 
 {/* Ai search */}
 import Ai_Search from "./page/Ai_Search/Ai_Search";
@@ -28,7 +28,7 @@ import Library_playlist from "./page/Library/Library_playlist";
 import Library_addplaylist from "./page/Library/Library_addplaylist";
 
 {/* MyPage */}
-import Mypage from "./page/Home/Mypage";
+import Mypage from "./page/home/Mypage";
 
 {/* Music */}
 import Music_songplay from "./page/Music/Music_songplay";
