@@ -26,7 +26,8 @@
 
             .banner{
                 margin-top: 24px;
-                width: 100%;
+                // width: 100%;
+                width: 360px;
                 height: 113px;
                 background-color: var(--gray02);
                 border-radius: 5px;
@@ -125,6 +126,7 @@
 
 //Home_trending_now.jsx
 .home_trendging_now {
+    width: 393px;
     height: 852px; 
     display: flex;
     flex-direction: column;
