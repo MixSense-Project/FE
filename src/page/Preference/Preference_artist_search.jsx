@@ -4,23 +4,34 @@ import PreferenceArtistCircle from "../../components/Preference/Preference_artis
 import PreferenceSelectBtn from "../../components/Preference/Preference_selectbtn";
 import searchicon from "../../assets/img/nav/search_g.svg";
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
 const DEFAULT_LIMIT = 20;
 
 function buildQuery(paramsObj = {}) {
   const params = new URLSearchParams();
+
   Object.entries(paramsObj).forEach(([key, value]) => {
     if (value === undefined || value === null) return;
-    params.set(key, String(value));
+
+    if (Array.isArray(value)) {
+      value.forEach((v) => {
+        if (v === undefined || v === null) return;
+        const s = String(v).trim();
+        if (!s) return;
+        params.append(key, s);
+      });
+    } else {
+      const s = String(value).trim();
+      if (!s) return;
+      params.set(key, s);
+    }
   });
+
   const qs = params.toString();
   return qs ? `?${qs}` : "";
 }
 
-async function request(path, options = {}) {
-  if (!API_BASE) throw new Error("VITE_API_BASE_URL is missing (.env.local).");
-
-  const url = `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
+async function requestJson(path, options = {}) {
+  const url = `${path.startsWith("/") ? "" : "/"}${path}`; 
   const res = await fetch(url, {
     ...options,
     headers: {
@@ -34,8 +45,12 @@ async function request(path, options = {}) {
   const text = await res.text();
 
   if (!res.ok) throw new Error(`HTTP ${res.status} - ${text.slice(0, 200)}`);
-  if (!contentType.includes("application/json"))
-    throw new Error("Response is not JSON.");
+
+  if (!contentType.includes("application/json")) {
+    throw new Error(
+      `Non-JSON response (${contentType}). Body head: ${text.slice(0, 120)}`
+    );
+  }
 
   return text ? JSON.parse(text) : null;
 }
@@ -61,16 +76,24 @@ function normalizeArtists(payload) {
   const list = Array.isArray(payload)
     ? payload
     : payload?.artists ??
-      payload?.items ??
-      payload?.results ??
-      payload?.data ??
-      payload?.artists?.items;
+    payload?.items ??
+    payload?.results ??
+    payload?.data ??
+    payload?.artists?.items;
 
   return (Array.isArray(list) ? list : []).map((a, idx) => {
     const rawId =
-      a.id ?? a.artistId ?? a.artist_id ?? a.spotifyId ?? a.spotify_id ?? null;
+      a.id ??
+      a.artistId ??
+      a.artist_id ??
+      a.spotifyId ??
+      a.spotify_id ??
+      a.artistID ??
+      null;
 
-    const name = a.name ?? a.artistName ?? a.artist_name ?? a.title ?? "";
+    const name =
+      a.name ?? a.artistName ?? a.artist_name ?? a.title ?? a.artist ?? "";
+
     const id = rawId ?? `${name || "artist"}__${idx}`;
 
     return { id, name, imageUrl: pickImage(a) };
@@ -99,28 +122,33 @@ const Preference_artist_search = () => {
     return Array.isArray(ids) ? ids : [];
   }, [location.state]);
 
-  const [pickedId, setPickedId] = useState(() => {
-    return "";
-  });
-
+  const [pickedId, setPickedId] = useState("");
   const [q, setQ] = useState("");
   const debouncedQ = useDebouncedValue(q, 300);
 
-  const [limit] = useState(DEFAULT_LIMIT);
+  const [indexChar] = useState(null);
+
   const [artists, setArtists] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const toggleArtist = (id) => {
-    setPickedId((prev) => (prev === id ? "" : id)); // ✅ 1명만 토글
+    setPickedId((prev) => (prev === id ? "" : id));
   };
 
   const pickedArtist = useMemo(() => {
     if (!pickedId) return null;
-    return artists.find((a) => a.id === pickedId) ?? { id: pickedId, name: "", imageUrl: null };
+    return (
+      artists.find((a) => a.id === pickedId) ?? {
+        id: pickedId,
+        name: "",
+        imageUrl: null,
+      }
+    );
   }, [artists, pickedId]);
 
   useEffect(() => {
     const keyword = debouncedQ.trim();
+
     if (!keyword) {
       setArtists([]);
       return;
@@ -129,11 +157,18 @@ const Preference_artist_search = () => {
     const run = async () => {
       setLoading(true);
       try {
-        const qs = buildQuery({ query: keyword, limit });
-        const data = await request(`/api/search${qs}`, { method: "GET" });
-        setArtists(normalizeArtists(data));
+        const qs = buildQuery({
+          genres: selectedGenres, 
+          keyword,
+          index_char: indexChar,
+        });
+
+        const data = await requestJson(`/api/artists${qs}`, { method: "GET" });
+
+        const normalized = normalizeArtists(data).slice(0, DEFAULT_LIMIT);
+        setArtists(normalized);
       } catch (e) {
-        console.error("[search] error:", e);
+        console.error("[artists search] error:", e);
         setArtists([]);
       } finally {
         setLoading(false);
@@ -141,7 +176,7 @@ const Preference_artist_search = () => {
     };
 
     run();
-  }, [debouncedQ, limit]);
+  }, [debouncedQ, selectedGenres, indexChar]);
 
   const handleSelect = () => {
     if (!pickedArtist?.id) return;
@@ -151,8 +186,8 @@ const Preference_artist_search = () => {
     navigate("/preference_artist", {
       state: {
         selectedGenres,
-        selectedArtist: pickedArtist,     
-        selectedArtistIds: mergedIds,       
+        selectedArtist: pickedArtist,
+        selectedArtistIds: mergedIds,
       },
       replace: true,
     });
@@ -162,7 +197,7 @@ const Preference_artist_search = () => {
     navigate("/preference_artist", {
       state: {
         selectedGenres,
-        selectedArtistIds: baseSelectedIds, 
+        selectedArtistIds: baseSelectedIds,
       },
       replace: true,
     });
@@ -191,7 +226,9 @@ const Preference_artist_search = () => {
 
         <div className="artist_part">
           {loading && (
-            <div style={{ padding: "12px 0", color: "white" }}>Searching...</div>
+            <div style={{ padding: "12px 0", color: "white" }}>
+              Searching...
+            </div>
           )}
 
           <div className="artist_grid">
@@ -199,18 +236,20 @@ const Preference_artist_search = () => {
               <PreferenceArtistCircle
                 key={artist.id}
                 artist={artist}
-                isSelected={baseSelectedIds.includes(artist.id) || pickedId === artist.id}
+                isSelected={
+                  baseSelectedIds.includes(artist.id) || pickedId === artist.id
+                }
                 onClick={() => toggleArtist(artist.id)}
               />
             ))}
-          </div>
+          </div> </div>
 
-          <PreferenceSelectBtn
-            disabled={!pickedArtist}
-            onClick={handleSelect}
-            text="Select"
-          />
-        </div>
+        <PreferenceSelectBtn
+          disabled={!pickedArtist}
+          onClick={handleSelect}
+          text="Select"
+        />
+
       </div>
     </div>
   );
