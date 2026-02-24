@@ -5,7 +5,7 @@ import PreferenceGenreCircle from "../../components/Preference/Preference_genre_
 import PreferenceSelectBtn from "../../components/Preference/Preference_selectbtn";
 import { GENRES } from "../../data/Preference_genre";
 
-const MAX_SELECT = 20;
+const MAX_SELECT = 3;
 
 const Preference_genre = () => {
   const navigate = useNavigate();
@@ -25,8 +25,14 @@ const Preference_genre = () => {
 
   const selectedIds = useMemo(() => Array.from(selected), [selected]);
 
-  const handleSubmit = () => {
-  navigate("/preference_artist");
+const selectedGenreLabels = useMemo(() => {
+  return GENRES.filter(g => selected.has(g.id)).map(g => g.label);
+}, [selected]);
+
+const handleSubmit = () => {
+  navigate("/preference_artist", {
+    state: { selectedGenres: selectedGenreLabels } 
+  });
 };
 
 
