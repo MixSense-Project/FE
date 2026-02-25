@@ -154,8 +154,9 @@
 }
 
 //Home_search.jsx
-.home_searchbar_wrap{
+.home_search_wrap{
     position: relative;
+    width: 393px;
     height: 852px; 
     display: flex;
     flex-direction: column;
@@ -478,7 +479,8 @@
 //Searchedlist.jsx
 #Searchedlist_Wrap{
     margin-top: 8px;
-    width: 100%;
+    // width: 100%;
+    
     height: 60px;
 
     display: flex;
