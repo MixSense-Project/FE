@@ -9,7 +9,7 @@ import Musiclist from '../../components/Home/Musiclist'
 import Musicplay from '../../components/Home/Musicplay'
 import more_btn from '../../assets/img/home/more_btn.svg'
 import axios from 'axios'
-import banner_img from '../../assets/img/Home/banner.png'
+import banner_img from '../../assets/img/home/banner.png'
 
 const Home = () => {
   const tracks = Array.from({ length: 18 });
