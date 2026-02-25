@@ -117,7 +117,9 @@ const Home_search = () => {
               }}
             />
           </div>
-          <p onClick={() => { setKeyword(""); fetchHistory(); }}>취소</p>
+          <Link to='/home'>
+            <p onClick={() => { setKeyword(""); fetchHistory(); }}>취소</p>
+          </Link>
         </div>
 
         <div className="scroll_container">
