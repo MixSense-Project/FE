@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { data, Link } from 'react-router-dom'
 import Header from '../../components/Header'
 import Searchbar from '../../components/Home/Searchbar'
 import Nav from '../../components/Nav'
@@ -8,12 +8,40 @@ import Track from '../../components/Home/Track'
 import Musiclist from '../../components/Home/Musiclist'
 import Musicplay from '../../components/Home/Musicplay'
 import more_btn from '../../assets/img/home/more_btn.svg'
+import axios from 'axios'
+import banner_img from '../../assets/img/home/banner.png'
 
 const Home = () => {
   const tracks = Array.from({ length: 18 });
 
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef(null);
+
+  //Trending Now api 연동
+  const [trendingTracks, setTrendingTracks] = useState([]);
+
+  const fetchTrending = async () =>{
+    try{
+      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      const response = await axios.get(`${BASE_URL}/api/trending?limit=4`,{
+        headers:{"ngrok-skip-browser-warning": "69420"}
+    });
+
+    console.log("서버 데이터:", response.data);
+    if (response.data && response.data.trending) {
+        setTrendingTracks(response.data.trending);
+      }
+    
+    }catch (error){
+      console.log(error)
+      }
+    }
+
+    useEffect(()=>{
+      fetchTrending();
+    }, []);
+
+
 
   const handleScroll = () => {
     if (scrollRef.current) {
@@ -24,12 +52,16 @@ const Home = () => {
     }
   };
 
+
+
   return (
     <div className='home_wrap'>
         <div className="container">
           <Header/>
           <div className="scroll_container">
-            <div className="banner"></div>
+            <div className="banner">
+              <img src={banner_img} alt="" />
+            </div>
             <div className="Recommend_track">
               <div className="text">Recommend Track</div>
               <div className="track_container" ref={scrollRef} onScroll={handleScroll}>
@@ -53,10 +85,13 @@ const Home = () => {
                   <img src={more_btn} alt="" />
                 </div>
               </Link>
-              <Musiclist/>
-              <Musiclist/>
-              <Musiclist/>
-              <Musiclist/>
+              {trendingTracks.length > 0 ? (
+                trendingTracks.map((item) => (
+                  <Musiclist key={item.id} data={item} />
+                ))
+              ) : (
+                <p style={{ textAlign: 'center', padding: '20px' }}>Loading trending...</p>
+              )}
             </div>
             <Musicplay/>
           </div>  

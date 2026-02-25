@@ -12,7 +12,7 @@ import Home_trending_now from "./page/Home/Home_trending_now";
 
 {/* Ai search */}
 import Ai_Search from "./page/Ai_Search/Ai_Search";
-import Ai_Search_Onboarding from "./page/Ai_Search/Ai_Search_Onboarding";
+// import Ai_Search_Onboarding from "./page/Ai_Search/Ai_Search_Onboarding";
 
 {/* Ai Dj */}
 import Ai_Dj from "./page/Ai_Dj/Ai_Dj";
