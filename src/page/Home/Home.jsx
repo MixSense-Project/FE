@@ -17,6 +17,48 @@ const Home = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef(null);
 
+  //Recommend Track api 연동
+
+  const [recommendTracks, setRecommendTracks] = useState([]);
+
+  const fetchRecommend = async () => {
+    try {
+      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      
+      const token = localStorage.getItem('access_token'); 
+
+      if (!token) {
+        console.error("로컬 스토리지에 access_token이 없습니다. 로그인이 필요합니다.");
+        return;
+      }
+
+      const response = await axios.get(`${BASE_URL}/api/ai/recommend/home`, {
+        headers: {
+          "ngrok-skip-browser-warning": "69420",
+          "Authorization": `Bearer ${token}` 
+        }
+    });
+
+    console.log("Recommend 서버 데이터:", response.data);
+
+    // 추천 API 응답 구조가 trending과 같다면 recommend 배열을 추출합니다.
+    if (response.data && response.data.recommend) {
+      setRecommendTracks(response.data.recommend);
+    } else if (Array.isArray(response.data)) {
+      setRecommendTracks(response.data);
+    }
+
+  } catch (error) {
+    // 401 에러 발생 시 출력되는 메시지입니다.
+    console.error("추천 트랙 로드 실패:", error.response?.status === 401 ? "토큰 인증 실패" : error.message);
+  }
+};
+
+useEffect(() => {
+  fetchRecommend();
+}, []);
+
+
   //Trending Now api 연동
   const [trendingTracks, setTrendingTracks] = useState([]);
 
@@ -64,15 +106,22 @@ const Home = () => {
             </div>
             <div className="Recommend_track">
               <div className="text">Recommend Track</div>
-              <div className="track_container" ref={scrollRef} onScroll={handleScroll}>
-                {[0, 1].map((pageIndex) => (
-                  <div className="track_page" key={pageIndex}>
-                    {tracks.slice(pageIndex * 9, (pageIndex + 1) * 9).map((_, i) => (
-                      <Track key={i} />
-                    ))}
-                  </div>
+          <div className="track_container" ref={scrollRef} onScroll={handleScroll}>
+              {[0, 1].map((pageIndex) => (
+                <div className="track_page" key={pageIndex}>
+                  {recommendTracks.length > 0 ? (
+                    recommendTracks.slice(pageIndex * 9, (pageIndex + 1) * 9).map((item, i) => (
+                      <Track 
+                        key={item.id || i} 
+                        img={item.track?.track_image_url || item.track_image_url || item.image_url} 
+                      />
+                    ))
+                  ) : (
+                    Array.from({ length: 9 }).map((_, i) => <Track key={i} />)
+                  )}
+                </div>
               ))}
-              </div>
+            </div>
               <div className="indicator_container">
                 <div className={`dot ${activeIndex === 0 ? 'active' : ''}`}></div>
                 <div className={`dot ${activeIndex === 1 ? 'active' : ''}`}></div>
