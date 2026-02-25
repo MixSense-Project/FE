@@ -6,7 +6,7 @@ import Splash_Login from "./page/Splash/Splash_Login";
 import Splash_Signup from "./page/Splash/Splash_Signup";
 
 {/* Home */}
-import Home from "./page/home/Home";
+import Home from "./page/Home/Home";
 import Home_search from "./page/home/Home_search";
 import Home_trending_now from "./page/home/Home_trending_now";
 
