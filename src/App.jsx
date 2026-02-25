@@ -28,7 +28,7 @@ import Library_playlist from "./page/Library/Library_playlist";
 import Library_addplaylist from "./page/Library/Library_addplaylist";
 
 {/* MyPage */}
-import Mypage from "./page/home/Mypage";
+import Mypage from "./page/Home/Mypage";
 
 {/* Music */}
 import Music_songplay from "./page/Music/Music_songplay";
