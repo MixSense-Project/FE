@@ -13,6 +13,7 @@ const Home = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [recommendTracks, setRecommendTracks] = useState([]);
   const [trendingTracks, setTrendingTracks] = useState([]);
+  const [currentTrack, setCurrentTrack] = useState(null); // 현재 재생 중인 트랙 상태
   const scrollRef = useRef(null);
 
   const fetchRecommend = async () => {
@@ -28,8 +29,7 @@ const Home = () => {
         }
       });
 
-      // [수정] 스크린샷 로그 확인 결과, 데이터가 'home' 키 안에 들어있습니다.
-      console.log("Recommend 서버 데이터:", response.data);
+      // 데이터가 { home: [...] } 구조로 들어오는 것을 확인 
       if (response.data && response.data.home) {
         setRecommendTracks(response.data.home);
       }
@@ -48,7 +48,7 @@ const Home = () => {
         setTrendingTracks(response.data.trending);
       }
     } catch (error) {
-      console.log(error);
+      console.error("트렌딩 로드 실패:", error);
     }
   };
 
@@ -69,7 +69,7 @@ const Home = () => {
       <div className="container">
         <Header />
         <div className="scroll_container">
-          <div className="banner"><img src={banner_img} alt="" /></div>
+          <div className="banner"><img src={banner_img} alt="banner" /></div>
           
           <div className="Recommend_track">
             <div className="text">Recommend Track</div>
@@ -78,10 +78,12 @@ const Home = () => {
                 <div className="track_page" key={pageIndex}>
                   {recommendTracks.length > 0 ? (
                     recommendTracks.slice(pageIndex * 9, (pageIndex + 1) * 9).map((item, i) => {
+                      const videoId = item.youtube_video_id || item.track?.youtube_video_id;
                       return (
                         <Track 
                           key={item.track_id || i} 
-                          img={item.track_image_url} 
+                          img={videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null}
+                          onClick={() => setCurrentTrack(item)} // 트랙 클릭 시 재생 곡 설정
                         />
                       );
                     })
@@ -101,16 +103,22 @@ const Home = () => {
             <Link to='/home_trending_now'>
               <div className="text_container">
                 <div className="text">Trending Now</div>
-                <img src={more_btn} alt="" />
+                <img src={more_btn} alt="more" />
               </div>
             </Link>
             {trendingTracks.length > 0 ? (
-              trendingTracks.map((item) => <Musiclist key={item.id} data={item} />)
+              trendingTracks.map((item) => (
+                <Musiclist 
+                  key={item.id} 
+                  data={item} 
+                  onPlay={() => setCurrentTrack(item)} // 리스트 클릭 시 재생 곡 설정
+                />
+              ))
             ) : (
               <p style={{ textAlign: 'center', padding: '20px' }}>Loading trending...</p>
             )}
           </div>
-          <Musicplay />
+          {currentTrack && <Musicplay currentTrack={currentTrack} />}
         </div>
       </div>
       <Nav />
