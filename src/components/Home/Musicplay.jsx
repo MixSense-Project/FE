@@ -1,86 +1,50 @@
-import React, { useState, useEffect } from 'react';
-import YouTube from 'react-youtube';
-import axios from 'axios';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useMusic } from '../../context/MusicContext'; 
 import music_play from '../../assets/img/home/music_play.svg';
-import music_fast from '../../assets/img/home/music_fast.svg';
 import music_stop from '../../assets/img/home/music_stop.svg';
+import music_fast from '../../assets/img/home/music_fast.svg';
 
 const Musicplay = () => {
-    const { currentTrack } = useMusic(); 
-    const [isPlay, setIsPlay] = useState(false);
-    const [player, setPlayer] = useState(null);
-    const [startTime, setStartTime] = useState(null);
+    const { currentTrack, isPlay, player } = useMusic();
+    const navigate = useNavigate();
 
-    // Context로부터 넘어온 데이터 로그 확인
-    useEffect(() => {
-        if (currentTrack) {
-            console.log("🎧 [Musicplay 수신 데이터]:", currentTrack);
-        }
-    }, [currentTrack]);
+    const trackData = currentTrack?.track || currentTrack;
+    const videoId = trackData?.youtube_video_id || trackData?.video_id;
 
-    const videoId = currentTrack?.youtube_video_id || currentTrack?.track?.youtube_video_id || currentTrack?.video_id;
+    if (!videoId) return null;
 
-    const opts = {
-        height: '0', width: '0',
-        playerVars: { autoplay: 1, controls: 0 },
-    };
-
-    useEffect(() => {
-        if (videoId) {
-            console.log("📺 [Musicplay] 최종 비디오 ID:", videoId);
-            setIsPlay(true);
-        } else {
-            console.warn("⚠️ [Musicplay] 비디오 ID가 없습니다. 렌더링이 중단됩니다.");
-        }
-    }, [videoId]);
-
-    useEffect(() => {
-        if (isPlay) {
-            setStartTime(Date.now());
-        } else if (startTime) {
-            const duration = Date.now() - startTime;
-            if (duration >= 30000) {
-                const token = localStorage.getItem('access_token');
-                const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-                const trackId = currentTrack?.track_id || currentTrack?.track?.track_id || currentTrack?.id;
-                
-                axios.post(`${BASE_URL}/api/logs/play`, 
-                    { track_id: trackId, ms_played: duration },
-                    { headers: { Authorization: `Bearer ${token}` } }
-                ).catch(err => console.error("Log failed", err));
-            }
-            setStartTime(null);
-        }
-    }, [isPlay, videoId]);
-
-    const togglePlay = () => {
+    const togglePlay = (e) => {
+        e.stopPropagation();
         if (!player) return;
         isPlay ? player.pauseVideo() : player.playVideo();
     };
 
-    if (!videoId) return null; // 여기서 null을 반환하면 플레이어가 사라짐
-
     return (
-        <div id="Musicplay_Wrap">
-            <YouTube 
-                videoId={videoId} 
-                opts={opts} 
-                onReady={(e) => { setPlayer(e.target); setIsPlay(true); }} 
-                onStateChange={(e) => setIsPlay(e.data === 1)} 
-            />
+        <div id="Musicplay_Wrap" onClick={() => navigate('/music/songplay')}>
             <div className="musicplay_wrap">
                 <div className="musiclist_container">
-                    <div className="album_cover">
+                    {/* 앨범 커버 이미지 비율 수정 */}
+                    <div className="album_cover" style={{ overflow: 'hidden', borderRadius: '8px' }}>
                         <img 
                             src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`} 
                             alt="cover" 
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                            style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'cover', // 핵심: 컨테이너 비율에 맞춰 꽉 채움
+                                display: 'block'
+                            }} 
                         />
                     </div>
+                    
                     <div className="music_info">
-                        <div className="title">{currentTrack?.title || currentTrack?.track?.title || "Unknown Title"}</div>
-                        <div className="artist">{currentTrack?.artist || currentTrack?.track?.artist || "Unknown Artist"}</div>
+                        <div className="title">
+                            {trackData?.title || trackData?.track_name || "Unknown Title"}
+                        </div>
+                        <div className="artist">
+                            {trackData?.artist || trackData?.artist_name || "Unknown Artist"}
+                        </div>
                     </div>
                 </div>
                 <div className="btn_container">
