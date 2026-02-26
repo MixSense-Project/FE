@@ -5,7 +5,6 @@ import Nav from "../../components/Nav";
 import plus_btn from "../../assets/img/library/plus_btn.svg";
 import camera_icon from "../../assets/img/library/camera_icon.svg";
 import Library_myplaylist from "../../components/Library/Library_myplaylist";
-import Library_deletesongs from "../../components/Library/Library_deletesongs";
 import Musicplay from "../../components/Home/Musicplay";
 
 const Library = () => {
@@ -38,46 +37,50 @@ const Library = () => {
   };
 
   const onSave = () => {
-    // 여기서 API 연결/상태 저장
-    // 예) createPlaylist({ name: playlistName, imageFile: fileRef.current.files[0] })
     if (!playlistName.trim()) {
       alert("플레이리스트 이름을 입력해줘.");
       return;
     }
-
+    // API 연결 로직 위치
     closeModal();
   };
 
   return (
     <div className="library_wrap">
       <div className="container">
-        <Header/>
+        <Header />
 
         <div className="scroll_container">
-           <div className="category">
-          <div className="lb_left_btns">
-            <button className="playlist" type="button">
-              <p>Playlist</p>
-            </button>
+          <div className="category">
+            <div className="lb_left_btns">
+              <button className="playlist" type="button">
+                <p>Playlist</p>
+              </button>
 
-            <button className="liked" type="button" onClick={() => navigate("/library/liked")}>
-              <p>Liked Songs</p>
-            </button>
+              <button className="liked" type="button" onClick={() => navigate("/library/liked")}>
+                <p>Liked Songs</p>
+              </button>
+            </div>
+            <div className="lb_right_btn">
+              <button className="plus_btn" type="button" onClick={openModal} aria-label="플레이리스트 추가">
+                <img src={plus_btn} alt="" />
+              </button>
+            </div>
           </div>
-          <div className="lb_right_btn">
-            <button className="plus_btn" type="button" onClick={openModal} aria-label="플레이리스트 추가">
-              <img src={plus_btn} alt="" />
-            </button>
-          </div>
-        </div>
-        <Library_myplaylist />
-        <Library_myplaylist />
-        <Library_myplaylist />
+          
+          <Library_myplaylist />
+          <Library_myplaylist />
+          <Library_myplaylist />
         </div>
       </div>
 
+      {/* 하단 음악 플레이어 추가 */}
+      <Musicplay />
+      
+      {/* 내비게이션 바 */}
       <Nav />
 
+      {/* 모달 렌더링 - 괄호와 조건문 구조 확인 */}
       {isModalOpen && (
         <div className="pl_modal_overlay" onClick={closeModal} role="presentation">
           <div
@@ -97,7 +100,7 @@ const Library = () => {
             </div>
 
             <div className="pl_modal_body">
-              <div className="pl_cover" onClick={onPickImage} role="button" tabIndex={0}>
+              <div className="pl_cover" onClick={onPickImage} role="button" tabIndex={0} onKeyDown={(e) => e.key === 'Enter' && onPickImage()}>
                 {imagePreview ? (
                   <img className="pl_cover_preview" src={imagePreview} alt="선택한 이미지 미리보기" />
                 ) : (
@@ -113,6 +116,7 @@ const Library = () => {
                 accept="image/*"
                 onChange={onFileChange}
                 className="pl_file_input"
+                style={{ display: "none" }} // 화면에서 숨김 처리
               />
 
               <div className="pl_name">
@@ -133,5 +137,3 @@ const Library = () => {
 };
 
 export default Library;
-
-
