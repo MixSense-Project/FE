@@ -135,7 +135,7 @@ const Home_search = () => {
                   />
                 ))
               ) : (
-                <p style={{textAlign:'center', color:'#888', marginTop:'40px'}}>기록 없음</p>
+                <p style={{textAlign:'center', color:'#888', marginTop:'40px'}}></p>
               )}
             </>
           ) : (

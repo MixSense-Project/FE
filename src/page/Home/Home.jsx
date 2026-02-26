@@ -78,19 +78,14 @@ const Home = () => {
                 <div className="track_page" key={pageIndex}>
                   {recommendTracks.length > 0 ? (
                     recommendTracks.slice(pageIndex * 9, (pageIndex + 1) * 9).map((item, i) => {
-                      // 유튜브 ID 추출 (스크린샷 기준 item 바로 아래에 존재)
-                      const videoId = item.youtube_video_id;
-                      
                       return (
                         <Track 
                           key={item.track_id || i} 
-                          // 고화질(hqdefault) 썸네일 URL 생성
-                          img={videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null} 
+                          img={item.track_image_url} 
                         />
                       );
                     })
                   ) : (
-                    // 데이터가 없을 때 보여줄 빈 슬롯
                     Array.from({ length: 9 }).map((_, i) => <Track key={i} />)
                   )}
                 </div>
