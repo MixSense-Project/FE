@@ -1,104 +1,86 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { Link } from 'react-router-dom'
-import axios from 'axios'
-import Nav from '../../components/Nav'
-import searchicon from '../../assets/img/nav/search_g.svg'
-import Musicplay from '../../components/Home/Musicplay'
-import Searchedlist from '../../components/Home/Searchedlist'
-import Searchlist from '../../components/Home/Searchlist'
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { useMusic } from '../../context/MusicContext'; 
+import searchicon from '../../assets/img/nav/search_g.svg';
+import Searchedlist from '../../components/Home/Searchedlist';
+import Searchlist from '../../components/Home/Searchlist';
+import Nav from '../../components/Nav';
 
 const Home_search = () => {
+  const { setCurrentTrack } = useMusic(); 
   const [keyword, setKeyword] = useState("");
   const [results, setResults] = useState([]);
   const [history, setHistory] = useState([]); 
-  const [loading, setLoading] = useState(false);
 
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const token = localStorage.getItem('access_token');
 
-  // 히스토리 가져오기
   const fetchHistory = useCallback(async () => {
     try {
       const response = await axios.get(`${BASE_URL}/api/search/history`, {
         params: { limit: 10 },
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "ngrok-skip-browser-warning": "69420"
-        }
-      });
-      const data = response.data.history || [];
-      setHistory(data);
-      console.log("📡 히스토리 데이터 로드 완료:", data.length);
-    } catch (error) {
-      console.error("히스토리 로드 실패:", error);
-    }
-  }, [BASE_URL, token]);
-
-  useEffect(() => {
-    fetchHistory();
-  }, [fetchHistory]);
-
-  // 검색 결과 클릭 시 히스토리 저장 및 화면 전환
-  const handleTrackClick = async (e, track) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-
-    if (!track) return;
-    const titleToSave = track.title || track.keyword;
-
-    try {
-      console.log("🛠️ [1/3] 서버 저장 시작:", titleToSave);
-
-      const res = await axios.post(`${BASE_URL}/api/search/history`, 
-        { keyword: titleToSave }, 
-        { headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" } }
-      );
-
-      if (res.status === 201 || res.status === 200) {
-        console.log("✅ [2/3] 서버 저장 완료");
-        await fetchHistory(); 
-        console.log("🚀 [3/3] 검색창 초기화");
-        setKeyword(""); 
-      }
-    } catch (error) {
-      console.error("❌ 저장 오류:", error);
-    }
-  };
-
-  // 검색 API 호출
-  const fetchSearch = async (query) => {
-    if (!query.trim()) {
-      setResults([]);
-      return;
-    }
-    try {
-      setLoading(true);
-      const response = await axios.get(`${BASE_URL}/api/search`, {
-        params: { query: query, limit: 15 },
         headers: { "Authorization": `Bearer ${token}`, "ngrok-skip-browser-warning": "69420" }
       });
+      setHistory(response.data.history || []);
+    } catch (error) { console.error("히스토리 로딩 실패:", error); }
+  }, [BASE_URL, token]);
+
+  useEffect(() => { if(token) fetchHistory(); }, [fetchHistory, token]);
+
+  // 검색 실행 및 결과 로그 확인
+  const fetchSearch = async (query) => {
+    if (!query.trim()) { setResults([]); return; }
+    try {
+      const response = await axios.get(`${BASE_URL}/api/search`, {
+        params: { query, limit: 15 },
+        headers: { "Authorization": `Bearer ${token}`, "ngrok-skip-browser-warning": "69420" }
+      });
+      console.log("🔍 [Search API 결과]:", response.data);
       setResults(response.data.results || response.data);
-    } catch (error) {
-      console.error("검색 에러:", error);
-    } finally {
-      setLoading(false);
-    }
+    } catch (error) { console.error("검색 실패:", error); }
   };
 
-  // 개별 히스토리 삭제 로직
+  // 리스트 클릭 시 실행되는 핵심 함수
+  const handleTrackClick = async (e, track) => {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    
+    // 1. 클릭한 원본 데이터 구조 파악 (가장 중요)
+    console.log("🖱️ [클릭한 트랙 원본 데이터]:", track);
+
+    if (!track) return;
+
+    // 2. 데이터 정규화 (videoId를 강제로 추출)
+    const normalizedTrack = {
+      ...track,
+      // API 응답 키값이 다를 경우를 대비해 가능한 모든 경로를 적어줍니다.
+      youtube_video_id: track.youtube_video_id || track.track?.youtube_video_id || track.video_id || track.id,
+      title: track.title || track.track?.title || track.keyword || "Unknown Title",
+      artist: track.artist || track.track?.artist || "Unknown Artist"
+    };
+
+    console.log("✨ [정규화된 트랙 데이터]:", normalizedTrack);
+
+    // 3. 전역 상태 업데이트
+    setCurrentTrack(normalizedTrack); 
+
+    // 4. 히스토리 저장
+    try {
+      await axios.post(`${BASE_URL}/api/search/history`, 
+        { keyword: normalizedTrack.title }, 
+        { headers: { "Authorization": `Bearer ${token}` } }
+      );
+      fetchHistory();
+    } catch (error) { console.error("히스토리 저장 실패", error); }
+  };
+
   const handleDeleteHistory = async (id) => {
     try {
-      console.log(`🗑️ 삭제 요청 ID: ${id}`);
       await axios.delete(`${BASE_URL}/api/search/history/${id}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
-      // 삭제 후 목록 새로고침
       fetchHistory();
-    } catch (error) {
-      console.error("❌ 삭제 실패:", error);
-    }
+    } catch (error) { console.error(error); }
   };
 
   return (
@@ -117,48 +99,33 @@ const Home_search = () => {
               }}
             />
           </div>
-          <Link to='/home'>
-            <p onClick={() => { setKeyword(""); fetchHistory(); }}>취소</p>
-          </Link>
+          <Link to='/home'><p>취소</p></Link>
         </div>
 
         <div className="scroll_container">
           {keyword === "" ? (
-            <>
-              <p className='history'>History</p>
-              {history.length > 0 ? (
-                history.map((item) => (
-                  <Searchedlist 
-                    key={item.search_history_id} 
-                    data={item} 
-                    onDelete={handleDeleteHistory} 
-                  />
-                ))
-              ) : (
-                <p style={{textAlign:'center', color:'#888', marginTop:'40px'}}>기록 없음</p>
-              )}
-            </>
+            history.map((item) => (
+              <Searchedlist 
+                key={item.search_history_id} 
+                data={item} 
+                onClick={(e) => handleTrackClick(e, item)} 
+                onDelete={handleDeleteHistory}
+              />
+            ))
           ) : (
-            <div className="search_results">
-              {loading ? (
-                <p style={{textAlign:'center', marginTop:'20px'}}>Searching...</p>
-              ) : (
-                results.map((item) => (
-                  <Searchlist 
-                    key={item.track_id || item.id} 
-                    data={item} 
-                    onClick={(e, data) => handleTrackClick(e, data)} 
-                  />
-                ))
-              )}
-            </div>
+            results.map((item, idx) => (
+              <Searchlist 
+                key={item.track_id || idx} 
+                data={item} 
+                onPlay={(e) => handleTrackClick(e, item)} 
+              />
+            ))
           )}
         </div>
-        <Musicplay />
       </div>
       <Nav />
     </div>
-  )
-}
+  );
+};
 
 export default Home_search;

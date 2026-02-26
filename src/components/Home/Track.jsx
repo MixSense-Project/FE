@@ -2,20 +2,20 @@ import React from 'react';
 
 const Track = ({ img }) => {
   return (
-    <div 
-      id="Track_Wrap">
+    <div id="Track_Wrap">
       {img ? (
         <img 
           src={img} 
-          alt="album thumbnail" 
+          alt="track thumbnail" 
           style={{ 
             width: '100%', 
             height: '100%', 
-            objectFit: 'cover' 
+            objectFit: 'cover', 
+            borderRadius: 3.21,
           }} 
           onError={(e) => {
             console.log("이미지 로드 실패:", e.target.src);
-            e.target.style.display = 'none'; 
+            e.target.style.backgroundColor = '#333';
           }} 
         />
       ) : (
@@ -27,8 +27,7 @@ const Track = ({ img }) => {
             display: 'flex', 
             justifyContent: 'center', 
             alignItems: 'center',
-            fontSize: '10px',
-            color: '#555'
+            backgroundColor: '#222'
           }}
         >
         </div>
