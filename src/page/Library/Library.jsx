@@ -261,15 +261,19 @@ const Library = () => {
             playlists.map((pl) => (
               <Library_myplaylist
                 key={pl.id}
+                id={pl.id}
                 title={pl.title}
                 coverUrl={pl.coverUrl}
-                onClick={() => navigate(`/library/playlist?id=${pl.id}`)}
-                 onEdit={() => openEditModal(pl)}   
+                onClick={() =>
+                  navigate(`/library/playlist?id=${pl.id}`, {
+                    state: { id: pl.id, title: pl.title, coverUrl: pl.coverUrl },
+                  })
+                }
+                onEdit={() => openEditModal(pl)}
                 onDelete={() => handleDeletePlaylist(pl.id)}
               />
             ))}
 
-          <Musicplay />
         </div>
       </div>
 
