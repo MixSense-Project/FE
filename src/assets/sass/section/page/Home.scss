@@ -358,10 +358,9 @@
 //Musicplay.jsx
 #Musicplay_Wrap{
     position: absolute;
-    bottom: 1vh;
-    left: calc(50% - 180px);
-    box-sizing: border-box;
-    z-index: 10000;
+    bottom: 185px; 
+    left: 50%;
+    transform: translateX(-50%);
 
     width: 361px;
     height: 60px;

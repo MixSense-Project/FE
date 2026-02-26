@@ -73,10 +73,7 @@ const Library = () => {
         <Library_myplaylist />
         <Library_myplaylist />
         <Library_myplaylist />
-        
-        <Musicplay />
         </div>
-
       </div>
 
       <Nav />
