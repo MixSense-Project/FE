@@ -73,7 +73,7 @@ const Music_songplay = () => {
                         <img 
                             src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`} 
                             alt="cover" 
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '20px' }} 
+                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }} 
                         />
                     </div>
                     
