@@ -11,8 +11,14 @@ import music_play from '../../assets/img/home/music_play.svg';
 import music_stop from '../../assets/img/home/music_stop.svg';
 import next_btn from "../../assets/img/Music/next.svg";
 import lyrics_btn from "../../assets/img/Music/lyrics.svg";
+import Popup from '../Music/Popup'
 
 const Music_songplay = () => {
+    
+    //popup
+    const [isPopupOpen, setIsPopupOpen] = useState(false)
+
+
     const navigate = useNavigate();
     const { currentTrack, isPlay, player } = useMusic(); 
     
@@ -64,7 +70,8 @@ const Music_songplay = () => {
                             <img src={back_btn} alt="back" />
                         </button>
                         <h1 className="title">Music</h1>
-                        <button className="edit_btn"><img src={edit_btn} alt="edit" /></button>
+                        <button className="edit_btn" onClick={()=>setIsPopupOpen(true)}
+                        ><img src={edit_btn} alt="edit" /></button>
                     </div>
                 </div>
 
@@ -118,6 +125,7 @@ const Music_songplay = () => {
                         <img src={lyrics_btn} alt="lyrics" />
                     </button>
                 </div>
+                {isPopupOpen && <Popup onClose={()=>setIsPopupOpen(false)}/>}
             </div>
         </div>
     );
