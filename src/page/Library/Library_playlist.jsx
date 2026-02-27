@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Nav from "../../components/Nav";
 import play_btn from "../../assets/img/library/play_btn.svg";
@@ -6,14 +6,16 @@ import random_btn from "../../assets/img/library/random_btn.svg";
 import plus_btn from "../../assets/img/library/plus_btn.svg";
 import Library_deletesongs from "../../components/Library/Library_deletesongs";
 import SubHeader from "../../components/SubHeader";
-import { fetchMyPlaylists } from "../../api/playlists";
+import {
+  fetchMyPlaylists,
+  fetchPlaylistTracks,
+  removeTrackFromPlaylist,
+} from "../../api/playlists";
 
 const Library_playlist = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // username은 로그인 응답에서 따로 저장해두면 제일 좋고(아래 참고),
-  // 없으면 email을 대신 보여주게 fallback
   const username = useMemo(() => {
     return (
       localStorage.getItem("username") ||
@@ -22,12 +24,10 @@ const Library_playlist = () => {
     );
   }, []);
 
-  // ✅ 1) state로 받은 값(즉시 표시용)
   const statePl = location.state || null;
-
-  // ✅ 2) querystring의 id (새로고침 대비)
   const params = new URLSearchParams(location.search);
   const playlistIdFromQs = params.get("id");
+  const pid = statePl?.id || playlistIdFromQs || null;
 
   const [pl, setPl] = useState(() => {
     if (statePl?.id) return statePl;
@@ -35,17 +35,34 @@ const Library_playlist = () => {
     return null;
   });
 
-  // ✅ 3) 최신 데이터로 보강(새로고침/직접접속도 OK)
+  const [tracks, setTracks] = useState([]);
+  const [loadingTracks, setLoadingTracks] = useState(false);
+
+  const onGoAdd = useCallback(() => {
+    const playlistId = pl?.id || pid;
+    if (!playlistId) return;
+
+    navigate("/library/add/playlist", {
+      state: {
+        playlistId,
+        playlistTitle: pl?.title || "myplaylist",
+      },
+    });
+  }, [navigate, pl?.id, pl?.title, pid]);
+
   useEffect(() => {
-    const pid = statePl?.id || playlistIdFromQs;
     if (!pid) return;
 
     (async () => {
       try {
         const data = await fetchMyPlaylists();
-        const items = Array.isArray(data) ? data : data?.playlists || data?.items || [];
+        const items = Array.isArray(data)
+          ? data
+          : data?.playlists || data?.items || [];
 
-        const found = items.find((p) => (p.id ?? p.playlist_id ?? p.playlistId) === pid);
+        const found = items.find(
+          (p) => (p.id ?? p.playlist_id ?? p.playlistId) === pid
+        );
 
         if (found) {
           setPl({
@@ -58,18 +75,74 @@ const Library_playlist = () => {
         console.error("[Library_playlist] fetch playlist detail failed:", e);
       }
     })();
-  }, [statePl?.id, playlistIdFromQs]);
+  }, [pid]);
 
-  const onGoAdd = () => {
-    if (!pl?.id) return;
+  const loadTracks = useCallback(async () => {
+    if (!pid) return;
 
-    // ✅ add 페이지에서 헤더에 타이틀 보여주려고 같이 넘김
-    navigate("/library/add/playlist", {
-      state: {
-        playlistId: pl.id,
-        playlistTitle: pl.title || "myplaylist",
-      },
-    });
+    setLoadingTracks(true);
+    try {
+      const data = await fetchPlaylistTracks(pid);
+
+      const raw = Array.isArray(data)
+        ? data
+        : (data?.playlist_tracks ||
+            data?.tracks ||
+            data?.items ||
+            data?.results ||
+            []);
+
+      const normalized = (Array.isArray(raw) ? raw : []).map((pt) => {
+        const t = pt?.track || {};
+        return {
+          playlist_track_id: pt?.playlist_track_id,
+          playlist_id: pt?.playlist_id,
+          track_id: pt?.track_id || t?.track_id,
+          added_at: pt?.added_at,
+
+          title: t?.title,
+          artist: t?.artist,
+          track_image_url: t?.track_image_url,
+          youtube_video_id: t?.youtube_video_id,
+
+          track: t,
+        };
+      });
+
+      const seen = new Set();
+      const unique = [];
+      for (const x of normalized) {
+        if (!x?.track_id) continue;
+        if (seen.has(x.track_id)) continue;
+        seen.add(x.track_id);
+        unique.push(x);
+      }
+
+      setTracks(unique);
+      console.log("[Playlist Tracks unique]", unique);
+    } catch (e) {
+      console.error("[Library_playlist] fetch tracks failed:", e);
+      setTracks([]);
+    } finally {
+      setLoadingTracks(false);
+    }
+  }, [pid]);
+
+  useEffect(() => {
+    loadTracks();
+  }, [loadTracks]);
+
+  const handleDeleteTrack = async (track) => {
+    const trackId = track?.track_id;
+    if (!pid || !trackId) return;
+
+    try {
+      await removeTrackFromPlaylist({ playlistId: pid, trackId });
+      await loadTracks(); 
+    } catch (e) {
+      console.error("[removeTrackFromPlaylist] failed:", e);
+      alert(e?.message || "삭제에 실패했어.");
+    }
   };
 
   return (
@@ -110,8 +183,25 @@ const Library_playlist = () => {
           </div>
         </div>
 
-        <Library_deletesongs />
-        <Library_deletesongs />
+        {loadingTracks ? (
+          <p style={{ padding: 16, opacity: 0.8 }}>곡 목록 불러오는 중...</p>
+        ) : tracks.length === 0 ? (
+          <p style={{ padding: 16, opacity: 0.8 }}>
+            아직 추가된 곡이 없어. + 버튼으로 곡을 추가해줘.
+          </p>
+        ) : (
+          tracks.map((t, idx) => (
+            <Library_deletesongs
+              key={t?.track_id || idx}
+              data={t}
+              onDelete={handleDeleteTrack}
+            />
+          ))
+        )}
+
+        <button type="button" onClick={loadTracks} style={{ margin: 16 }}>
+          새로고침
+        </button>
       </div>
 
       <Nav />

@@ -5,7 +5,6 @@ import Nav from "../../components/Nav";
 import plus_btn from "../../assets/img/library/plus_btn.svg";
 import camera_icon from "../../assets/img/library/camera_icon.svg";
 import Library_myplaylist from "../../components/Library/Library_myplaylist";
-import Musicplay from "../../components/Home/Musicplay";
 import {
   createPlaylist,
   fetchMyPlaylists,
@@ -42,7 +41,7 @@ const makeSafeCoverName = (playlistId, file) => {
 const Library = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
+const [coverFile, setCoverFile] = useState(null);
   const isLikedPage = location.pathname === "/library/liked";
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -156,12 +155,18 @@ const Library = () => {
     if (!ok) {
       alert("이미지는 jpg/jpeg/png/webp만 가능해. (heic 등은 안 돼)");
       e.target.value = "";
+      setCoverFile(null);
       setImagePreview("");
       return;
     }
 
+    setCoverFile(file);
+
     const url = URL.createObjectURL(file);
-    setImagePreview(url);
+    setImagePreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return url;
+    });
   };
 
   const onSave = async () => {
@@ -177,7 +182,6 @@ const Library = () => {
         if (!editingId) throw new Error("editingId가 없어. 수정할 플레이리스트를 찾지 못했어.");
 
         await updatePlaylistTitle({ playlistId: editingId, title });
-        console.log("[Playlists] update title success:", { editingId, title });
 
         setPlaylists((prev) =>
           prev.map((p) => (p.id === editingId ? { ...p, title } : p))
@@ -188,28 +192,26 @@ const Library = () => {
       }
 
       const created = await createPlaylist({ title });
-      console.log("[Playlists] createPlaylist response:", created);
-
       const playlistId = pickPlaylistId(created);
-      console.log("[Playlists] extracted playlistId:", playlistId);
 
       if (!playlistId) {
-        throw new Error(
-          "createPlaylist 응답에서 playlistId를 찾지 못했어. (created.playlist.id / playlist_id / playlistId 중 하나가 필요해)"
-        );
+        throw new Error("createPlaylist 응답에서 playlistId를 찾지 못했어.");
       }
 
-      const file = fileRef.current?.files?.[0];
-      if (file) {
-        const safeName = makeSafeCoverName(playlistId, file);
+      if (coverFile) {
+        const safeName = makeSafeCoverName(playlistId, coverFile);
 
+        const safeContentType = ALLOWED_MIME.includes(coverFile.type)
+          ? coverFile.type
+          : "image/png";
+        console.log("[CoverUpload] request", { playlistId, safeName, safeContentType });
         const { signed_url, storage_path } = await getPlaylistCoverUploadUrl({
           playlistId,
           filename: safeName,
-          contentType: file.type,
+          contentType: safeContentType,
         });
 
-        await uploadFileToSignedUrl({ signedUrl: signed_url, file });
+        await uploadFileToSignedUrl({ signedUrl: signed_url, file: coverFile });
         await setPlaylistCoverPath({ playlistId, coverPath: storage_path });
       }
 
