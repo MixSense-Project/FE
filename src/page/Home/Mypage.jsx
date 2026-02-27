@@ -1,6 +1,3 @@
-// Mypage.jsx (완성본: GET /profile/by_user -> display_name 세팅,
-// PATCH /profile/edit_profile -> display_name 저장, ngrok 헤더 포함)
-
 import React, { useEffect, useRef, useState } from "react";
 import SubHeader from "../../components/SubHeader";
 import edit_btn from "../../assets/img/home/edit_btn.svg";
@@ -19,8 +16,8 @@ const Mypage = () => {
   const fileRef = useRef(null);
 
   const [profile, setProfile] = useState(null);
-  const [displayName, setDisplayName] = useState(""); // ✅ 닉네임(input)
-  const [originalDisplayName, setOriginalDisplayName] = useState(""); // ✅ PATCH original_name 용
+  const [displayName, setDisplayName] = useState(""); 
+  const [originalDisplayName, setOriginalDisplayName] = useState(""); 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -34,8 +31,62 @@ const Mypage = () => {
     const url = URL.createObjectURL(file);
     setImagePreview(url);
   };
+  const getUnsubscribeToken = () => {
+    const supabaseAccess = localStorage.getItem("access_token");
+    if (supabaseAccess) return supabaseAccess;
 
-  // ✅ 1) 로그인 유저 프로필 불러오기
+    const backendAccess = localStorage.getItem("accessToken");
+    if (backendAccess) return backendAccess;
+
+    return "";
+  };
+
+  const clearAuthStorage = () => {
+    [
+      "accessToken",
+      "access_token",
+      "refresh_token",
+      "email",
+      "username",
+      "user_id",
+      "profile_id",
+      "pref_selected_artists",
+      "pref_selected_genres",
+    ].forEach((k) => localStorage.removeItem(k));
+  };
+
+  const onUnsubscribe = async () => {
+    const ok = confirm("정말 회원탈퇴 하시겠어요? 탈퇴 후 복구할 수 없습니다.");
+    if (!ok) return;
+
+    const token = getUnsubscribeToken();
+    if (!token) {
+      alert("로그인 토큰이 없습니다. 다시 로그인 후 시도해 주세요.");
+      return;
+    }
+
+    try {
+      await api.delete("/auth/unsubscribe", {
+        headers: {
+          ...NGROK_HEADERS,
+          authorization: `Bearer ${token}`, 
+        },
+      });
+
+      alert("회원탈퇴가 완료되었습니다.");
+      clearAuthStorage();
+
+      window.location.href = "/";
+    } catch (err) {
+      console.error("[Mypage] unsubscribe failed:", err);
+      const status = err?.response?.status;
+      const detail = err?.response?.data?.detail;
+
+      if (status === 401) alert("로그인이 만료되었습니다. 다시 로그인해 주세요.");
+      else alert(detail ? String(detail) : "회원탈퇴에 실패했습니다.");
+    }
+  };
+
   useEffect(() => {
     let mounted = true;
 
@@ -55,7 +106,6 @@ const Mypage = () => {
 
         const data = res.data;
 
-        // ✅ 너가 준 응답 형태: { profiles: [ { ... } ] }
         const picked =
           (Array.isArray(data?.profiles) && data.profiles[0]) ||
           (Array.isArray(data) && data[0]) ||
@@ -66,7 +116,6 @@ const Mypage = () => {
 
         setProfile(picked || null);
 
-        // ✅ 닉네임: display_name
         const serverDisplayName = picked?.display_name ?? "";
         setDisplayName(serverDisplayName);
         setOriginalDisplayName(serverDisplayName);
@@ -87,7 +136,6 @@ const Mypage = () => {
     };
   }, []);
 
-  // ✅ 2) 닉네임 저장
   const onSaveDisplayName = async () => {
     if (!profile) {
       alert("프로필 정보를 먼저 불러와야 합니다.");
@@ -116,7 +164,6 @@ const Mypage = () => {
         user_id: String(userId),
         original_name: String(originalDisplayName || ""),
         updated: {
-          // ✅ display_name으로 저장
           display_name: trimmed,
         },
       };
@@ -131,7 +178,6 @@ const Mypage = () => {
         return;
       }
 
-      // ✅ 성공 시 UI 반영
       setOriginalDisplayName(trimmed);
       setProfile((prev) => (prev ? { ...prev, display_name: trimmed } : prev));
       alert("닉네임이 저장되었습니다.");
@@ -157,6 +203,39 @@ const Mypage = () => {
     if (e.key === "Enter") {
       e.preventDefault();
       onSaveDisplayName();
+    }
+  };
+  const onLogout = async () => {
+    const token = getUnsubscribeToken();
+    if (!token) {
+      clearAuthStorage();
+      window.location.href = "/";
+      return;
+    }
+
+    try {
+      await api.post(
+        "/auth/logout",
+        null, 
+        {
+          headers: {
+            ...NGROK_HEADERS,
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert("로그아웃 되었습니다.");
+    } catch (err) {
+      console.error("[Mypage] logout failed:", err);
+
+      const status = err?.response?.status;
+      if (status === 401) {
+      } else {
+      }
+    } finally {
+      clearAuthStorage();
+      window.location.href = "/";
     }
   };
 
@@ -206,8 +285,12 @@ const Mypage = () => {
         </div>
 
         <div className="btn">
-          <button className="logout">Logout</button>
-          <button className="logout">Unsubscribe</button>
+          <button className="logout" type="button" onClick={onLogout}>
+            Logout
+          </button>
+          <button className="logout" type="button" onClick={onUnsubscribe}>
+            Unsubscribe
+          </button>
         </div>
 
         <div className="area" />
