@@ -273,7 +273,6 @@ const Library = () => {
                 onDelete={() => handleDeletePlaylist(pl.id)}
               />
             ))}
-
         </div>
       </div>
 
