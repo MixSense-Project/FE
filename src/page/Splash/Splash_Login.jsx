@@ -31,42 +31,58 @@ const Splash_Login = () => {
   }, [form]);
 
   const onSubmit = async (e) => {
-  e.preventDefault();
-  if (!isEnabled) return;
+    e.preventDefault();
+    if (!isEnabled) return;
 
-  try {
-    setLoading(true);
-    setMsg("");
+    try {
+      setLoading(true);
+      setMsg("");
 
-    const res = await login({
-      email: form.email.trim(),
-      password: form.password.trim(),
-    });
+      const res = await login({
+        email: form.email.trim(),
+        password: form.password.trim(),
+      });
 
-    if (res.session && res.session.access_token) {
-      // 토큰 저장
-      localStorage.setItem("access_token", res.session.access_token);
+      if (res.session && res.session.access_token) {
+        // ✅ 토큰 저장
+        localStorage.setItem("access_token", res.session.access_token);
 
-      // refresh token도 있다면 같이 저장
-      if (res.session.refresh_token) {
-        localStorage.setItem("refresh_token", res.session.refresh_token);
+        if (res.session.refresh_token) {
+          localStorage.setItem("refresh_token", res.session.refresh_token);
+        }
+
+        // ✅ 유저네임/이메일 저장 (추가)
+        const usernameFromRes =
+          res?.session?.user?.user_metadata?.username ||
+          res?.session?.user?.user_metadata?.display_name ||
+          ""; // 없으면 빈 문자열
+
+        const emailFromRes =
+          res?.session?.user?.email ||
+          res?.session?.user?.user_metadata?.email ||
+          form.email.trim(); // fallback
+
+        // localStorage에 저장 (플레이리스트 화면에서 사용)
+        if (usernameFromRes) localStorage.setItem("username", usernameFromRes);
+        if (emailFromRes) localStorage.setItem("email", emailFromRes);
+
+        // (선택) userId도 저장해두면 나중에 유용함
+        const userId = res?.session?.user?.id;
+        if (userId) localStorage.setItem("user_id", userId);
+
+        navigate("/preference_genre", { replace: true });
       }
-
-      // 로그인 성공 후 홈으로 이동
-      navigate("/preference_genre", { replace: true });
+    } catch (err) {
+      const apiMsg =
+        err?.response?.data?.detail?.[0]?.msg ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "로그인 실패";
+      setMsg(apiMsg);
+    } finally {
+      setLoading(false);
     }
-
-  } catch (err) {
-    const apiMsg =
-      err?.response?.data?.detail?.[0]?.msg ||
-      err?.response?.data?.message ||
-      err?.message ||
-      "로그인 실패";
-    setMsg(apiMsg);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="splash_login_wrap">

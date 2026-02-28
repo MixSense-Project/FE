@@ -1,3 +1,5 @@
+import { api } from "./client";
+
 function authHeader() {
   const token = localStorage.getItem("access_token");
   return token ? `Bearer ${token}` : "";
@@ -61,6 +63,8 @@ export async function fetchMyPlaylists() {
 }
 
 export async function getPlaylistCoverUploadUrl({ playlistId, filename, contentType }) {
+  const safeContentType = contentType || "application/octet-stream";
+
   const res = await fetch(`${BASE}/playlists/${playlistId}/cover/upload-url`, {
     method: "POST",
     headers: {
@@ -68,7 +72,13 @@ export async function getPlaylistCoverUploadUrl({ playlistId, filename, contentT
       Authorization: authHeader(),
       "ngrok-skip-browser-warning": "true",
     },
-    body: JSON.stringify({ filename, content_type: contentType }),
+    body: JSON.stringify({
+      filename,
+      // ✅ 백엔드 구현 차이 흡수: 둘 다 보냄
+      content_type: safeContentType,
+      contentType: safeContentType,
+      mime_type: safeContentType,
+    }),
   });
 
   const data = await readJson(res);
@@ -131,5 +141,68 @@ export async function updatePlaylistTitle({ playlistId, title }) {
 
   const data = await readJson(res);
   if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
-  return data; 
+  return data;
+}
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+export async function addTrackToPlaylist({ playlistId, track }) {
+  const res = await fetch(`/api/playlists/${playlistId}/tracks`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: authHeader(),
+      "ngrok-skip-browser-warning": "true",
+    },
+    body: JSON.stringify({
+      track_id: String(track.track_id),
+      title: track.title ?? null,
+      artist: track.artist ?? null,
+      track_image_url: track.track_image_url ?? null,
+      youtube_video_id: track.youtube_video_id ?? null,
+    }),
+  });
+
+  const text = await res.text().catch(() => "");
+  console.log("[addTrackToPlaylist] status:", res.status);
+  console.log("[addTrackToPlaylist] body:", text);
+
+  let data;
+  try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+
+  if (!res.ok) throw new Error(data?.detail || text || `HTTP ${res.status}`);
+  return data;
+}
+
+export async function fetchPlaylistTracks(playlistId) {
+  if (!playlistId) throw new Error("playlistId is required");
+
+  const res = await fetch(`/api/playlists/${playlistId}/tracks`, {
+    method: "GET",
+    headers: {
+      Authorization: authHeader(),
+      "ngrok-skip-browser-warning": "true",
+    },
+  });
+
+  const data = await readJson(res);
+  if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
+  return data;
+}
+
+// ✅ DELETE /api/playlists/{playlist_id}/tracks/{track_id}
+export async function removeTrackFromPlaylist({ playlistId, trackId }) {
+  if (!playlistId) throw new Error("playlistId is required");
+  if (!trackId) throw new Error("trackId is required");
+
+  const res = await fetch(`${BASE}/playlists/${playlistId}/tracks/${trackId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: authHeader(),
+      "ngrok-skip-browser-warning": "true",
+    },
+  });
+
+  const data = await readJson(res);
+  if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
+  return data;
 }
