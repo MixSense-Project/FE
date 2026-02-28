@@ -56,14 +56,14 @@ const Home = () => {
       <div className="container">
         <Header />
         <div className="scroll_container">
-          <div className="banner"><img src={banner_img} alt="banner" /></div>
-          
+          <Link to='/ai_dj'>
+            <div className="banner"><img src={banner_img} alt="banner" /></div>
+          </Link>
           <div className="Recommend_track">
             <div className="text">Recommend Track</div>
             <div className="track_container" ref={scrollRef} onScroll={handleScroll}>
               {[0, 1].map((pageIndex) => (
                 <div className="track_page" key={pageIndex}>
-                  {/* 데이터가 있을 때와 로딩 중일 때 구분 로직 복구 */}
                   {recommendTracks.length > 0 ? (
                     recommendTracks.slice(pageIndex * 9, (pageIndex + 1) * 9).map((item, i) => {
                       const videoId = item.youtube_video_id || item.track?.youtube_video_id;
