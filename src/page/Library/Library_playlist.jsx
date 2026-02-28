@@ -6,6 +6,8 @@ import random_btn from "../../assets/img/library/random_btn.svg";
 import plus_btn from "../../assets/img/library/plus_btn.svg";
 import Library_deletesongs from "../../components/Library/Library_deletesongs";
 import SubHeader from "../../components/SubHeader";
+import { useMusic } from "../../context/MusicContext";
+
 import {
   fetchMyPlaylists,
   fetchPlaylistTracks,
@@ -15,6 +17,8 @@ import {
 const Library_playlist = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { setCurrentTrack } = useMusic();
 
   const username = useMemo(() => {
     return (
@@ -38,6 +42,23 @@ const Library_playlist = () => {
   const [tracks, setTracks] = useState([]);
   const [loadingTracks, setLoadingTracks] = useState(false);
 
+  const handleSelectTrack = useCallback(
+    (trackRow) => {
+      const videoId =
+        trackRow?.youtube_video_id ||
+        trackRow?.track?.youtube_video_id ||
+        trackRow?.video_id;
+
+      if (!videoId) {
+        alert("이 곡은 YouTube 영상이 매핑되지 않아 재생할 수 없어.");
+        return;
+      }
+
+      setCurrentTrack(trackRow);
+    },
+    [setCurrentTrack]
+  );
+
   const onGoAdd = useCallback(() => {
     const playlistId = pl?.id || pid;
     if (!playlistId) return;
@@ -50,35 +71,8 @@ const Library_playlist = () => {
     });
   }, [navigate, pl?.id, pl?.title, pid]);
 
-  useEffect(() => {
-    if (!pid) return;
-
-    (async () => {
-      try {
-        const data = await fetchMyPlaylists();
-        const items = Array.isArray(data)
-          ? data
-          : data?.playlists || data?.items || [];
-
-        const found = items.find(
-          (p) => (p.id ?? p.playlist_id ?? p.playlistId) === pid
-        );
-
-        if (found) {
-          setPl({
-            id: found.id ?? found.playlist_id ?? found.playlistId,
-            title: found.title ?? found.name ?? "Untitled",
-            coverUrl: found.cover_url ?? found.coverUrl ?? found.imageUrl ?? null,
-          });
-        }
-      } catch (e) {
-        console.error("[Library_playlist] fetch playlist detail failed:", e);
-      }
-    })();
-  }, [pid]);
-
   const loadTracks = useCallback(async () => {
-    if (!pid) return;
+    if (!pid) return [];
 
     setLoadingTracks(true);
     try {
@@ -87,10 +81,10 @@ const Library_playlist = () => {
       const raw = Array.isArray(data)
         ? data
         : (data?.playlist_tracks ||
-            data?.tracks ||
-            data?.items ||
-            data?.results ||
-            []);
+          data?.tracks ||
+          data?.items ||
+          data?.results ||
+          []);
 
       const normalized = (Array.isArray(raw) ? raw : []).map((pt) => {
         const t = pt?.track || {};
@@ -120,30 +114,106 @@ const Library_playlist = () => {
 
       setTracks(unique);
       console.log("[Playlist Tracks unique]", unique);
+      return unique;
     } catch (e) {
       console.error("[Library_playlist] fetch tracks failed:", e);
       setTracks([]);
+      return [];
     } finally {
       setLoadingTracks(false);
     }
+  }, [pid]);
+
+  const pickFirstFromList = useCallback((list) => {
+    if (!Array.isArray(list) || list.length === 0) return null;
+
+    const sorted = [...list].sort((a, b) => {
+      const ta = a?.added_at ? new Date(a.added_at).getTime() : 0;
+      const tb = b?.added_at ? new Date(b.added_at).getTime() : 0;
+      return ta - tb;
+    });
+
+    return sorted[0] || null;
+  }, []);
+
+  const handlePlayFirst = useCallback(async () => {
+    let list = tracks;
+
+    if (!list || list.length === 0) {
+      list = await loadTracks();
+    }
+
+    const first = pickFirstFromList(list);
+    if (!first) {
+      alert("플레이리스트에 곡이 없어.");
+      return;
+    }
+
+    handleSelectTrack(first);
+  }, [tracks, loadTracks, pickFirstFromList, handleSelectTrack]);
+  const handlePlayRandom = useCallback(async () => {
+    let list = tracks;
+
+    if (!list || list.length === 0) {
+      list = await loadTracks();
+    }
+
+    if (!list || list.length === 0) {
+      alert("플레이리스트에 곡이 없어.");
+      return;
+    }
+
+    const randomIndex = Math.floor(Math.random() * list.length);
+    const randomTrack = list[randomIndex];
+
+    handleSelectTrack(randomTrack);
+  }, [tracks, loadTracks, handleSelectTrack]);
+  useEffect(() => {
+    if (!pid) return;
+
+    (async () => {
+      try {
+        const data = await fetchMyPlaylists();
+        const items = Array.isArray(data)
+          ? data
+          : data?.playlists || data?.items || [];
+
+        const found = items.find(
+          (p) => (p.id ?? p.playlist_id ?? p.playlistId) === pid
+        );
+
+        if (found) {
+          setPl({
+            id: found.id ?? found.playlist_id ?? found.playlistId,
+            title: found.title ?? found.name ?? "Untitled",
+            coverUrl: found.cover_url ?? found.coverUrl ?? found.imageUrl ?? null,
+          });
+        }
+      } catch (e) {
+        console.error("[Library_playlist] fetch playlist detail failed:", e);
+      }
+    })();
   }, [pid]);
 
   useEffect(() => {
     loadTracks();
   }, [loadTracks]);
 
-  const handleDeleteTrack = async (track) => {
-    const trackId = track?.track_id;
-    if (!pid || !trackId) return;
+  const handleDeleteTrack = useCallback(
+    async (track) => {
+      const trackId = track?.track_id;
+      if (!pid || !trackId) return;
 
-    try {
-      await removeTrackFromPlaylist({ playlistId: pid, trackId });
-      await loadTracks(); 
-    } catch (e) {
-      console.error("[removeTrackFromPlaylist] failed:", e);
-      alert(e?.message || "삭제에 실패했어.");
-    }
-  };
+      try {
+        await removeTrackFromPlaylist({ playlistId: pid, trackId });
+        await loadTracks();
+      } catch (e) {
+        console.error("[removeTrackFromPlaylist] failed:", e);
+        alert(e?.message || "삭제에 실패했어.");
+      }
+    },
+    [pid, loadTracks]
+  );
 
   return (
     <div className="libraryplaylist_wrap">
@@ -168,11 +238,19 @@ const Library_playlist = () => {
             <p className="pl_h_user">{username}</p>
 
             <div className="pl_h_btns">
-              <button className="pl_h_playbtn" type="button">
+              <button
+                className="pl_h_playbtn"
+                type="button"
+                onClick={handlePlayFirst}
+              >
                 <img src={play_btn} alt="" />
               </button>
 
-              <button className="pl_h_randombtn" type="button">
+              <button
+                className="pl_h_randombtn"
+                type="button"
+                onClick={handlePlayRandom}
+              >
                 <img src={random_btn} alt="" />
               </button>
 
@@ -195,6 +273,7 @@ const Library_playlist = () => {
               key={t?.track_id || idx}
               data={t}
               onDelete={handleDeleteTrack}
+              onSelect={handleSelectTrack}
             />
           ))
         )}

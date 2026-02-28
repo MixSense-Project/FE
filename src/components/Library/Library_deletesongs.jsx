@@ -1,9 +1,13 @@
 import React from "react";
 import delete_btn from "../../assets/img/library/cancel_g.svg";
 
-const Library_deletesongs = ({ data, onDelete }) => {
+const Library_deletesongs = ({ data, onDelete, onSelect }) => {
   return (
-    <div className="deletesongs_wrap">
+    <div
+      className="deletesongs_wrap"
+      style={{ cursor: "pointer" }}
+      onClick={() => onSelect?.(data)}    
+    >
       <div className="c_pl_left">
         <div className="c_pl_cover">
           {data?.track_image_url ? (
@@ -23,9 +27,8 @@ const Library_deletesongs = ({ data, onDelete }) => {
 
       <div
         className="delete"
-        onMouseDown={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
+        onClick={(e) => {                 
+          e.stopPropagation();            
           onDelete?.(data);
         }}
         style={{ cursor: "pointer" }}
