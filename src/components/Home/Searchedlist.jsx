@@ -20,7 +20,6 @@ const Searchedlist = ({ data, onDelete, onClick }) => {
           }}
         ></div>
         <div className="music_info">
-          {/* 히스토리는 keyword가 우선, 없으면 title 표시 */}
           <div className="title">{data.keyword || data.track?.title || data.title}</div>
           <div className="artist">{data.track?.artist || data.artist || "artists"}</div>
         </div>
@@ -29,7 +28,7 @@ const Searchedlist = ({ data, onDelete, onClick }) => {
         <button 
           className="del_btn" 
           onClick={(e) => {
-            e.stopPropagation(); // 재생 방지
+            e.stopPropagation(); 
             onDelete(data.search_history_id);
           }}
         >

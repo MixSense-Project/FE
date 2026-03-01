@@ -4,6 +4,7 @@ import { MusicProvider } from "./context/MusicContext";
 
 // 공통 컴포넌트
 import Musicplay from "./components/Home/Musicplay";
+import YouTubePlayer from "./components/YouTubePlayer";
 import Nav from "./components/Nav";
 
 // 페이지 컴포넌트 임포트
@@ -41,7 +42,7 @@ import Preference_artist_search from "./page/Preference/Preference_artist_search
 function App() {
   const location = useLocation();
 
-  // MuiscPlay 컴포넌트 숨길 페이지
+  // MusicPlay 컴포넌트 숨길 페이지 (하단 바 UI만 숨김)
   const hideBottomBar = [
     "/", 
     "/splash_account", 
@@ -52,11 +53,18 @@ function App() {
     "/preference_artist",
     "/preference_artist_search",
     "/ai_search",
+    "/music/songplay", // 상세 페이지에서는 하단 바를 숨김 (상세 UI가 있으므로)
+    "/music/songlyrics"
   ].includes(location.pathname);
 
   return (
     <MusicProvider>
       <div className="app_container">
+        {/* [중요] YouTubePlayer는 Routes 밖에 위치합니다. 
+            페이지가 바뀌어도 이 컴포넌트는 사라지지 않으므로 노래가 끊기지 않습니다.
+        */}
+        <YouTubePlayer />
+
         <Routes>
           {/* Splash */}
           <Route path="/" element={<Splash />} />
@@ -98,14 +106,15 @@ function App() {
           <Route path="/preference_artist_search" element={<Preference_artist_search/>}/>
         </Routes>
 
+        {/* 하단 UI 바: hideBottomBar가 아닐 때만 노출되지만, 
+            노래는 위의 YouTubePlayer가 담당하므로 UI가 사라져도 노래는 계속 나옵니다.
+        */}
         {!hideBottomBar && (
-          <>
-            <Musicplay />
-          </>
+          <Musicplay />
         )}
       </div>
     </MusicProvider>
   );
 }
 
-export default App;
+export default App; 

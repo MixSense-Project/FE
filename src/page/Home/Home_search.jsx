@@ -41,19 +41,14 @@ const Home_search = () => {
     } catch (error) { console.error("검색 실패:", error); }
   };
 
-  // 리스트 클릭 시 실행되는 핵심 함수
   const handleTrackClick = async (e, track) => {
     if (e) { e.preventDefault(); e.stopPropagation(); }
-    
-    // 1. 클릭한 원본 데이터 구조 파악 (가장 중요)
-    console.log("🖱️ [클릭한 트랙 원본 데이터]:", track);
+        console.log("[클릭한 트랙 원본 데이터]:", track);
 
     if (!track) return;
 
-    // 2. 데이터 정규화 (videoId를 강제로 추출)
     const normalizedTrack = {
       ...track,
-      // API 응답 키값이 다를 경우를 대비해 가능한 모든 경로를 적어줍니다.
       youtube_video_id: track.youtube_video_id || track.track?.youtube_video_id || track.video_id || track.id,
       title: track.title || track.track?.title || track.keyword || "Unknown Title",
       artist: track.artist || track.track?.artist || "Unknown Artist"
@@ -61,10 +56,8 @@ const Home_search = () => {
 
     console.log("✨ [정규화된 트랙 데이터]:", normalizedTrack);
 
-    // 3. 전역 상태 업데이트
     setCurrentTrack(normalizedTrack); 
 
-    // 4. 히스토리 저장
     try {
       await axios.post(`${BASE_URL}/api/search/history`, 
         { keyword: normalizedTrack.title }, 
