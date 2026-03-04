@@ -543,7 +543,9 @@
         display: flex;
         flex-direction: column;
     }
-
+    .lb_add_search{
+        margin-bottom: -40px;
+    }
     .lb_add_main {
         flex: 1;
         overflow-y: auto;

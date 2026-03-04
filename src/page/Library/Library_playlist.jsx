@@ -18,7 +18,7 @@ const Library_playlist = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { setCurrentTrack } = useMusic();
+  const { setCurrentTrack, playQueue } = useMusic();
 
   const username = useMemo(() => {
     return (
@@ -54,6 +54,7 @@ const Library_playlist = () => {
         return;
       }
 
+      // 단일 곡 선택 재생
       setCurrentTrack(trackRow);
     },
     [setCurrentTrack]
@@ -81,10 +82,10 @@ const Library_playlist = () => {
       const raw = Array.isArray(data)
         ? data
         : (data?.playlist_tracks ||
-          data?.tracks ||
-          data?.items ||
-          data?.results ||
-          []);
+            data?.tracks ||
+            data?.items ||
+            data?.results ||
+            []);
 
       const normalized = (Array.isArray(raw) ? raw : []).map((pt) => {
         const t = pt?.track || {};
@@ -94,10 +95,10 @@ const Library_playlist = () => {
           track_id: pt?.track_id || t?.track_id,
           added_at: pt?.added_at,
 
-          title: t?.title,
-          artist: t?.artist,
-          track_image_url: t?.track_image_url,
-          youtube_video_id: t?.youtube_video_id,
+          title: t?.title ?? pt?.title ?? null,
+          artist: t?.artist ?? pt?.artist ?? null,
+          track_image_url: t?.track_image_url ?? pt?.track_image_url ?? null,
+          youtube_video_id: t?.youtube_video_id ?? pt?.youtube_video_id ?? null,
 
           track: t,
         };
@@ -113,7 +114,6 @@ const Library_playlist = () => {
       }
 
       setTracks(unique);
-      console.log("[Playlist Tracks unique]", unique);
       return unique;
     } catch (e) {
       console.error("[Library_playlist] fetch tracks failed:", e);
@@ -124,39 +124,41 @@ const Library_playlist = () => {
     }
   }, [pid]);
 
-  const pickFirstFromList = useCallback((list) => {
-    if (!Array.isArray(list) || list.length === 0) return null;
-
-    const sorted = [...list].sort((a, b) => {
+  const sortByAddedAtAsc = useCallback((list) => {
+    return [...list].sort((a, b) => {
       const ta = a?.added_at ? new Date(a.added_at).getTime() : 0;
       const tb = b?.added_at ? new Date(b.added_at).getTime() : 0;
       return ta - tb;
     });
-
-    return sorted[0] || null;
   }, []);
 
-  const handlePlayFirst = useCallback(async () => {
+  const shuffle = useCallback((arr) => {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }, []);
+
+  // 재생: 첫 곡부터 끝까지 연속 재생
+  const handlePlayAll = useCallback(async () => {
     let list = tracks;
+    if (!list || list.length === 0) list = await loadTracks();
 
     if (!list || list.length === 0) {
-      list = await loadTracks();
-    }
-
-    const first = pickFirstFromList(list);
-    if (!first) {
       alert("플레이리스트에 곡이 없어.");
       return;
     }
 
-    handleSelectTrack(first);
-  }, [tracks, loadTracks, pickFirstFromList, handleSelectTrack]);
-  const handlePlayRandom = useCallback(async () => {
-    let list = tracks;
+    const queue = sortByAddedAtAsc(list);
+    playQueue(queue, 0);
+  }, [tracks, loadTracks, sortByAddedAtAsc, playQueue]);
 
-    if (!list || list.length === 0) {
-      list = await loadTracks();
-    }
+  // 랜덤: 랜덤 한 곡을 첫 곡으로 + 나머지 랜덤 순서로 전체 재생
+  const handlePlayShuffleAll = useCallback(async () => {
+    let list = tracks;
+    if (!list || list.length === 0) list = await loadTracks();
 
     if (!list || list.length === 0) {
       alert("플레이리스트에 곡이 없어.");
@@ -164,23 +166,22 @@ const Library_playlist = () => {
     }
 
     const randomIndex = Math.floor(Math.random() * list.length);
-    const randomTrack = list[randomIndex];
+    const first = list[randomIndex];
+    const rest = list.filter((_, i) => i !== randomIndex);
+    const queue = [first, ...shuffle(rest)];
 
-    handleSelectTrack(randomTrack);
-  }, [tracks, loadTracks, handleSelectTrack]);
+    playQueue(queue, 0);
+  }, [tracks, loadTracks, shuffle, playQueue]);
+
   useEffect(() => {
     if (!pid) return;
 
     (async () => {
       try {
         const data = await fetchMyPlaylists();
-        const items = Array.isArray(data)
-          ? data
-          : data?.playlists || data?.items || [];
+        const items = Array.isArray(data) ? data : data?.playlists || data?.items || [];
 
-        const found = items.find(
-          (p) => (p.id ?? p.playlist_id ?? p.playlistId) === pid
-        );
+        const found = items.find((p) => (p.id ?? p.playlist_id ?? p.playlistId) === pid);
 
         if (found) {
           setPl({
@@ -238,18 +239,14 @@ const Library_playlist = () => {
             <p className="pl_h_user">{username}</p>
 
             <div className="pl_h_btns">
-              <button
-                className="pl_h_playbtn"
-                type="button"
-                onClick={handlePlayFirst}
-              >
+              <button className="pl_h_playbtn" type="button" onClick={handlePlayAll}>
                 <img src={play_btn} alt="" />
               </button>
 
               <button
                 className="pl_h_randombtn"
                 type="button"
-                onClick={handlePlayRandom}
+                onClick={handlePlayShuffleAll}
               >
                 <img src={random_btn} alt="" />
               </button>
