@@ -321,6 +321,7 @@
 //splash_signup.jsx
 .splash_signup_wrap {
     height: 852px;
+    width: 393px;
 
     .container {
         height: 852px;
@@ -364,6 +365,7 @@
                     }
 
                     .email_icon {
+                        margin-top: -9px;
                         position: absolute;
                         right: 12px;
                         top: 50%;

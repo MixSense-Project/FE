@@ -6,7 +6,7 @@
     max-width: 393px;
     margin: 0 auto;
     overflow: hidden;
-    
+
     .container {
         flex: 1;
         display: flex;
@@ -53,6 +53,7 @@
                 margin-top: 10px;
 
             }
+
             img {
                 position: absolute;
                 top: 355px;
@@ -107,76 +108,253 @@
 
 //Ai_Search.jsx
 .Ai_Search_Wrap {
-    height: 852px;
+  height: 852px;
+  display: flex;
+  flex-direction: column;
+  max-width: 393px;
+  margin: 0 auto;
+  overflow: hidden;
+
+  .container {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    max-width: 393px;
-    margin: 0 auto;
     overflow: hidden;
-    
-    .container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        width: 100%;
-        max-width: 393px;
-        min-width: 0;
+    width: 100%;
+    max-width: 393px;
+    min-width: 0;
 
-        header {
-            margin-top: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+    header {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
 
-            img {
-                width: 27px;
+      img { width: 27px; }
+      p { color: var(--white); }
+    }
+
+    // ✅ 스크롤은 여기만 (입력칸 아래로는 스크롤 X)
+    .ai_chat_area {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+
+      // ✅ padding-bottom 제거 (이게 입력칸 아래로 스크롤되는 느낌의 원인)
+      padding-bottom: 0;
+
+      // ✅ 스크롤바 숨김 (스크롤은 됨)
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      &::-webkit-scrollbar { display: none; }
+    }
+
+    .ai_messages {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      // 원하면 아래 패딩으로 메시지 영역 여백만 주기
+      padding: 0 0 12px 0;
+    }
+
+
+        .ai_bubble {
+            max-width: 80%;
+            border-radius: 20px 0px 20px 20px;
+            padding: 10px 14px;
+            color: var(--white);
+            word-break: break-word;
+            white-space: pre-wrap;
+            font-weight: 400;
+            font-size: 14px;
+
+            &.user {
+                align-self: flex-end;
+                background: var(--main);
             }
 
-            p {
-                color: var(--white);
+            &.ai {
+                align-self: flex-start;
+                background: var(--gray02);
+                border-radius: 0px 20px 20px 20px;
             }
         }
 
-        .chat {
-            width: 361px;
-            height: 55px;
-            position: absolute;
-            z-index: 2;
-            bottom: 16px;
+        // 결과 카드 리스트
+        .ai_track_list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-            .chat_btn {
-                position: absolute;
-                z-index: 1;
-                top: calc(50% - 18px);
-                right: 6px;
+        .ai_track_card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 12px;
+            color: var(--white);
+        }
 
-                display: flex;
-                align-items: center;
-                justify-content: center;
+        .ai_track_thumb {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #444;
+            flex-shrink: 0;
+        }
 
-                width: 32px;
-                height: 32px;
-                background-color: var(--main);
-                border-radius: 50%;
+        .ai_track_meta {
+            flex: 1;
+            min-width: 0;
+        }
 
-                img {
-                    width: 15px;
-                    height: 15px;
-                }
-            }
+        .ai_track_title {
+            font-weight: 700;
+            font-size: 14px;
+            line-height: 18px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
-            input {
-                width: 100%;
-                height: 50px;
-                background-color: var(--black);
-                border-radius: 20px;
-                padding-left: 15px;
+        .ai_track_artist {
+            opacity: 0.8;
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ai_track_add {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: var(--white);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .ai_link {
+            align-self: flex-start;
+            display: inline-flex;
+            align-items: center;
+            height: 40px;
+            padding: 0 14px;
+            border-radius: 20px;
+            background: var(--gray02);
+            color: var(--white);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+ // ✅ 입력칸은 flex의 마지막 요소로 고정 (스크롤 영향 X)
+    .chat {
+      width: 361px;
+      height: 55px;
+
+      position: static;   // ✅ absolute 제거
+      margin: 0 auto;
+      margin-bottom: 16px; // 기존 bottom 느낌
+
+      z-index: 2;
+
+      .chat_btn {
+        position: absolute;
+        z-index: 1;
+        top: calc(50% - 18px);
+        right: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background-color: var(--main);
+        border-radius: 50%;
+
+        img { width: 15px; height: 15px; }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+
+      // ✅ chat_btn이 absolute라서 기준 잡아줘야 함
+      position: relative;
+
+      input {
+        width: 100%;
+        height: 50px;
+        background-color: var(--black);
+        border-radius: 20px;
+        padding-left: 15px;
+        padding-right: 48px;
+        color: var(--white);
+        font-size: 14px;
+        border: 1px solid var(--gray02);
+      }
+    }
+  }
+}
+
+//Musiclist.jsx
+.aisearch_Musiclist_Wrap {
+    margin-bottom: 8px;
+    width: 317px;
+    height: 52px;
+    background-color: var(--gray02);
+    border-radius: 3px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 12px;
+    padding-right: 12px;
+
+    .musiclist_container {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+
+        .album_cover {
+            width: 40px;
+            height: 40px;
+            background-color: var(--gray01);
+            border-radius: 3px;
+        }
+
+        .music_info {
+            display: flex;
+            flex-direction: column;
+
+            .title {
                 color: var(--white);
                 font-size: 14px;
-                border: 1px solid var(--gray02);
+                font-weight: 400;
+            }
+
+            .artist {
+                color: var(--white);
+                font-size: 12px;
+                font-weight: 300;
             }
         }
 
     }
+
+    .plus_btn {
+        width: 22px;
+        height: 22px;
+    }
+
+    img {
+        width: 40px;
+        height: 40px;
+    }
+
 }

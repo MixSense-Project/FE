@@ -1,48 +1,42 @@
-import React, {useState} from 'react'
-import add_btn from '../../assets/img/AIDJ/gray_add_btn.svg'
-import check_btn from '../../assets/img/home/check.svg'
-import del_btn from '../../assets/img/library/cancel_g.svg'
+import React from 'react';
+import del_btn from '../../assets/img/library/cancel_g.svg';
 
-const Searchedlist = () => {
-    const[isAdd, setIsAdd]=useState(false)
-    
-    const AddPlaylist=()=>{
-        if(!isAdd){
-            setIsAdd(true);
-        }else{
-            setIsAdd(false);
-        }
-    }
+const Searchedlist = ({ data, onDelete, onClick }) => {
+  if (!data) return null;
+  console.log("Current Data:", data);
 
-    const[isVisible, setIsVisible]=useState('true')
-
-    const handleDelete = () => {
-        setIsVisible(false)
-    }
-    
-    if(!isVisible){
-        return null;
-    }    
+  const videoId = data.track?.youtube_video_id || data.youtube_video_id;
 
   return (
-    <div id="Searchedlist_Wrap">
-        <div className="musiclist_container">
-            <div className="album_cover"></div>
-            <div className="music_info">
-                <div className="title">Song</div>
-                <div className="artist">Artist</div>
-            </div>
+    <div id="Searchedlist_Wrap" onClick={(e) => onClick && onClick(e)} style={{ cursor: 'pointer' }}>
+      <div className="musiclist_container">
+        <div 
+          className="album_cover"
+          style={{
+            backgroundImage: videoId ? `url('https://img.youtube.com/vi/${videoId}/mqdefault.jpg')` : 'none',
+            backgroundColor: 'var(--gray01)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        ></div>
+        <div className="music_info">
+          <div className="title">{data.keyword || data.track?.title || data.title}</div>
+          <div className="artist">{data.track?.artist || data.artist || "artists"}</div>
         </div>
-       <div className="icon_container">
-            <button className="add_btn" onClick={AddPlaylist}>
-                <img src={isAdd ? check_btn : add_btn} alt=""  />
-            </button>
-            <button className="del_btn" onClick={handleDelete} >
-                <img src={del_btn} alt="" />
-            </button>
-       </div>
+      </div>
+      <div className="icon_container">
+        <button 
+          className="del_btn" 
+          onClick={(e) => {
+            e.stopPropagation(); 
+            onDelete(data.search_history_id);
+          }}
+        >
+          <img src={del_btn} alt="delete" />
+        </button>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Searchedlist
+export default Searchedlist;
