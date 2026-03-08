@@ -269,11 +269,13 @@
 
 //Ai_Dj_Trackselct
 #Ai_Dj_Trackselect {
+    width: 393px;
     height: 852px;
     display: flex;
     flex-direction: column;
 
     .container {
+        position: relative;
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -290,6 +292,17 @@
 
             scrollbar-width: none;
             -ms-overflow-style: none;
+        }
+
+        .select_btn{
+            position: absolute;
+            top: 85%;
+            left: calc(50% - 103.5px);
+            width: 207px;
+            height: 44px;
+            background-color: var(--main);
+            color: var(--white);
+            border-radius: 50px;
         }
 
     }
