@@ -69,9 +69,14 @@ const Home = () => {
                       const videoId = item.youtube_video_id || item.track?.youtube_video_id;
                       return (
                         <Track 
-                          key={item.track_id || i} 
-                          img={videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null}
-                          onClick={() => setCurrentTrack(item)} 
+                        key={item.track_id || i} 
+                        img={videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null}
+                        onClick={() => {
+                          // 만약 item 자체가 트랙 정보라면 그대로 전달
+                          // 만약 item.track 안에 정보가 들어있다면 item.track을 전달해야 합니다.
+                          const trackData = item.track ? item.track : item;
+                          setCurrentTrack(trackData); 
+                        }} 
                         />
                       );
                     })

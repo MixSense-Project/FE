@@ -1,8 +1,10 @@
 import React from 'react';
 
-const Track = ({ img }) => {
+// 1. props에 onClick을 추가합니다.
+const Track = ({ img, onClick }) => {
   return (
-    <div id="Track_Wrap">
+    // 2. id="Track_Wrap"인 div에 onClick 이벤트를 걸어줍니다.
+    <div id="Track_Wrap" onClick={onClick} style={{ cursor: 'pointer' }}>
       {img ? (
         <img 
           src={img} 
