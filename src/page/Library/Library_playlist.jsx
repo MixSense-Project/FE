@@ -13,6 +13,7 @@ import {
   fetchPlaylistTracks,
   removeTrackFromPlaylist,
 } from "../../api/playlists";
+import { normalizeTrackData } from "../../utils/track";
 
 const Library_playlist = () => {
   const navigate = useNavigate();
@@ -35,7 +36,9 @@ const Library_playlist = () => {
 
   const [pl, setPl] = useState(() => {
     if (statePl?.id) return statePl;
-    if (playlistIdFromQs) return { id: playlistIdFromQs, title: "", coverUrl: "" };
+    if (playlistIdFromQs) {
+      return { id: playlistIdFromQs, title: "", coverUrl: "" };
+    }
     return null;
   });
 
@@ -54,7 +57,6 @@ const Library_playlist = () => {
         return;
       }
 
-      // 단일 곡 선택 재생
       setCurrentTrack(trackRow);
     },
     [setCurrentTrack]
@@ -81,26 +83,41 @@ const Library_playlist = () => {
 
       const raw = Array.isArray(data)
         ? data
-        : (data?.playlist_tracks ||
-            data?.tracks ||
-            data?.items ||
-            data?.results ||
-            []);
+        : data?.playlist_tracks ||
+          data?.tracks ||
+          data?.items ||
+          data?.results ||
+          [];
 
       const normalized = (Array.isArray(raw) ? raw : []).map((pt) => {
         const t = pt?.track || {};
+        const merged = {
+          ...pt,
+          ...t,
+          track: t,
+          playlist_track_id: pt?.playlist_track_id,
+          playlist_id: pt?.playlist_id,
+          added_at: pt?.added_at,
+        };
+
+        const nt = normalizeTrackData(merged);
+
         return {
           playlist_track_id: pt?.playlist_track_id,
           playlist_id: pt?.playlist_id,
-          track_id: pt?.track_id || t?.track_id,
+          track_id: nt?.track_id,
           added_at: pt?.added_at,
 
-          title: t?.title ?? pt?.title ?? null,
-          artist: t?.artist ?? pt?.artist ?? null,
-          track_image_url: t?.track_image_url ?? pt?.track_image_url ?? null,
-          youtube_video_id: t?.youtube_video_id ?? pt?.youtube_video_id ?? null,
+          title: nt?.title ?? null,
+          artist: nt?.artist ?? null,
+          track_image_url: nt?.track_image_url ?? null,
+          youtube_video_id: nt?.youtube_video_id ?? null,
 
-          track: t,
+          track: {
+            ...t,
+            track_image_url: nt?.track_image_url ?? null,
+            youtube_video_id: nt?.youtube_video_id ?? null,
+          },
         };
       });
 
@@ -141,7 +158,6 @@ const Library_playlist = () => {
     return a;
   }, []);
 
-  // 재생: 첫 곡부터 끝까지 연속 재생
   const handlePlayAll = useCallback(async () => {
     let list = tracks;
     if (!list || list.length === 0) list = await loadTracks();
@@ -155,7 +171,6 @@ const Library_playlist = () => {
     playQueue(queue, 0);
   }, [tracks, loadTracks, sortByAddedAtAsc, playQueue]);
 
-  // 랜덤: 랜덤 한 곡을 첫 곡으로 + 나머지 랜덤 순서로 전체 재생
   const handlePlayShuffleAll = useCallback(async () => {
     let list = tracks;
     if (!list || list.length === 0) list = await loadTracks();
@@ -179,15 +194,23 @@ const Library_playlist = () => {
     (async () => {
       try {
         const data = await fetchMyPlaylists();
-        const items = Array.isArray(data) ? data : data?.playlists || data?.items || [];
+        const items = Array.isArray(data)
+          ? data
+          : data?.playlists || data?.items || [];
 
-        const found = items.find((p) => (p.id ?? p.playlist_id ?? p.playlistId) === pid);
+        const found = items.find(
+          (p) => (p.id ?? p.playlist_id ?? p.playlistId) === pid
+        );
 
         if (found) {
           setPl({
             id: found.id ?? found.playlist_id ?? found.playlistId,
             title: found.title ?? found.name ?? "Untitled",
-            coverUrl: found.cover_url ?? found.coverUrl ?? found.imageUrl ?? null,
+            coverUrl:
+              found.cover_url ??
+              found.coverUrl ??
+              found.imageUrl ??
+              null,
           });
         }
       } catch (e) {
@@ -227,7 +250,7 @@ const Library_playlist = () => {
               {pl?.coverUrl ? (
                 <img
                   src={pl.coverUrl}
-                  alt=""
+                  alt="playlist cover"
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               ) : null}
@@ -239,7 +262,11 @@ const Library_playlist = () => {
             <p className="pl_h_user">{username}</p>
 
             <div className="pl_h_btns">
-              <button className="pl_h_playbtn" type="button" onClick={handlePlayAll}>
+              <button
+                className="pl_h_playbtn"
+                type="button"
+                onClick={handlePlayAll}
+              >
                 <img src={play_btn} alt="" />
               </button>
 

@@ -1,20 +1,28 @@
 import React from "react";
 import delete_btn from "../../assets/img/library/cancel_g.svg";
+import { normalizeTrackImage } from "../../utils/track";
 
 const Library_deletesongs = ({ data, onDelete, onSelect }) => {
+  const imageSrc = normalizeTrackImage(data);
+
   return (
     <div
       className="deletesongs_wrap"
       style={{ cursor: "pointer" }}
-      onClick={() => onSelect?.(data)}    
+      onClick={() => onSelect?.(data)}
     >
       <div className="c_pl_left">
         <div className="c_pl_cover">
-          {data?.track_image_url ? (
+          {imageSrc ? (
             <img
-              src={data.track_image_url}
+              src={imageSrc}
               alt=""
-              style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 3 }}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                borderRadius: 3,
+              }}
             />
           ) : null}
         </div>
@@ -27,8 +35,8 @@ const Library_deletesongs = ({ data, onDelete, onSelect }) => {
 
       <div
         className="delete"
-        onClick={(e) => {                 
-          e.stopPropagation();            
+        onClick={(e) => {
+          e.stopPropagation();
           onDelete?.(data);
         }}
         style={{ cursor: "pointer" }}
