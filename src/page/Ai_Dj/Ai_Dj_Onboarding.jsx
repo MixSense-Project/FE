@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import Header from '../../components/Header'
 import Nav from '../../components/Nav'
 import bg_circle1 from '../../assets/img/AIDJ/bg_circle1.png'
@@ -7,6 +7,17 @@ import bg_circle2 from '../../assets/img/AIDJ/bg_circle2.png'
 import gotodj from '../../assets/img/AIDJ/gotodj.svg'
 
 function Ai_Dj_Onboarding() {
+    const navigate = useNavigate();
+
+    const handleStart = () => {
+        // ✅ 1. 로컬 스토리지에 '봤음' 기록 저장
+        localStorage.setItem('hasSeenAiDjOnboarding', 'true');
+        
+        // ✅ 2. AI DJ 메인으로 이동 (App.js에서 이제 Ai_Dj를 보여줌)
+        // 새로고침을 통해 App.js의 hasSeenOnboarding 변수를 다시 읽게 합니다.
+        window.location.href = '/ai_dj';
+    };
+
     return (
         <div className='aidjonboarding_wrap'>
             <div className="container">
@@ -33,11 +44,11 @@ function Ai_Dj_Onboarding() {
                             Mix your songs right now
                         </p>
                         <img src={gotodj} alt="" className="gotodj" />
-                        <Link to='/ai_dj'>
-                            <button className="aidj_btn">
-                                Go to AI DJ
-                            </button>
-                        </Link>
+                        
+                        {/* ✅ 버튼 클릭 시 handleStart 실행 */}
+                        <button className="aidj_btn" onClick={handleStart}>
+                            Go to AI DJ
+                        </button>
                     </main>
                 </div>
                 <div className="bg_circle">
