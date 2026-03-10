@@ -1,28 +1,32 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import logo_g from '../../assets/img/AIDJ/logo_g.svg';
 import play_icon from '../../assets/img/AIDJ/play_icon.svg';
 import cancel_icon from '../../assets/img/AIDJ/cancel_icon.svg';
-import Playlist_add from "../../components/Ai_Dj/Playlist_add.jsx";
+
+// 실제 사용 중인 플레이리스트 컴포넌트 임포트
+import Library_myplaylist from "../../components/Library/Library_myplaylist";
 
 const Ai_Dj_Result = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const { mixData, songs } = location.state || {}; 
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     
-    // 상태 관리: 플레이리스트 목록 및 선택된 ID
     const [playlists, setPlaylists] = useState([]);
     const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    // 🎵 오디오 재생 관련 상태 및 Ref
+    // 🎵 오디오 재생 상태
     const [isPlaying, setIsPlaying] = useState(false);
     const audioRef = useRef(null);
 
-    // 컴포넌트 언마운트 시 오디오 정지 (메모리 누수 방지)
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    const token = localStorage.getItem("access_token");
+
     useEffect(() => {
         return () => {
             if (audioRef.current) {
@@ -32,17 +36,12 @@ const Ai_Dj_Result = () => {
         };
     }, []);
 
-    // 재생/일시정지 토글 함수
     const handlePlayPause = () => {
         if (!mixData?.mix_audio_url) return;
-
-        // 오디오 객체가 없으면 새로 생성
         if (!audioRef.current) {
             audioRef.current = new Audio(mixData.mix_audio_url);
-            // 노래가 끝났을 때 상태 업데이트
             audioRef.current.onended = () => setIsPlaying(false);
         }
-
         if (isPlaying) {
             audioRef.current.pause();
         } else {
@@ -54,20 +53,21 @@ const Ai_Dj_Result = () => {
     const toggleSheet = () => {
         setIsSheetOpen(!isSheetOpen);
         if (!isSheetOpen) {
-            fetchPlaylists(); // 시트를 열 때 목록 조회
+            fetchPlaylists(); 
         }
     };
 
-    // 1. 내 플레이리스트 목록 조회 API (GET /api/playlists)
     const fetchPlaylists = async () => {
         setIsLoading(true);
         try {
-            const token = localStorage.getItem("accessToken");
-            const response = await axios.get(
-                `${import.meta.env.VITE_API_BASE_URL}/api/playlists`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            setPlaylists(response.data); 
+            const response = await axios.get(`${BASE_URL}/api/playlists`, {
+                headers: { 
+                    Authorization: `Bearer ${token}`,
+                    "ngrok-skip-browser-warning": "69420",
+                }
+            });
+            const data = response.data;
+            setPlaylists(Array.isArray(data) ? data : (data.playlists || []));
         } catch (error) {
             console.error("플레이리스트 목록 조회 실패:", error);
         } finally {
@@ -75,7 +75,6 @@ const Ai_Dj_Result = () => {
         }
     };
 
-    // 2. 선택한 플레이리스트에 믹스곡 추가 API (POST /api/playlists/{id}/tracks)
     const handleAddToPlaylist = async () => {
         if (!selectedPlaylistId) {
             alert("저장할 플레이리스트를 선택해주세요!");
@@ -83,11 +82,15 @@ const Ai_Dj_Result = () => {
         }
 
         try {
-            const token = localStorage.getItem("accessToken");
             const response = await axios.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/playlists/${selectedPlaylistId}/tracks`,
+                `${BASE_URL}/api/playlists/${selectedPlaylistId}/tracks`,
                 { mix_id: mixData.mix_id },
-                { headers: { Authorization: `Bearer ${token}` } }
+                { 
+                    headers: { 
+                        Authorization: `Bearer ${token}`,
+                        "ngrok-skip-browser-warning": "69420"
+                    } 
+                }
             );
 
             if (response.status === 200 || response.status === 201) {
@@ -112,13 +115,8 @@ const Ai_Dj_Result = () => {
                 <div className="result_song">
                     <div className="rs_cover">
                         <div className="rs_logo"><img src={logo_g} alt="" /></div>
-                        {/* 🔘 재생/정지 버튼으로 변경 */}
                         <button className={`play_btn ${isPlaying ? "playing" : ""}`} onClick={handlePlayPause}>
-                            <img 
-                                src={play_icon} 
-                                alt="play/pause" 
-                                style={{ filter: isPlaying ? "hue-rotate(90deg)" : "none" }} // 재생 중일 때 시각적 피드백 (선택사항)
-                            />
+                            <img src={play_icon} alt="play/pause" />
                         </button>
                     </div>
                     <div className="rs_text">
@@ -131,36 +129,36 @@ const Ai_Dj_Result = () => {
                 </div>
             </div>
 
-            {/* 바텀 시트 영역 */}
             {isSheetOpen && (
                 <div className="bottomsheet_wrap">
                     <div id="sheet_container">
                         <header>
                             <img src={cancel_icon} alt="닫기" onClick={toggleSheet}/><p>Add to Playlist</p>
                         </header>
-                        <main style={{ overflowY: 'auto', maxHeight: '400px' }}>
+                        <main>
                             {isLoading ? (
-                                <p style={{ textAlign: 'center', padding: '20px' }}>Loading playlists...</p>
+                                <p style={{ textAlign: 'center', padding: '20px', color: '#fff' }}>Loading playlists...</p>
                             ) : playlists.length > 0 ? (
                                 playlists.map((list) => (
                                     <div 
                                         key={list.id} 
                                         onClick={() => setSelectedPlaylistId(list.id)}
-                                        style={{
-                                            cursor: 'pointer',
-                                            border: selectedPlaylistId === list.id ? '2px solid #BC29EC' : '1px solid transparent',
-                                            borderRadius: '8px',
-                                            marginBottom: '8px'
-                                        }}
+                                        // ✅ 선택된 항목에만 .selected 클래스 부여
+                                        className={`playlist_item_container ${selectedPlaylistId === list.id ? 'selected' : ''}`}
                                     >
-                                        <Playlist_add playlistData={list} />
+                                        <Library_myplaylist 
+                                            id={list.id}
+                                            title={list.title}
+                                            coverUrl={list.cover_url || list.thumbnail} 
+                                            onClick={() => setSelectedPlaylistId(list.id)}
+                                        />
                                     </div>
                                 ))
                             ) : (
-                                <p style={{ textAlign: 'center', padding: '20px' }}>No playlists found.</p>
+                                <p style={{ textAlign: 'center', padding: '20px', color: '#fff' }}>No playlists found.</p>
                             )}
                         </main>
-                        <button className="select_btn" onClick={handleAddToPlaylist}>Confirm Selection</button>
+                        <button className="select_btn" onClick={handleAddToPlaylist}>Select</button>
                     </div>
                 </div>
             )}
