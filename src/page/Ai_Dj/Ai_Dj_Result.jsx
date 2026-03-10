@@ -5,6 +5,7 @@ import Header from "../../components/Header";
 import Nav from "../../components/Nav";
 import logo_g from '../../assets/img/AIDJ/logo_g.svg';
 import play_icon from '../../assets/img/AIDJ/play_icon.svg';
+import pause_icon from '../../assets/img/AIDJ/pause_icon.svg'; // ✅ 일시정지 아이콘 추가
 import cancel_icon from '../../assets/img/AIDJ/cancel_icon.svg';
 
 // 실제 사용 중인 플레이리스트 컴포넌트 임포트
@@ -116,7 +117,8 @@ const Ai_Dj_Result = () => {
                     <div className="rs_cover">
                         <div className="rs_logo"><img src={logo_g} alt="" /></div>
                         <button className={`play_btn ${isPlaying ? "playing" : ""}`} onClick={handlePlayPause}>
-                            <img src={play_icon} alt="play/pause" />
+                            {/* ✅ 재생 상태에 따라 아이콘 변경 */}
+                            <img src={isPlaying ? pause_icon : play_icon} alt={isPlaying ? "pause" : "play"} />
                         </button>
                     </div>
                     <div className="rs_text">
@@ -143,7 +145,6 @@ const Ai_Dj_Result = () => {
                                     <div 
                                         key={list.id} 
                                         onClick={() => setSelectedPlaylistId(list.id)}
-                                        // ✅ 선택된 항목에만 .selected 클래스 부여
                                         className={`playlist_item_container ${selectedPlaylistId === list.id ? 'selected' : ''}`}
                                     >
                                         <Library_myplaylist 
