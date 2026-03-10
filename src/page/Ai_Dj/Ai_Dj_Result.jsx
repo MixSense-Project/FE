@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import Header from "../../components/Header";
@@ -18,6 +18,39 @@ const Ai_Dj_Result = () => {
     const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    // 🎵 오디오 재생 관련 상태 및 Ref
+    const [isPlaying, setIsPlaying] = useState(false);
+    const audioRef = useRef(null);
+
+    // 컴포넌트 언마운트 시 오디오 정지 (메모리 누수 방지)
+    useEffect(() => {
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
+        };
+    }, []);
+
+    // 재생/일시정지 토글 함수
+    const handlePlayPause = () => {
+        if (!mixData?.mix_audio_url) return;
+
+        // 오디오 객체가 없으면 새로 생성
+        if (!audioRef.current) {
+            audioRef.current = new Audio(mixData.mix_audio_url);
+            // 노래가 끝났을 때 상태 업데이트
+            audioRef.current.onended = () => setIsPlaying(false);
+        }
+
+        if (isPlaying) {
+            audioRef.current.pause();
+        } else {
+            audioRef.current.play();
+        }
+        setIsPlaying(!isPlaying);
+    };
+
     const toggleSheet = () => {
         setIsSheetOpen(!isSheetOpen);
         if (!isSheetOpen) {
@@ -34,7 +67,6 @@ const Ai_Dj_Result = () => {
                 `${import.meta.env.VITE_API_BASE_URL}/api/playlists`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            // 서버 응답 구조에 따라 response.data 또는 response.data.playlists 등으로 수정하세요
             setPlaylists(response.data); 
         } catch (error) {
             console.error("플레이리스트 목록 조회 실패:", error);
@@ -80,10 +112,13 @@ const Ai_Dj_Result = () => {
                 <div className="result_song">
                     <div className="rs_cover">
                         <div className="rs_logo"><img src={logo_g} alt="" /></div>
-                        <button className="play_btn" onClick={() => {
-                            if(mixData?.mix_audio_url) new Audio(mixData.mix_audio_url).play();
-                        }}>
-                            <img src={play_icon} alt="" />
+                        {/* 🔘 재생/정지 버튼으로 변경 */}
+                        <button className={`play_btn ${isPlaying ? "playing" : ""}`} onClick={handlePlayPause}>
+                            <img 
+                                src={play_icon} 
+                                alt="play/pause" 
+                                style={{ filter: isPlaying ? "hue-rotate(90deg)" : "none" }} // 재생 중일 때 시각적 피드백 (선택사항)
+                            />
                         </button>
                     </div>
                     <div className="rs_text">
@@ -118,7 +153,6 @@ const Ai_Dj_Result = () => {
                                             marginBottom: '8px'
                                         }}
                                     >
-                                        {/* Playlist_add 컴포넌트에 데이터를 전달하여 렌더링 */}
                                         <Playlist_add playlistData={list} />
                                     </div>
                                 ))
