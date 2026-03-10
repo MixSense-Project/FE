@@ -53,6 +53,11 @@ function App() {
     "/preference_artist",
     "/preference_artist_search",
     "/ai_search",
+    "ai_dj",
+    "ai_dj_trackselect",
+    "ai_dj_loading",
+    "ai_dj_onboarding",
+    "ai_dj_result",
     "/music/songplay", // 상세 페이지에서는 하단 바를 숨김 (상세 UI가 있으므로)
     "/music/songlyrics"
   ].includes(location.pathname);

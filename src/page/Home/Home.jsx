@@ -56,7 +56,7 @@ const Home = () => {
       <div className="container">
         <Header />
         <div className="scroll_container">
-          <Link to='/ai_dj'>
+          <Link to='/ai_dj_onboarding'>
             <div className="banner"><img src={banner_img} alt="banner" /></div>
           </Link>
           <div className="Recommend_track">
