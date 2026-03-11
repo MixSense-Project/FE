@@ -11,7 +11,7 @@ import { useMusic } from "../../context/MusicContext";
 import {
   fetchMyPlaylists,
   fetchPlaylistTracks,
-  removeTrackFromPlaylist,
+  removePlaylistItem,
 } from "../../api/playlists";
 import { normalizeTrackData } from "../../utils/track";
 
@@ -46,18 +46,22 @@ const Library_playlist = () => {
   const [loadingTracks, setLoadingTracks] = useState(false);
 
   const handleSelectTrack = useCallback(
-    (trackRow) => {
+    (item) => {
+      // 일반 트랙이면 youtube_video_id 기준
       const videoId =
-        trackRow?.youtube_video_id ||
-        trackRow?.track?.youtube_video_id ||
-        trackRow?.video_id;
+        item?.youtube_video_id ||
+        item?.track?.youtube_video_id ||
+        item?.video_id;
 
-      if (!videoId) {
-        alert("이 곡은 YouTube 영상이 매핑되지 않아 재생할 수 없어.");
+      // AI mix면 mix_audio_url만 있을 가능성 있음
+      const mixAudioUrl = item?.mix_audio_url || item?.audio_url;
+
+      if (!videoId && !mixAudioUrl) {
+        alert("이 항목은 재생 가능한 소스가 없어.");
         return;
       }
 
-      setCurrentTrack(trackRow);
+      setCurrentTrack(item);
     },
     [setCurrentTrack]
   );
@@ -74,6 +78,78 @@ const Library_playlist = () => {
     });
   }, [navigate, pl?.id, pl?.title, pid]);
 
+  const normalizePlaylistItem = useCallback((item) => {
+    const itemType = item?.item_type || (item?.mix_id ? "mix" : "track");
+
+    if (itemType === "mix") {
+      return {
+        item_type: "mix",
+        id: item?.mix_id ?? item?.id,
+        mix_id: item?.mix_id ?? item?.id,
+        playlist_id: item?.playlist_id ?? pid,
+        added_at: item?.added_at ?? item?.created_at ?? null,
+
+        title:
+          item?.title ??
+          item?.mix_title ??
+          item?.name ??
+          "AI Mix",
+        artist:
+          item?.artist ??
+          item?.creator_name ??
+          "AI DJ",
+        track_image_url:
+          item?.track_image_url ??
+          item?.cover_url ??
+          item?.image_url ??
+          null,
+
+        mix_audio_url: item?.mix_audio_url ?? item?.audio_url ?? null,
+        log_json_url: item?.log_json_url ?? null,
+        log_json_path: item?.log_json_path ?? null,
+        used_k: item?.used_k ?? null,
+        events: item?.events ?? [],
+
+        // Library_deletesongs / 기존 UI 호환용
+        track: null,
+        track_id: null,
+        youtube_video_id: null,
+      };
+    }
+
+    const t = item?.track || {};
+    const merged = {
+      ...item,
+      ...t,
+      track: t,
+      playlist_track_id: item?.playlist_track_id,
+      playlist_id: item?.playlist_id,
+      added_at: item?.added_at,
+    };
+
+    const nt = normalizeTrackData(merged);
+
+    return {
+      item_type: "track",
+      id: item?.track_id ?? nt?.track_id,
+      playlist_track_id: item?.playlist_track_id,
+      playlist_id: item?.playlist_id,
+      track_id: nt?.track_id,
+      added_at: item?.added_at,
+
+      title: nt?.title ?? null,
+      artist: nt?.artist ?? null,
+      track_image_url: nt?.track_image_url ?? null,
+      youtube_video_id: nt?.youtube_video_id ?? null,
+
+      track: {
+        ...t,
+        track_image_url: nt?.track_image_url ?? null,
+        youtube_video_id: nt?.youtube_video_id ?? null,
+      },
+    };
+  }, [pid]);
+
   const loadTracks = useCallback(async () => {
     if (!pid) return [];
 
@@ -89,44 +165,21 @@ const Library_playlist = () => {
           data?.results ||
           [];
 
-      const normalized = (Array.isArray(raw) ? raw : []).map((pt) => {
-        const t = pt?.track || {};
-        const merged = {
-          ...pt,
-          ...t,
-          track: t,
-          playlist_track_id: pt?.playlist_track_id,
-          playlist_id: pt?.playlist_id,
-          added_at: pt?.added_at,
-        };
-
-        const nt = normalizeTrackData(merged);
-
-        return {
-          playlist_track_id: pt?.playlist_track_id,
-          playlist_id: pt?.playlist_id,
-          track_id: nt?.track_id,
-          added_at: pt?.added_at,
-
-          title: nt?.title ?? null,
-          artist: nt?.artist ?? null,
-          track_image_url: nt?.track_image_url ?? null,
-          youtube_video_id: nt?.youtube_video_id ?? null,
-
-          track: {
-            ...t,
-            track_image_url: nt?.track_image_url ?? null,
-            youtube_video_id: nt?.youtube_video_id ?? null,
-          },
-        };
-      });
+      const normalized = (Array.isArray(raw) ? raw : []).map(normalizePlaylistItem);
 
       const seen = new Set();
       const unique = [];
+
       for (const x of normalized) {
-        if (!x?.track_id) continue;
-        if (seen.has(x.track_id)) continue;
-        seen.add(x.track_id);
+        const uniqueKey =
+          x?.item_type === "mix"
+            ? `mix:${x.mix_id}`
+            : `track:${x.track_id}`;
+
+        if (!x?.id && !x?.mix_id && !x?.track_id) continue;
+        if (seen.has(uniqueKey)) continue;
+
+        seen.add(uniqueKey);
         unique.push(x);
       }
 
@@ -139,7 +192,7 @@ const Library_playlist = () => {
     } finally {
       setLoadingTracks(false);
     }
-  }, [pid]);
+  }, [pid, normalizePlaylistItem]);
 
   const sortByAddedAtAsc = useCallback((list) => {
     return [...list].sort((a, b) => {
@@ -224,15 +277,14 @@ const Library_playlist = () => {
   }, [loadTracks]);
 
   const handleDeleteTrack = useCallback(
-    async (track) => {
-      const trackId = track?.track_id;
-      if (!pid || !trackId) return;
+    async (item) => {
+      if (!pid) return;
 
       try {
-        await removeTrackFromPlaylist({ playlistId: pid, trackId });
+        await removePlaylistItem({ playlistId: pid, item });
         await loadTracks();
       } catch (e) {
-        console.error("[removeTrackFromPlaylist] failed:", e);
+        console.error("[removePlaylistItem] failed:", e);
         alert(e?.message || "삭제에 실패했어.");
       }
     },
@@ -294,7 +346,11 @@ const Library_playlist = () => {
         ) : (
           tracks.map((t, idx) => (
             <Library_deletesongs
-              key={t?.track_id || idx}
+              key={
+                t?.item_type === "mix"
+                  ? t?.mix_id || `mix-${idx}`
+                  : t?.track_id || `track-${idx}`
+              }
               data={t}
               onDelete={handleDeleteTrack}
               onSelect={handleSelectTrack}
