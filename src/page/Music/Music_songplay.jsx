@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMusic } from '../../context/MusicContext'; 
-import axios from 'axios'; // axios 추가
+import axios from 'axios';
 
+// 이미지 Assets
 import back_btn from "../../assets/img/Header/back_btn.svg";
 import edit_btn from "../../assets/img/library/edit_btn.svg";
 import heart_btn from "../../assets/img/Music/heart_btn.svg";
-// 좋아요 활성화 시 사용할 아이콘이 있다면 추가 (예: heart_on.svg)
-// import heart_on from "../../assets/img/Music/heart_on.svg"; 
+import fullheart_btn from '../../assets/img/Music/fullheart_btn.svg'; // ✅ 꽉 찬 하트 아이콘
 import random_btn from "../../assets/img/Music/random_btn.svg";
 import before_btn from "../../assets/img/Music/before.svg";
 import music_play from '../../assets/img/home/music_play.svg';
@@ -18,7 +18,7 @@ import Popup from '../Music/Popup'
 
 const Music_songplay = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const [isLiked, setIsLiked] = useState(false); // 좋아요 상태 관리
+    const [isLiked, setIsLiked] = useState(false); // ✅ 좋아요 상태 (true/false)
 
     const navigate = useNavigate();
     const { currentTrack, isPlay, player } = useMusic(); 
@@ -26,53 +26,59 @@ const Music_songplay = () => {
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
 
+    // ✅ 곡 데이터 및 ID 추출
     const trackData = currentTrack?.track || currentTrack;
+    const trackId = trackData?.track_id || trackData?.id || trackData?.trackId || trackData?.youtube_video_id;
     const videoId = trackData?.youtube_video_id || trackData?.video_id;
-    const trackId = trackData?.track_id || trackData?.id;
 
+    // ✅ 좋아요 토글 핸들러
     const handleToggleLike = async () => {
-    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-    const token = localStorage.getItem('access_token');
-    
-    // 1. 데이터 확인 로그
-    console.log("요청 보낼 trackId:", trackId);
-    console.log("현재 토큰 존재 여부:", !!token);
+        const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+        const token = localStorage.getItem('access_token');
+        const profileId = localStorage.getItem('profile_id'); 
 
-    if (!trackId) {
-        alert("곡 정보가 없습니다.");
-        return;
-    }
+        if (!trackId) {
+            alert("곡 정보를 찾을 수 없습니다.");
+            return;
+        }
 
-    try {
-        // 2. API 주소 확인: /api/user/toggle_like 인지 /user/toggle_like 인지 확인 필요
-        // 보통 BASE_URL 뒤에 바로 붙이거나 /api를 포함합니다.
-        const response = await axios.post(`${BASE_URL}/api/user/toggle_like`, 
-            { track_id: trackId }, 
-            {
+        if (!profileId) {
+            alert("로그인 정보(profile_id)가 없습니다. 다시 로그인해 주세요.");
+            return;
+        }
+
+        try {
+            // 서버 요구사항: track_id와 profile_id 모두 문자열로 전송
+            const requestData = { 
+                track_id: String(trackId),
+                profile_id: String(profileId) 
+            };
+            
+            const response = await axios.post(`${BASE_URL}/user/toggle_like`, requestData, {
                 headers: { 
                     "Authorization": `Bearer ${token}`,
-                    "ngrok-skip-browser-warning": "69420" // ngrok 사용 시 필수
+                    "Content-Type": "application/json",
+                    "ngrok-skip-browser-warning": "69420"
                 }
+            });
+
+            if (response.status === 200 || response.status === 201) {
+                // ✅ 서버 응답 성공 시 상태 반전 (아이콘 변경 트리거)
+                setIsLiked(!isLiked);
+                console.log("좋아요 처리 완료:", response.data);
             }
-        );
-
-        console.log("좋아요 응답 성공:", response.data);
-        setIsLiked(!isLiked);
-        
-    } catch (error) {
-        // 3. 에러의 상세 내용을 콘솔에 출력
-        console.error("좋아요 에러 상세:", error.response);
-        
-        if (error.response?.status === 401) {
-            alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
-        } else if (error.response?.status === 404) {
-            alert("API 경로를 찾을 수 없습니다. (404)");
-        } else {
-            alert(error.response?.data?.message || "좋아요 처리에 실패했습니다.");
+            
+        } catch (error) {
+            console.error("좋아요 에러:", error.response?.data);
+            if (error.response?.status === 403) {
+                alert("권한이 없습니다.");
+            } else {
+                alert(error.response?.data?.detail || "처리에 실패했습니다.");
+            }
         }
-    }
-};
+    };
 
+    // 유튜브 플레이어 시간 업데이트 로직
     useEffect(() => {
         let timer;
         if (player && isPlay) {
@@ -131,13 +137,18 @@ const Music_songplay = () => {
                             <h1>{trackData?.title || trackData?.track_name || "Unknown Title"}</h1>
                             <p>{trackData?.artist || trackData?.artist_name || "Unknown Artist"}</p>
                         </div>
-                        {/* 2. 하트 버튼에 onClick 연결 및 스타일 변경 */}
+
+                        {/* ✅ 하트 버튼: isLiked 상태에 따라 이미지 소스 변경 */}
                         <div 
                             className="heart_btn" 
                             onClick={handleToggleLike} 
-                            style={{ cursor: 'pointer', opacity: isLiked ? 1 : 0.5 }}
+                            style={{ cursor: 'pointer' }}
                         >
-                            <img src={heart_btn} alt="like" />
+                            <img 
+                                src={isLiked ? fullheart_btn : heart_btn} 
+                                alt="like_icon" 
+                                style={{ transition: 'transform 0.2s ease' }} // 부드러운 효과 추가
+                            />
                         </div>
                     </div>
 
@@ -163,6 +174,7 @@ const Music_songplay = () => {
                     <button className="btn"><img src={random_btn} alt="random" /></button>
                     <button className="btn"><img src={before_btn} alt="before" /></button>
                     
+                    {/* 재생 상태 아이콘 (isPlay 상태 활용) */}
                     <button className="btn btn3" onClick={togglePlay}>
                         <img src={isPlay ? music_play : music_stop} alt="play_toggle" />
                     </button>
