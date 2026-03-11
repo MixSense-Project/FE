@@ -53,7 +53,6 @@ const Library_playlist = () => {
         item?.track?.youtube_video_id ||
         item?.video_id;
 
-      // AI mix면 mix_audio_url만 있을 가능성 있음
       const mixAudioUrl = item?.mix_audio_url || item?.audio_url;
 
       if (!videoId && !mixAudioUrl) {
@@ -110,7 +109,6 @@ const Library_playlist = () => {
         used_k: item?.used_k ?? null,
         events: item?.events ?? [],
 
-        // Library_deletesongs / 기존 UI 호환용
         track: null,
         track_id: null,
         youtube_video_id: null,

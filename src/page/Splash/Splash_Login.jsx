@@ -1,15 +1,15 @@
 import React, { useMemo, useState } from "react";
 import SubHeader from "../../components/SubHeader";
 import { login } from "../../api/auth";
-import { useNavigate } from "react-router-dom";
-
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Splash_Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [form, setForm] = useState({
     username: "",
-    email: "",
+    email: location.state?.prefillEmail || "",
     password: "",
   });
 
@@ -24,11 +24,10 @@ const Splash_Login = () => {
 
   const isEnabled = useMemo(() => {
     return (
-      form.username.trim().length > 0 &&
       form.email.trim().length > 0 &&
       form.password.trim().length > 0
     );
-  }, [form]);
+  }, [form.email, form.password]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -43,34 +42,31 @@ const Splash_Login = () => {
         password: form.password.trim(),
       });
 
-      if (res.session && res.session.access_token) {
-        // ✅ 토큰 저장
+      if (res?.session?.access_token) {
         localStorage.setItem("access_token", res.session.access_token);
 
-        if (res.session.refresh_token) {
+        if (res?.session?.refresh_token) {
           localStorage.setItem("refresh_token", res.session.refresh_token);
         }
 
-        // ✅ 유저네임/이메일 저장 (추가)
         const usernameFromRes =
           res?.session?.user?.user_metadata?.username ||
           res?.session?.user?.user_metadata?.display_name ||
-          ""; // 없으면 빈 문자열
+          form.username.trim() ||
+          "";
 
         const emailFromRes =
           res?.session?.user?.email ||
           res?.session?.user?.user_metadata?.email ||
-          form.email.trim(); // fallback
+          form.email.trim();
 
-        // localStorage에 저장 (플레이리스트 화면에서 사용)
         if (usernameFromRes) localStorage.setItem("username", usernameFromRes);
         if (emailFromRes) localStorage.setItem("email", emailFromRes);
 
-        // (선택) userId도 저장해두면 나중에 유용함
         const userId = res?.session?.user?.id;
         if (userId) localStorage.setItem("user_id", userId);
 
-        navigate("/preference_genre", { replace: true });
+        navigate("/home", { replace: true });
       }
     } catch (err) {
       const apiMsg =
@@ -125,6 +121,7 @@ const Splash_Login = () => {
             />
           </label>
 
+          {msg && <p>{msg}</p>}
 
           <button
             type="submit"
