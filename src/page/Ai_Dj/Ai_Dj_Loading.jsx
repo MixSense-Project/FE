@@ -96,8 +96,8 @@ const Ai_Dj_Loading = () => {
           <main>
             <img src={graphic} alt="" />
             <div className="text">AI is creating your unique remix.<br />Please wait a moment.</div>
-            <img src={gotodj} alt="" className="gotodj" />
-            <button className="remix_highlight_btn">Listen to Remix Highlights</button>
+            {/* <img src={gotodj} alt="" className="gotodj" /> */}
+            {/* <button className="remix_highlight_btn">Listen to Remix Highlights</button> */}
           </main>
         </div>
       </div>
