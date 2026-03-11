@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMusic } from '../../context/MusicContext'; 
+import axios from 'axios'; // axios 추가
 
 import back_btn from "../../assets/img/Header/back_btn.svg";
 import edit_btn from "../../assets/img/library/edit_btn.svg";
 import heart_btn from "../../assets/img/Music/heart_btn.svg";
+// 좋아요 활성화 시 사용할 아이콘이 있다면 추가 (예: heart_on.svg)
+// import heart_on from "../../assets/img/Music/heart_on.svg"; 
 import random_btn from "../../assets/img/Music/random_btn.svg";
 import before_btn from "../../assets/img/Music/before.svg";
 import music_play from '../../assets/img/home/music_play.svg';
@@ -14,10 +17,8 @@ import lyrics_btn from "../../assets/img/Music/lyrics.svg";
 import Popup from '../Music/Popup'
 
 const Music_songplay = () => {
-    
-    //popup
-    const [isPopupOpen, setIsPopupOpen] = useState(false)
-
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [isLiked, setIsLiked] = useState(false); // 좋아요 상태 관리
 
     const navigate = useNavigate();
     const { currentTrack, isPlay, player } = useMusic(); 
@@ -25,13 +26,53 @@ const Music_songplay = () => {
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
 
-    // [중요] 데이터 구조가 깊을 수 있으므로 공통 참조 변수 생성
     const trackData = currentTrack?.track || currentTrack;
-    
     const videoId = trackData?.youtube_video_id || trackData?.video_id;
     const trackId = trackData?.track_id || trackData?.id;
 
-    // 재생 시간 및 바(Bar) 실시간 업데이트
+    const handleToggleLike = async () => {
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    const token = localStorage.getItem('access_token');
+    
+    // 1. 데이터 확인 로그
+    console.log("요청 보낼 trackId:", trackId);
+    console.log("현재 토큰 존재 여부:", !!token);
+
+    if (!trackId) {
+        alert("곡 정보가 없습니다.");
+        return;
+    }
+
+    try {
+        // 2. API 주소 확인: /api/user/toggle_like 인지 /user/toggle_like 인지 확인 필요
+        // 보통 BASE_URL 뒤에 바로 붙이거나 /api를 포함합니다.
+        const response = await axios.post(`${BASE_URL}/api/user/toggle_like`, 
+            { track_id: trackId }, 
+            {
+                headers: { 
+                    "Authorization": `Bearer ${token}`,
+                    "ngrok-skip-browser-warning": "69420" // ngrok 사용 시 필수
+                }
+            }
+        );
+
+        console.log("좋아요 응답 성공:", response.data);
+        setIsLiked(!isLiked);
+        
+    } catch (error) {
+        // 3. 에러의 상세 내용을 콘솔에 출력
+        console.error("좋아요 에러 상세:", error.response);
+        
+        if (error.response?.status === 401) {
+            alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+        } else if (error.response?.status === 404) {
+            alert("API 경로를 찾을 수 없습니다. (404)");
+        } else {
+            alert(error.response?.data?.message || "좋아요 처리에 실패했습니다.");
+        }
+    }
+};
+
     useEffect(() => {
         let timer;
         if (player && isPlay) {
@@ -70,8 +111,9 @@ const Music_songplay = () => {
                             <img src={back_btn} alt="back" />
                         </button>
                         <h1 className="title">Music</h1>
-                        <button className="edit_btn" onClick={()=>setIsPopupOpen(true)}
-                        ><img src={edit_btn} alt="edit" /></button>
+                        <button className="edit_btn" onClick={()=>setIsPopupOpen(true)}>
+                            <img src={edit_btn} alt="edit" />
+                        </button>
                     </div>
                 </div>
 
@@ -86,11 +128,17 @@ const Music_songplay = () => {
                     
                     <div className="ms_detail">
                         <div className="song_detail">
-                            {/* [수정] trackData를 참조하여 제목과 아티스트 표시 */}
                             <h1>{trackData?.title || trackData?.track_name || "Unknown Title"}</h1>
                             <p>{trackData?.artist || trackData?.artist_name || "Unknown Artist"}</p>
                         </div>
-                        <div className="heart_btn"><img src={heart_btn} alt="like" /></div>
+                        {/* 2. 하트 버튼에 onClick 연결 및 스타일 변경 */}
+                        <div 
+                            className="heart_btn" 
+                            onClick={handleToggleLike} 
+                            style={{ cursor: 'pointer', opacity: isLiked ? 1 : 0.5 }}
+                        >
+                            <img src={heart_btn} alt="like" />
+                        </div>
                     </div>
 
                     <div className="playing">
