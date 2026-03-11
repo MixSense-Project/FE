@@ -2,12 +2,18 @@ import React, { useState } from 'react';
 import add_btn from '../../assets/img/AIDJ/gray_add_btn.svg';
 import check_btn from '../../assets/img/home/check.svg';
 
-const Musiclist = ({ data, onPlay }) => {
+const Musiclist = ({ data, onPlay, onAdd }) => { // onAdd 프롭 추가
   const [isAdd, setIsAdd] = useState(false);
 
   const Addplaylist = (e) => {
-    e.stopPropagation(); // + 버튼 클릭 시 재생되는 것 방지
-    setIsAdd(!isAdd);
+    e.stopPropagation(); 
+    const nextState = !isAdd;
+    setIsAdd(nextState);
+    
+    // 부모 컴포넌트로 이 곡의 정보와 체크 여부를 전달합니다.
+    if (onAdd) {
+      onAdd(data, nextState);
+    }
   };
 
   return (
@@ -16,7 +22,6 @@ const Musiclist = ({ data, onPlay }) => {
             <div 
               className="album_cover"
               style={{
-                // 유튜브 ID 기반 썸네일 우선 적용 (MixSense 설계 반영)
                 backgroundImage: `url('https://img.youtube.com/vi/${data.track?.youtube_video_id || data.youtube_video_id}/mqdefault.jpg')`,
                 backgroundSize: 'cover', 
               }}
