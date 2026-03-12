@@ -28,7 +28,6 @@ const Home_search = () => {
 
   useEffect(() => { if(token) fetchHistory(); }, [fetchHistory, token]);
 
-  // 검색 실행 및 결과 로그 확인
   const fetchSearch = async (query) => {
     if (!query.trim()) { setResults([]); return; }
     try {
@@ -36,35 +35,56 @@ const Home_search = () => {
         params: { query, limit: 15 },
         headers: { "Authorization": `Bearer ${token}`, "ngrok-skip-browser-warning": "69420" }
       });
-      console.log("🔍 [Search API 결과]:", response.data);
       setResults(response.data.results || response.data);
     } catch (error) { console.error("검색 실패:", error); }
   };
 
   const handleTrackClick = async (e, track) => {
     if (e) { e.preventDefault(); e.stopPropagation(); }
-        console.log("[클릭한 트랙 원본 데이터]:", track);
-
     if (!track) return;
+
+    // 1. 데이터 정규화
+    const trackTitle = track.title || track.track?.title || track.keyword;
+    const trackVideoId = track.youtube_video_id || track.track?.youtube_video_id || track.video_id || track.id;
 
     const normalizedTrack = {
       ...track,
-      youtube_video_id: track.youtube_video_id || track.track?.youtube_video_id || track.video_id || track.id,
-      title: track.title || track.track?.title || track.keyword || "Unknown Title",
+      youtube_video_id: trackVideoId,
+      title: trackTitle || "Unknown Title",
       artist: track.artist || track.track?.artist || "Unknown Artist"
     };
 
-    console.log("✨ [정규화된 트랙 데이터]:", normalizedTrack);
-
+    // 2. 음악 재생 설정
     setCurrentTrack(normalizedTrack); 
 
     try {
+      // --- 중복 방지 로직 시작 ---
+      // 현재 기록(history) 중에 클릭한 곡과 같은 비디오 ID를 가진 항목이 있는지 확인
+      const existingItem = history.find(item => {
+        const itemVideoId = item.youtube_video_id || item.track?.youtube_video_id;
+        return itemVideoId === trackVideoId;
+      });
+
+      // 만약 이미 기록에 있다면, 서버에서 기존 기록 삭제 (순서 최신화를 위해)
+      if (existingItem && existingItem.search_history_id) {
+        await axios.delete(`${BASE_URL}/api/search/history/${existingItem.search_history_id}`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+      }
+
+      // 3. 새로 기록 등록 (이렇게 하면 서버 DB 상에서도 가장 최신 순서로 저장됨)
       await axios.post(`${BASE_URL}/api/search/history`, 
         { keyword: normalizedTrack.title }, 
         { headers: { "Authorization": `Bearer ${token}` } }
       );
+      
+      // 4. 히스토리 다시 불러와서 UI 업데이트
       fetchHistory();
-    } catch (error) { console.error("히스토리 저장 실패", error); }
+      // --- 중복 방지 로직 끝 ---
+
+    } catch (error) { 
+      console.error("히스토리 처리 실패", error); 
+    }
   };
 
   const handleDeleteHistory = async (id) => {
