@@ -11,8 +11,9 @@ import { useMusic } from "../../context/MusicContext";
 import {
   fetchMyPlaylists,
   fetchPlaylistTracks,
-  removeTrackFromPlaylist,
+  removePlaylistItem,
 } from "../../api/playlists";
+import { normalizeTrackData } from "../../utils/track";
 
 const Library_playlist = () => {
   const navigate = useNavigate();
@@ -35,7 +36,9 @@ const Library_playlist = () => {
 
   const [pl, setPl] = useState(() => {
     if (statePl?.id) return statePl;
-    if (playlistIdFromQs) return { id: playlistIdFromQs, title: "", coverUrl: "" };
+    if (playlistIdFromQs) {
+      return { id: playlistIdFromQs, title: "", coverUrl: "" };
+    }
     return null;
   });
 
@@ -43,19 +46,23 @@ const Library_playlist = () => {
   const [loadingTracks, setLoadingTracks] = useState(false);
 
   const handleSelectTrack = useCallback(
-    (trackRow) => {
+    (item) => {
       const videoId =
-        trackRow?.youtube_video_id ||
-        trackRow?.track?.youtube_video_id ||
-        trackRow?.video_id;
+        item?.youtube_video_id ||
+        item?.track?.youtube_video_id ||
+        item?.video_id;
 
-      if (!videoId) {
-        alert("이 곡은 YouTube 영상이 매핑되지 않아 재생할 수 없어.");
+      const mixAudioUrl =
+        item?.mix_audio_url ||
+        item?.audio_url ||
+        item?.mix?.mix_audio_url;
+
+      if (!videoId && !mixAudioUrl) {
+        alert("이 항목은 재생 가능한 소스가 없어.");
         return;
       }
 
-      // 단일 곡 선택 재생
-      setCurrentTrack(trackRow);
+      setCurrentTrack(item);
     },
     [setCurrentTrack]
   );
@@ -72,6 +79,108 @@ const Library_playlist = () => {
     });
   }, [navigate, pl?.id, pl?.title, pid]);
 
+  const normalizePlaylistItem = useCallback(
+    (item) => {
+      const itemType = item?.item_type || (item?.mix_id ? "mix" : "track");
+
+      if (itemType === "mix") {
+        const displayTitle =
+          item?.title ||
+          item?.mix?.title ||
+          "AI Mix";
+
+        const displayArtist =
+          item?.artist ||
+          item?.mix?.artist ||
+          "AI DJ";
+
+        const displayImage =
+          item?.track_image_url ||
+          item?.cover_url ||
+          item?.image_url ||
+          item?.mix?.track_image_url ||
+          item?.mix?.cover_url ||
+          item?.mix?.image_url ||
+          null;
+
+        const resolvedMixAudioUrl =
+          item?.mix_audio_url ||
+          item?.audio_url ||
+          item?.mix?.mix_audio_url ||
+          null;
+
+        return {
+          item_type: "mix",
+          id: item?.playlist_track_id ?? item?.mix_id ?? item?.id,
+          playlist_track_id: item?.playlist_track_id ?? null,
+          playlist_id: item?.playlist_id ?? pid,
+          track_id: null,
+          mix_id: item?.mix_id ?? item?.id ?? null,
+          added_at: item?.added_at ?? item?.created_at ?? null,
+
+          title: displayTitle,
+          artist: displayArtist,
+          track_image_url: displayImage,
+
+          mix_audio_url: resolvedMixAudioUrl,
+          log_json_url: item?.log_json_url ?? item?.mix?.log_json_url ?? null,
+          log_json_path: item?.log_json_path ?? item?.mix?.log_json_path ?? null,
+          used_k: item?.used_k ?? item?.mix?.used_k ?? null,
+          events: item?.events ?? item?.mix?.events ?? [],
+
+          track: {
+            title: displayTitle,
+            artist: displayArtist,
+            track_image_url: displayImage,
+            mix_audio_url: resolvedMixAudioUrl,
+          },
+
+          mix: item?.mix ?? null,
+          youtube_video_id: null,
+        };
+      }
+
+      const t = item?.track || {};
+      const merged = {
+        ...item,
+        ...t,
+        track: t,
+        playlist_track_id: item?.playlist_track_id,
+        playlist_id: item?.playlist_id,
+        added_at: item?.added_at,
+      };
+
+      const nt = normalizeTrackData(merged);
+
+      return {
+        item_type: "track",
+        id: item?.playlist_track_id ?? item?.track_id ?? nt?.track_id,
+        playlist_track_id: item?.playlist_track_id ?? null,
+        playlist_id: item?.playlist_id ?? null,
+        track_id: nt?.track_id,
+        mix_id: null,
+        added_at: item?.added_at,
+
+        title: nt?.title ?? null,
+        artist: nt?.artist ?? null,
+        track_image_url: nt?.track_image_url ?? null,
+        youtube_video_id: nt?.youtube_video_id ?? null,
+
+        track: {
+          ...t,
+          title: nt?.title ?? null,
+          artist: nt?.artist ?? null,
+          track_image_url: nt?.track_image_url ?? null,
+          youtube_video_id: nt?.youtube_video_id ?? null,
+        },
+
+        mix: null,
+        mix_audio_url: null,
+      };
+    },
+    [pid]
+  );
+
   const loadTracks = useCallback(async () => {
     if (!pid) return [];
 
@@ -79,37 +188,39 @@ const Library_playlist = () => {
     try {
       const data = await fetchPlaylistTracks(pid);
 
+      console.log("fetchPlaylistTracks response:", data);
+
       const raw = Array.isArray(data)
         ? data
-        : (data?.playlist_tracks ||
-            data?.tracks ||
-            data?.items ||
-            data?.results ||
-            []);
+        : data?.playlist_tracks ||
+        data?.tracks ||
+        data?.items ||
+        data?.results ||
+        [];
 
-      const normalized = (Array.isArray(raw) ? raw : []).map((pt) => {
-        const t = pt?.track || {};
-        return {
-          playlist_track_id: pt?.playlist_track_id,
-          playlist_id: pt?.playlist_id,
-          track_id: pt?.track_id || t?.track_id,
-          added_at: pt?.added_at,
+      console.log("playlist tracks raw:", raw);
 
-          title: t?.title ?? pt?.title ?? null,
-          artist: t?.artist ?? pt?.artist ?? null,
-          track_image_url: t?.track_image_url ?? pt?.track_image_url ?? null,
-          youtube_video_id: t?.youtube_video_id ?? pt?.youtube_video_id ?? null,
+      const firstMix = raw.find((x) => x?.item_type === "mix");
 
-          track: t,
-        };
-      });
+      console.log("mix item JSON:", JSON.stringify(firstMix, null, 2));
+
+      const normalized = (Array.isArray(raw) ? raw : []).map(
+        normalizePlaylistItem
+      );
 
       const seen = new Set();
       const unique = [];
+
       for (const x of normalized) {
-        if (!x?.track_id) continue;
-        if (seen.has(x.track_id)) continue;
-        seen.add(x.track_id);
+        const uniqueKey =
+          x?.item_type === "mix"
+            ? `mix:${x.mix_id}`
+            : `track:${x.track_id}`;
+
+        if (!x?.mix_id && !x?.track_id) continue;
+        if (seen.has(uniqueKey)) continue;
+
+        seen.add(uniqueKey);
         unique.push(x);
       }
 
@@ -122,7 +233,7 @@ const Library_playlist = () => {
     } finally {
       setLoadingTracks(false);
     }
-  }, [pid]);
+  }, [pid, normalizePlaylistItem]);
 
   const sortByAddedAtAsc = useCallback((list) => {
     return [...list].sort((a, b) => {
@@ -141,7 +252,6 @@ const Library_playlist = () => {
     return a;
   }, []);
 
-  // 재생: 첫 곡부터 끝까지 연속 재생
   const handlePlayAll = useCallback(async () => {
     let list = tracks;
     if (!list || list.length === 0) list = await loadTracks();
@@ -155,7 +265,6 @@ const Library_playlist = () => {
     playQueue(queue, 0);
   }, [tracks, loadTracks, sortByAddedAtAsc, playQueue]);
 
-  // 랜덤: 랜덤 한 곡을 첫 곡으로 + 나머지 랜덤 순서로 전체 재생
   const handlePlayShuffleAll = useCallback(async () => {
     let list = tracks;
     if (!list || list.length === 0) list = await loadTracks();
@@ -179,15 +288,23 @@ const Library_playlist = () => {
     (async () => {
       try {
         const data = await fetchMyPlaylists();
-        const items = Array.isArray(data) ? data : data?.playlists || data?.items || [];
+        const items = Array.isArray(data)
+          ? data
+          : data?.playlists || data?.items || [];
 
-        const found = items.find((p) => (p.id ?? p.playlist_id ?? p.playlistId) === pid);
+        const found = items.find(
+          (p) => (p.id ?? p.playlist_id ?? p.playlistId) === pid
+        );
 
         if (found) {
           setPl({
             id: found.id ?? found.playlist_id ?? found.playlistId,
             title: found.title ?? found.name ?? "Untitled",
-            coverUrl: found.cover_url ?? found.coverUrl ?? found.imageUrl ?? null,
+            coverUrl:
+              found.cover_url ??
+              found.coverUrl ??
+              found.imageUrl ??
+              null,
           });
         }
       } catch (e) {
@@ -201,15 +318,14 @@ const Library_playlist = () => {
   }, [loadTracks]);
 
   const handleDeleteTrack = useCallback(
-    async (track) => {
-      const trackId = track?.track_id;
-      if (!pid || !trackId) return;
+    async (item) => {
+      if (!pid) return;
 
       try {
-        await removeTrackFromPlaylist({ playlistId: pid, trackId });
+        await removePlaylistItem({ playlistId: pid, item });
         await loadTracks();
       } catch (e) {
-        console.error("[removeTrackFromPlaylist] failed:", e);
+        console.error("[removePlaylistItem] failed:", e);
         alert(e?.message || "삭제에 실패했어.");
       }
     },
@@ -227,7 +343,7 @@ const Library_playlist = () => {
               {pl?.coverUrl ? (
                 <img
                   src={pl.coverUrl}
-                  alt=""
+                  alt="playlist cover"
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               ) : null}
@@ -239,7 +355,11 @@ const Library_playlist = () => {
             <p className="pl_h_user">{username}</p>
 
             <div className="pl_h_btns">
-              <button className="pl_h_playbtn" type="button" onClick={handlePlayAll}>
+              <button
+                className="pl_h_playbtn"
+                type="button"
+                onClick={handlePlayAll}
+              >
                 <img src={play_btn} alt="" />
               </button>
 
@@ -267,7 +387,11 @@ const Library_playlist = () => {
         ) : (
           tracks.map((t, idx) => (
             <Library_deletesongs
-              key={t?.track_id || idx}
+              key={
+                t?.item_type === "mix"
+                  ? t?.mix_id || `mix-${idx}`
+                  : t?.track_id || `track-${idx}`
+              }
               data={t}
               onDelete={handleDeleteTrack}
               onSelect={handleSelectTrack}

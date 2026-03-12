@@ -5,6 +5,7 @@ import PreferenceSelectBtn from "../../components/Preference/Preference_selectbt
 import searchicon from "../../assets/img/nav/search_g.svg";
 
 const DEFAULT_LIMIT = 20;
+const MAX_SELECT = 3;
 
 function buildQuery(paramsObj = {}) {
   const params = new URLSearchParams();
@@ -31,7 +32,7 @@ function buildQuery(paramsObj = {}) {
 }
 
 async function requestJson(path, options = {}) {
-  const url = `${path.startsWith("/") ? "" : "/"}${path}`; 
+  const url = `${path.startsWith("/") ? "" : "/"}${path}`;
   const res = await fetch(url, {
     ...options,
     headers: {
@@ -76,10 +77,10 @@ function normalizeArtists(payload) {
   const list = Array.isArray(payload)
     ? payload
     : payload?.artists ??
-    payload?.items ??
-    payload?.results ??
-    payload?.data ??
-    payload?.artists?.items;
+      payload?.items ??
+      payload?.results ??
+      payload?.data ??
+      payload?.artists?.items;
 
   return (Array.isArray(list) ? list : []).map((a, idx) => {
     const rawId =
@@ -102,16 +103,20 @@ function normalizeArtists(payload) {
 
 function useDebouncedValue(value, delayMs) {
   const [debounced, setDebounced] = useState(value);
+
   useEffect(() => {
     const t = setTimeout(() => setDebounced(value), delayMs);
     return () => clearTimeout(t);
   }, [value, delayMs]);
+
   return debounced;
 }
 
 const Preference_artist_search = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const signupDraft = location.state?.signupDraft || null;
 
   const selectedGenres = useMemo(() => {
     return location.state?.selectedGenres ?? [];
@@ -120,6 +125,11 @@ const Preference_artist_search = () => {
   const baseSelectedIds = useMemo(() => {
     const ids = location.state?.selectedArtistIds;
     return Array.isArray(ids) ? ids : [];
+  }, [location.state]);
+
+  const baseSelectedArtists = useMemo(() => {
+    const artists = location.state?.selectedArtists;
+    return Array.isArray(artists) ? artists : [];
   }, [location.state]);
 
   const [pickedId, setPickedId] = useState("");
@@ -158,7 +168,7 @@ const Preference_artist_search = () => {
       setLoading(true);
       try {
         const qs = buildQuery({
-          genres: selectedGenres, 
+          genres: selectedGenres,
           keyword,
           index_char: indexChar,
         });
@@ -181,13 +191,31 @@ const Preference_artist_search = () => {
   const handleSelect = () => {
     if (!pickedArtist?.id) return;
 
-    const mergedIds = Array.from(new Set([...baseSelectedIds, pickedArtist.id]));
+    const alreadySelected = baseSelectedIds.includes(pickedArtist.id);
+
+    let mergedIds = baseSelectedIds;
+    let mergedArtists = baseSelectedArtists;
+
+    if (!alreadySelected) {
+      if (baseSelectedIds.length >= MAX_SELECT) return;
+
+      mergedIds = [...baseSelectedIds, pickedArtist.id];
+      mergedArtists = [
+        ...baseSelectedArtists,
+        {
+          id: pickedArtist.id,
+          name: pickedArtist.name,
+          imageUrl: pickedArtist.imageUrl,
+        },
+      ];
+    }
 
     navigate("/preference_artist", {
       state: {
+        signupDraft,
         selectedGenres,
-        selectedArtist: pickedArtist,
         selectedArtistIds: mergedIds,
+        selectedArtists: mergedArtists,
       },
       replace: true,
     });
@@ -196,8 +224,10 @@ const Preference_artist_search = () => {
   const handleCancel = () => {
     navigate("/preference_artist", {
       state: {
+        signupDraft,
         selectedGenres,
         selectedArtistIds: baseSelectedIds,
+        selectedArtists: baseSelectedArtists,
       },
       replace: true,
     });
@@ -232,24 +262,31 @@ const Preference_artist_search = () => {
           )}
 
           <div className="artist_grid">
-            {artists.map((artist) => (
-              <PreferenceArtistCircle
-                key={artist.id}
-                artist={artist}
-                isSelected={
-                  baseSelectedIds.includes(artist.id) || pickedId === artist.id
-                }
-                onClick={() => toggleArtist(artist.id)}
-              />
-            ))}
-          </div> </div>
+            {artists.map((artist) => {
+              const isAlreadySelected = baseSelectedIds.includes(artist.id);
+              const isCurrentPicked = pickedId === artist.id;
+
+              return (
+                <PreferenceArtistCircle
+                  key={artist.id}
+                  artist={artist}
+                  isSelected={isAlreadySelected || isCurrentPicked}
+                  onClick={() => toggleArtist(artist.id)}
+                />
+              );
+            })}
+          </div>
+        </div>
 
         <PreferenceSelectBtn
-          disabled={!pickedArtist}
+          disabled={
+            !pickedArtist ||
+            (!baseSelectedIds.includes(pickedArtist.id) &&
+              baseSelectedIds.length >= MAX_SELECT)
+          }
           onClick={handleSelect}
           text="Select"
         />
-
       </div>
     </div>
   );

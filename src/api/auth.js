@@ -6,7 +6,6 @@ export const sendOtp = ({ email }) =>
 export const verifyOtp = ({ email, token, type = "email" }) =>
   api.post("/auth/verify", { email, token, type }).then((res) => res.data);
 
-// token 매개변수 추가 및 Header 설정 반영
 export const signup = ({ email, password, username, token }) =>
   api.post(
     "/auth/signup",
