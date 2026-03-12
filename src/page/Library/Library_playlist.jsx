@@ -47,13 +47,15 @@ const Library_playlist = () => {
 
   const handleSelectTrack = useCallback(
     (item) => {
-      // 일반 트랙이면 youtube_video_id 기준
       const videoId =
         item?.youtube_video_id ||
         item?.track?.youtube_video_id ||
         item?.video_id;
 
-      const mixAudioUrl = item?.mix_audio_url || item?.audio_url;
+      const mixAudioUrl =
+        item?.mix_audio_url ||
+        item?.audio_url ||
+        item?.mix?.mix_audio_url;
 
       if (!videoId && !mixAudioUrl) {
         alert("이 항목은 재생 가능한 소스가 없어.");
@@ -77,76 +79,107 @@ const Library_playlist = () => {
     });
   }, [navigate, pl?.id, pl?.title, pid]);
 
-  const normalizePlaylistItem = useCallback((item) => {
-    const itemType = item?.item_type || (item?.mix_id ? "mix" : "track");
+  const normalizePlaylistItem = useCallback(
+    (item) => {
+      const itemType = item?.item_type || (item?.mix_id ? "mix" : "track");
 
-    if (itemType === "mix") {
-      return {
-        item_type: "mix",
-        id: item?.mix_id ?? item?.id,
-        mix_id: item?.mix_id ?? item?.id,
-        playlist_id: item?.playlist_id ?? pid,
-        added_at: item?.added_at ?? item?.created_at ?? null,
+      if (itemType === "mix") {
+        const displayTitle =
+          item?.title ||
+          item?.mix?.title ||
+          "AI Mix";
 
-        title:
-          item?.title ??
-          item?.mix_title ??
-          item?.name ??
-          "AI Mix",
-        artist:
-          item?.artist ??
-          item?.creator_name ??
-          "AI DJ",
-        track_image_url:
-          item?.track_image_url ??
-          item?.cover_url ??
-          item?.image_url ??
-          null,
+        const displayArtist =
+          item?.artist ||
+          item?.mix?.artist ||
+          "AI DJ";
 
-        mix_audio_url: item?.mix_audio_url ?? item?.audio_url ?? null,
-        log_json_url: item?.log_json_url ?? null,
-        log_json_path: item?.log_json_path ?? null,
-        used_k: item?.used_k ?? null,
-        events: item?.events ?? [],
+        const displayImage =
+          item?.track_image_url ||
+          item?.cover_url ||
+          item?.image_url ||
+          item?.mix?.track_image_url ||
+          item?.mix?.cover_url ||
+          item?.mix?.image_url ||
+          null;
 
-        track: null,
-        track_id: null,
-        youtube_video_id: null,
-      };
-    }
+        const resolvedMixAudioUrl =
+          item?.mix_audio_url ||
+          item?.audio_url ||
+          item?.mix?.mix_audio_url ||
+          null;
 
-    const t = item?.track || {};
-    const merged = {
-      ...item,
-      ...t,
-      track: t,
-      playlist_track_id: item?.playlist_track_id,
-      playlist_id: item?.playlist_id,
-      added_at: item?.added_at,
-    };
+        return {
+          item_type: "mix",
+          id: item?.playlist_track_id ?? item?.mix_id ?? item?.id,
+          playlist_track_id: item?.playlist_track_id ?? null,
+          playlist_id: item?.playlist_id ?? pid,
+          track_id: null,
+          mix_id: item?.mix_id ?? item?.id ?? null,
+          added_at: item?.added_at ?? item?.created_at ?? null,
 
-    const nt = normalizeTrackData(merged);
+          title: displayTitle,
+          artist: displayArtist,
+          track_image_url: displayImage,
 
-    return {
-      item_type: "track",
-      id: item?.track_id ?? nt?.track_id,
-      playlist_track_id: item?.playlist_track_id,
-      playlist_id: item?.playlist_id,
-      track_id: nt?.track_id,
-      added_at: item?.added_at,
+          mix_audio_url: resolvedMixAudioUrl,
+          log_json_url: item?.log_json_url ?? item?.mix?.log_json_url ?? null,
+          log_json_path: item?.log_json_path ?? item?.mix?.log_json_path ?? null,
+          used_k: item?.used_k ?? item?.mix?.used_k ?? null,
+          events: item?.events ?? item?.mix?.events ?? [],
 
-      title: nt?.title ?? null,
-      artist: nt?.artist ?? null,
-      track_image_url: nt?.track_image_url ?? null,
-      youtube_video_id: nt?.youtube_video_id ?? null,
+          track: {
+            title: displayTitle,
+            artist: displayArtist,
+            track_image_url: displayImage,
+            mix_audio_url: resolvedMixAudioUrl,
+          },
 
-      track: {
+          mix: item?.mix ?? null,
+          youtube_video_id: null,
+        };
+      }
+
+      const t = item?.track || {};
+      const merged = {
+        ...item,
         ...t,
+        track: t,
+        playlist_track_id: item?.playlist_track_id,
+        playlist_id: item?.playlist_id,
+        added_at: item?.added_at,
+      };
+
+      const nt = normalizeTrackData(merged);
+
+      return {
+        item_type: "track",
+        id: item?.playlist_track_id ?? item?.track_id ?? nt?.track_id,
+        playlist_track_id: item?.playlist_track_id ?? null,
+        playlist_id: item?.playlist_id ?? null,
+        track_id: nt?.track_id,
+        mix_id: null,
+        added_at: item?.added_at,
+
+        title: nt?.title ?? null,
+        artist: nt?.artist ?? null,
         track_image_url: nt?.track_image_url ?? null,
         youtube_video_id: nt?.youtube_video_id ?? null,
-      },
-    };
-  }, [pid]);
+
+        track: {
+          ...t,
+          title: nt?.title ?? null,
+          artist: nt?.artist ?? null,
+          track_image_url: nt?.track_image_url ?? null,
+          youtube_video_id: nt?.youtube_video_id ?? null,
+        },
+
+        mix: null,
+        mix_audio_url: null,
+      };
+    },
+    [pid]
+  );
 
   const loadTracks = useCallback(async () => {
     if (!pid) return [];
@@ -155,15 +188,25 @@ const Library_playlist = () => {
     try {
       const data = await fetchPlaylistTracks(pid);
 
+      console.log("fetchPlaylistTracks response:", data);
+
       const raw = Array.isArray(data)
         ? data
         : data?.playlist_tracks ||
-          data?.tracks ||
-          data?.items ||
-          data?.results ||
-          [];
+        data?.tracks ||
+        data?.items ||
+        data?.results ||
+        [];
 
-      const normalized = (Array.isArray(raw) ? raw : []).map(normalizePlaylistItem);
+      console.log("playlist tracks raw:", raw);
+
+      const firstMix = raw.find((x) => x?.item_type === "mix");
+
+      console.log("mix item JSON:", JSON.stringify(firstMix, null, 2));
+
+      const normalized = (Array.isArray(raw) ? raw : []).map(
+        normalizePlaylistItem
+      );
 
       const seen = new Set();
       const unique = [];
@@ -174,7 +217,7 @@ const Library_playlist = () => {
             ? `mix:${x.mix_id}`
             : `track:${x.track_id}`;
 
-        if (!x?.id && !x?.mix_id && !x?.track_id) continue;
+        if (!x?.mix_id && !x?.track_id) continue;
         if (seen.has(uniqueKey)) continue;
 
         seen.add(uniqueKey);

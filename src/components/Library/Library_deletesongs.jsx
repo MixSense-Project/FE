@@ -5,6 +5,18 @@ import { normalizeTrackImage } from "../../utils/track";
 const Library_deletesongs = ({ data, onDelete, onSelect }) => {
   const imageSrc = normalizeTrackImage(data);
 
+  const title =
+    data?.title ||
+    data?.track?.title ||
+    data?.mix?.title ||
+    "Song";
+
+  const artist =
+    data?.artist ||
+    data?.track?.artist ||
+    data?.mix?.artist ||
+    "Artist";
+
   return (
     <div
       className="deletesongs_wrap"
@@ -28,8 +40,8 @@ const Library_deletesongs = ({ data, onDelete, onSelect }) => {
         </div>
 
         <div className="song_detail">
-          <p className="c_song_name">{data?.title || "Song"}</p>
-          <p className="c_artist_name">{data?.artist || "Artist"}</p>
+          <p className="c_song_name">{title}</p>
+          <p className="c_artist_name">{artist}</p>
         </div>
       </div>
 
