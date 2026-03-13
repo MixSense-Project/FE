@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import add_btn from '../../assets/img/AIDJ/gray_add_btn.svg';
-import check_btn from '../../assets/img/home/check.svg';
 
-const Searchlist = ({ data, onPlay }) => { // onPlay로 프롭스 이름 변경
-  const [isAdd, setIsAdd] = useState(false);
-
-  const Addplaylist = (e) => {
-    e.stopPropagation(); // + 버튼 클릭 시 재생 방지
-    setIsAdd(!isAdd);
-  };
-
+const Searchlist = ({ data, onPlay, onAdd }) => { // ✅ onAdd 프롭스 추가
   // 비디오 ID 추출 로직
   const videoId = data.track?.youtube_video_id || data.youtube_video_id;
+
+  const handleAddClick = (e) => {
+    e.stopPropagation(); // + 버튼 클릭 시 재생 방지
+    
+    // ✅ 클릭한 위치의 좌표 추출
+    const pos = { x: e.clientX, y: e.clientY };
+    
+    // ✅ 부모에게 데이터와 위치 전달
+    if (onAdd) {
+      onAdd(data, pos);
+    }
+  };
 
   return (
     <div id="Searchlist_Wrap" onClick={onPlay} style={{ cursor: 'pointer' }}>
@@ -31,9 +35,9 @@ const Searchlist = ({ data, onPlay }) => { // onPlay로 프롭스 이름 변경
             </div>
         </div>
         <img 
-          src={isAdd ? check_btn : add_btn} 
+          src={add_btn} // 팝업이 뜰 것이므로 체크 버튼 상태는 필요 없습니다.
           alt="add" 
-          onClick={Addplaylist} 
+          onClick={handleAddClick} // ✅ 클릭 핸들러 변경
           style={{ width: '22px', height: '22px' }}
         />
     </div> 
