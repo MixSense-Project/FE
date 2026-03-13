@@ -10,8 +10,14 @@ const Musiclist = ({ data, onPlay, onAdd }) => {
   const isPlayingNow = trackId === currentPlayingId;
 
   const handleAddClick = (e) => {
-    e.stopPropagation(); // 재생 안 되게 막기
-    if (onAdd) onAdd(data); // 부모의 handleOpenPopup 실행
+    e.stopPropagation(); 
+    
+    // ✅ 클릭한 위치 좌표 추출
+    const pos = { x: e.clientX, y: e.clientY };
+    
+    if (onAdd) {
+      onAdd(data, pos); // 데이터와 위치를 부모에게 전달
+    }
   };
 
   return (
