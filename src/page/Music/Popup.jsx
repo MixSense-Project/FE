@@ -6,7 +6,7 @@ import aidj_img from '../../assets/img/Music/aidj.svg';
 import share__img from '../../assets/img/Music/share.svg';
 import add_img from '../../assets/img/Music/add.svg';
 
-const Popup = ({ onClose }) => {
+const Popup = ({ onClose, specificTrack }) => {
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
   const { currentTrack } = useMusic();
@@ -41,26 +41,27 @@ const Popup = ({ onClose }) => {
 
   // 2. 플레이리스트에 곡 추가하는 함수
   const handleAddToPlaylist = async (playlistId) => {
-    // 위에서 확인한 데이터 구조에 따라 track_id 추출
-    const trackId = currentTrack?.track?.track_id || currentTrack?.track_id;
+    // [수정 포인트] specificTrack(Home 리스트 클릭)이 있으면 우선 사용하고, 없으면 currentTrack(재생중인 곡) 사용
+    const target = specificTrack || currentTrack;
+    
+    // 데이터 구조 대응: track.track_id (송플레이) OR track_id OR id (Home 리스트)
+    const finalTrackId = target?.track?.track_id || target?.track_id || target?.id;
 
-    if (!trackId) {
+    if (!finalTrackId) {
       alert("추가할 곡 정보가 없습니다.");
       return;
     }
 
     try {
-      // API 명세에 따라 URL이나 Data 구조는 바뀔 수 있습니다. 
-      // 보통 /api/playlists/{playlistId}/tracks 형태를 많이 사용합니다.
       await axios.post(`${BASE_URL}/api/playlists/${playlistId}/tracks`, 
-        { track_id: trackId }, 
+        { track_id: finalTrackId }, 
         {
           headers: { "Authorization": `Bearer ${token}` }
         }
       );
 
       alert("플레이리스트에 곡이 추가되었습니다!");
-      onClose(); // 성공 후 팝업 닫기
+      onClose(); 
     } catch (error) {
       console.error("곡 추가 실패:", error);
       alert(error.response?.data?.message || "곡을 추가하는 데 실패했습니다.");
@@ -68,7 +69,9 @@ const Popup = ({ onClose }) => {
   };
 
   const handleShare = () => {
-    const videoId = currentTrack?.track?.youtube_video_id;
+    const target = specificTrack || currentTrack;
+    const videoId = target?.track?.youtube_video_id || target?.youtube_video_id || target?.video_id;
+
     if (videoId) {
       const youtubeLink = `https://www.youtube.com/watch?v=${videoId}`;
       navigator.clipboard.writeText(youtubeLink)
@@ -97,7 +100,7 @@ const Popup = ({ onClose }) => {
                 <img src={share__img} alt="share" />
             </button>
 
-            <div className="playlist_container" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+            <div className="playlist_container">
                 {loading ? (
                     <p style={{ color: '#fff', textAlign: 'center', padding: '10px' }}>Loading...</p>
                 ) : playlists.length > 0 ? (

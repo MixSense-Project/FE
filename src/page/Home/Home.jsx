@@ -7,6 +7,7 @@ import Track from '../../components/Home/Track';
 import Musiclist from '../../components/Home/Musiclist';
 import more_btn from '../../assets/img/home/more_btn.svg';
 import banner_img from '../../assets/img/home/banner.png';
+import Popup from '../Music/Popup'; // ✅ 추가
 import axios from 'axios';
 
 const Home = () => {
@@ -15,6 +16,16 @@ const Home = () => {
   const [recommendTracks, setRecommendTracks] = useState([]);
   const [trendingTracks, setTrendingTracks] = useState([]);
   const scrollRef = useRef(null);
+
+  // ✅ [추가] 팝업 제어 상태
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState(null);
+
+  // ✅ [추가] 팝업 열기 함수
+  const handleOpenPopup = (trackData) => {
+    setSelectedTrack(trackData);
+    setIsPopupOpen(true);
+  };
 
   const fetchRecommend = async () => {
     try {
@@ -72,8 +83,6 @@ const Home = () => {
                         key={item.track_id || i} 
                         img={videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null}
                         onClick={() => {
-                          // 만약 item 자체가 트랙 정보라면 그대로 전달
-                          // 만약 item.track 안에 정보가 들어있다면 item.track을 전달해야 합니다.
                           const trackData = item.track ? item.track : item;
                           setCurrentTrack(trackData); 
                         }} 
@@ -81,13 +90,11 @@ const Home = () => {
                       );
                     })
                   ) : (
-                    // 데이터 로딩 전 보여줄 빈 칸들
                     Array.from({ length: 9 }).map((_, i) => <Track key={i} />)
                   )}
                 </div>
               ))}
             </div>
-            {/* 인디케이터(점) 로직 유지 */}
             <div className="indicator_container">
               <div className={`dot ${activeIndex === 0 ? 'active' : ''}`}></div>
               <div className={`dot ${activeIndex === 1 ? 'active' : ''}`}></div>
@@ -107,6 +114,7 @@ const Home = () => {
                   key={item.id} 
                   data={item} 
                   onPlay={() => setCurrentTrack(item)} 
+                  onAdd={handleOpenPopup} // ✅ Musiclist에 함수 연결
                 />
               ))
             ) : (
@@ -116,6 +124,8 @@ const Home = () => {
         </div>
       </div>
       <Nav/>
+      {/* ✅ 팝업 추가 */}
+      {isPopupOpen && <Popup onClose={() => setIsPopupOpen(false)} specificTrack={selectedTrack} />}
     </div>
   );
 };
