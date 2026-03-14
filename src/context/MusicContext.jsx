@@ -86,6 +86,7 @@ export const MusicProvider = ({ children }) => {
 
     setCurrentIndex((prev) => {
       if (!queue || queue.length === 0) return -1;
+
       const ni = prev + 1;
       if (ni >= queue.length) {
         setIsPlay(false);
@@ -103,8 +104,10 @@ export const MusicProvider = ({ children }) => {
 
     setCurrentIndex((prevIdx) => {
       if (!queue || queue.length === 0) return -1;
+
       const pi = prevIdx - 1;
       if (pi < 0) return prevIdx;
+
       setCurrentTrack(queue[pi]);
       setIsPlay(true);
       return pi;

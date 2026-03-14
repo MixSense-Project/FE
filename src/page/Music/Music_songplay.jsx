@@ -51,7 +51,6 @@ const Music_songplay = () => {
                     }
                 });
 
-                // ✅ 수정 포인트: res.data가 아니라 res.data.mylist를 사용해야 함
                 const mylist = res.data.mylist || res.data; 
                 
                 console.log("동기화 시도 중 - 실제 리스트 데이터:", mylist);
@@ -86,7 +85,6 @@ const Music_songplay = () => {
         try {
             setBusy(true);
             const res = await toggleLike({ profileId, contentId });
-            // ✅ res.status와 res.data.status 모두 대응
             const status = (typeof res === "string" ? res : res?.status) || res?.data?.status;
 
             if (status === "unliked") {
