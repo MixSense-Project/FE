@@ -19,8 +19,7 @@ const Library_playlist = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { setCurrentTrack, playQueue } = useMusic();
-
+  const { setCurrentTrack, setIsPlay, playQueue } = useMusic();
   const username = useMemo(() => {
     return (
       localStorage.getItem("username") ||
@@ -63,8 +62,9 @@ const Library_playlist = () => {
       }
 
       setCurrentTrack(item);
+      setIsPlay(true);
     },
-    [setCurrentTrack]
+    [setCurrentTrack, setIsPlay]
   );
 
   const onGoAdd = useCallback(() => {

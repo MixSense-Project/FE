@@ -7,16 +7,17 @@ export const MusicProvider = ({ children }) => {
   const [isPlay, setIsPlay] = useState(false);
   const [player, setPlayer] = useState(null);
 
-  // 큐/연속재생
   const [queue, setQueue] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
 
   const playQueue = useCallback((tracks, startIndex = 0) => {
     const safe = Array.isArray(tracks) ? tracks.filter(Boolean) : [];
+
     if (safe.length === 0) {
       setQueue([]);
       setCurrentIndex(-1);
       setCurrentTrack(null);
+      setIsPlay(false);
       return;
     }
 
@@ -24,14 +25,21 @@ export const MusicProvider = ({ children }) => {
     setQueue(safe);
     setCurrentIndex(i);
     setCurrentTrack(safe[i]);
+    setIsPlay(true);
   }, []);
 
   const next = useCallback(() => {
     setCurrentIndex((prev) => {
       if (!queue || queue.length === 0) return -1;
+
       const ni = prev + 1;
-      if (ni >= queue.length) return prev; 
+      if (ni >= queue.length) {
+        setIsPlay(false);
+        return prev;
+      }
+
       setCurrentTrack(queue[ni]);
+      setIsPlay(true);
       return ni;
     });
   }, [queue]);
@@ -39,9 +47,12 @@ export const MusicProvider = ({ children }) => {
   const prev = useCallback(() => {
     setCurrentIndex((prevIdx) => {
       if (!queue || queue.length === 0) return -1;
+
       const pi = prevIdx - 1;
       if (pi < 0) return prevIdx;
+
       setCurrentTrack(queue[pi]);
+      setIsPlay(true);
       return pi;
     });
   }, [queue]);
@@ -54,7 +65,6 @@ export const MusicProvider = ({ children }) => {
       setIsPlay,
       player,
       setPlayer,
-
       queue,
       currentIndex,
       playQueue,
