@@ -48,22 +48,39 @@ const Popup = ({ onClose, specificTrack, position }) => {
     }
   };
 
-  // ✅ 1. 위치 스타일 계산 (Home 리스트용)
-  let popupWrapStyle = {};
+  // ✅ 위치 스타일 계산 수정
+  let popupWrapStyle = {
+    position: 'absolute',
+    zIndex: 10001,
+  };
+
   if (position) {
+    // 부모 컨테이너(.home_wrap 등) 중앙을 기준으로 팝업을 띄웁니다.
     popupWrapStyle = {
-      position: 'fixed',
-      top: `${position.y - 190}px`, // 손가락 위로 띄우기
-      left: `${position.x - 180}px`, // 왼쪽 정렬 보정
-      zIndex: 10001, // 내부 박스는 오버레이보다 더 높게
-      margin: 0
+      ...popupWrapStyle,
+      top: `${position.y - 150}px`, // 클릭한 위치보다 위쪽으로 띄움
+      left: '50%',
+      transform: 'translateX(-15%)', // 모바일 프레임 가로 중앙 정렬
+      width: '187px',                // 팝업 너비 적정값 고정
     };
   }
 
   return (
+    /* ✅ Overlay를 absolute로 설정하여 relative 부모(모바일 프레임) 내에 고정 */
     <div 
       className="Popup_Overlay" 
-      onClick={onClose}> 
+      onClick={onClose}
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        // backgroundColor: 'rgba(0,0,0,0.5)', 
+        zIndex: 10000,
+        borderRadius: 'inherit' // 부모의 테두리 둥글기 상속 (선택사항)
+      }}
+    > 
         <div 
           id="Popup_Wrap" 
           onClick={(e) => e.stopPropagation()} 
