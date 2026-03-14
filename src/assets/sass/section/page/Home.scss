@@ -355,10 +355,19 @@
 }
 
 
+.app_container {
+    position: relative; 
+    width: 393px;      
+    margin: 0 auto;    
+    // background-color: var(--black); 
+    overflow: hidden; 
+}
+
 //Musicplay.jsx
 #Musicplay_Wrap{
-    position: absolute;
-    bottom: 150px;
+    position: absolute; 
+    bottom: 96px; 
+    
     left: 50%;
     transform: translateX(-50%);
 
