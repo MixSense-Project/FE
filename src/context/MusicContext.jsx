@@ -9,51 +9,72 @@ export const MusicProvider = ({ children }) => {
   const [queue, setQueue] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
 
-  // 재생 시작 시점 기록용 (렌더링과 무관하게 값을 유지하기 위해 useRef 사용)
   const playStartTimeRef = useRef(null);
 
-  // --- [로그 전송 로직] ---
+  // --- [1. Autoplay API 호출 로직] ---
+  const fetchAutoplay = useCallback(async (trackId) => {
+    console.log(`%c[Autoplay] 📡 추천 API 호출 시도 (ID: ${trackId})`, "color: #2196F3; font-weight: bold");
+    
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      console.warn("[Autoplay] ⚠️ 토큰이 없습니다.");
+      return [];
+    }
+
+    // 포스트맨에서 확인한 경로와 파라미터 (current_track_id)
+    const apiUrl = `/api/ai/recommend/autoplay?current_track_id=${trackId}&k=5`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: { 
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const newTracks = Array.isArray(data) ? data : (data.tracks || []);
+        console.log(`%c[Autoplay] ✅ 추천 곡 ${newTracks.length}개 로드 성공`, "color: #2196F3; font-weight: bold", newTracks);
+        return newTracks;
+      } else {
+        console.error(`[Autoplay] ❌ 서버 응답 에러: ${response.status}`);
+        return [];
+      }
+    } catch (error) {
+      console.error("[Autoplay] ❌ 네트워크 오류:", error);
+      return [];
+    }
+  }, []);
+
+  // --- [2. 재생 로그 전송 로직] ---
   const sendPlayLog = useCallback(async () => {
     if (!currentTrack || !playStartTimeRef.current) return;
-
     const msPlayed = Math.floor(Date.now() - playStartTimeRef.current);
-    
-    // 1초 미만은 의미 없는 데이터로 간주하고 전송하지 않음
     if (msPlayed < 1000) return;
 
     const token = localStorage.getItem('access_token');
-    const apiUrl = "/api/logs/play"; // Vite Proxy 설정을 이용한 상대 경로
-
     const logData = {
       track_id: String(currentTrack.id || currentTrack.track_id || ""),
       ms_played: msPlayed,
     };
 
     try {
-      const response = await fetch(apiUrl, {
+      await fetch("/api/logs/play", {
         method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` 
-        },
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify(logData),
       });
-
-      if (response.ok) {
-        console.log(`%c[Log Success] ✅ 기록 완료: ${msPlayed}ms`, "color: #4CAF50; font-weight: bold");
-      }
-    } catch (error) {
-      console.error("[Log Error] 전송 실패:", error);
-    }
+      console.log(`%c[Log] ✅ 기록 완료: ${msPlayed}ms`, "color: #4CAF50");
+    } catch (e) { console.error("[Log] 전송 실패", e); }
   }, [currentTrack]);
 
-  // --- [재생 상태 감시 이펙트] ---
+  // --- [3. 재생 상태 감시] ---
   useEffect(() => {
     if (isPlay) {
-      // 재생 시작 시점 기록
       playStartTimeRef.current = Date.now();
     } else {
-      // 일시정지 시 지금까지 들은 시간 전송
       if (playStartTimeRef.current) {
         sendPlayLog();
         playStartTimeRef.current = null;
@@ -61,75 +82,65 @@ export const MusicProvider = ({ children }) => {
     }
   }, [isPlay, sendPlayLog]);
 
-  // --- [기존 로직 유지 + 로그 전송 추가] ---
+  // --- [4. 재생 컨트롤 로직 (핵심 수정)] ---
   const playQueue = useCallback((tracks, startIndex = 0) => {
     const safe = Array.isArray(tracks) ? tracks.filter(Boolean) : [];
-
-    if (safe.length === 0) {
-      setQueue([]);
-      setCurrentIndex(-1);
-      setCurrentTrack(null);
-      setIsPlay(false);
-      return;
-    }
-
-    const i = Math.max(0, Math.min(startIndex, safe.length - 1));
     setQueue(safe);
-    setCurrentIndex(i);
-    setCurrentTrack(safe[i]);
+    setCurrentIndex(startIndex);
+    setCurrentTrack(safe[startIndex]);
     setIsPlay(true);
   }, []);
 
-  const next = useCallback(() => {
-    // 곡이 바뀌기 전 현재까지 재생한 기록 전송
+  const next = useCallback(async () => {
+    console.log("%c[Control] ⏭️ Next 호출", "font-weight: bold");
     sendPlayLog();
 
-    setCurrentIndex((prev) => {
-      if (!queue || queue.length === 0) return -1;
+    // ID 확보 (여러 구조 대응)
+    const currentId = currentTrack?.id || currentTrack?.track_id || currentTrack?.track?.id;
+    const nextIndex = currentIndex + 1;
 
-      const ni = prev + 1;
-      if (ni >= queue.length) {
-        setIsPlay(false);
-        return prev;
+    // 큐가 비어있거나 마지막 곡일 경우 -> 무조건 Autoplay API 호출
+    if (queue.length === 0 || nextIndex >= queue.length) {
+      console.log("%c[System] 💡 큐가 비었거나 마지막입니다. 자동 재생을 요청합니다.", "color: #9C27B0");
+      
+      if (!currentId) {
+        console.warn("[System] 현재 곡 ID를 찾을 수 없어 API를 호출할 수 없습니다.");
+        return;
       }
-      setCurrentTrack(queue[ni]);
-      setIsPlay(true);
-      return ni;
-    });
-  }, [queue, sendPlayLog]);
+
+      const newTracks = await fetchAutoplay(currentId);
+
+      if (newTracks && newTracks.length > 0) {
+        setQueue(newTracks); 
+        setCurrentIndex(0);
+        setCurrentTrack(newTracks[0]);
+        setIsPlay(true);
+      } else {
+        console.warn("[System] 추천 곡이 없습니다.");
+        setIsPlay(false);
+      }
+      return;
+    }
+
+    // 큐에 다음 곡이 있는 경우
+    setCurrentIndex(nextIndex);
+    setCurrentTrack(queue[nextIndex]);
+    setIsPlay(true);
+  }, [queue, currentIndex, currentTrack, sendPlayLog, fetchAutoplay]);
 
   const prev = useCallback(() => {
-    // 곡이 바뀌기 전 현재까지 재생한 기록 전송
     sendPlayLog();
-
-    setCurrentIndex((prevIdx) => {
-      if (!queue || queue.length === 0) return -1;
-
-      const pi = prevIdx - 1;
-      if (pi < 0) return prevIdx;
-
+    if (currentIndex > 0) {
+      const pi = currentIndex - 1;
+      setCurrentIndex(pi);
       setCurrentTrack(queue[pi]);
       setIsPlay(true);
-      return pi;
-    });
-  }, [queue, sendPlayLog]);
+    }
+  }, [queue, currentIndex, sendPlayLog]);
 
-  const value = useMemo(
-    () => ({
-      currentTrack,
-      setCurrentTrack,
-      isPlay,
-      setIsPlay,
-      player,
-      setPlayer,
-      queue,
-      currentIndex,
-      playQueue,
-      next,
-      prev,
-    }),
-    [currentTrack, isPlay, player, queue, currentIndex, playQueue, next, prev]
-  );
+  const value = useMemo(() => ({
+    currentTrack, setCurrentTrack, isPlay, setIsPlay, player, setPlayer, queue, currentIndex, playQueue, next, prev,
+  }), [currentTrack, isPlay, player, queue, currentIndex, playQueue, next, prev]);
 
   return <MusicContext.Provider value={value}>{children}</MusicContext.Provider>;
 };
