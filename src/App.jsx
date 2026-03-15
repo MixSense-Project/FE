@@ -43,7 +43,7 @@ function App() {
     "/ai_dj_loading", "/preference_genre", "/preference_artist",
     "/preference_artist_search", "/ai_search",
     "/ai_dj", "/ai_dj_trackselect", "/ai_dj_loading", "/ai_dj_onboarding", "/ai_dj_result",
-    "/music/songplay", "/music/songlyrics"
+    "/music/songplay", "/music/songlyrics", "/mypage"
   ].includes(location.pathname);
 
   return (
