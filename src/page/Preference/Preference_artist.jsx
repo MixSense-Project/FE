@@ -6,59 +6,13 @@ import PreferenceSelectBtn from "../../components/Preference/Preference_selectbt
 import search_white from "../../assets/img/Header/search_white.svg";
 import { GENRES } from "../../data/Preference_genre";
 import { signup } from "../../api/auth";
+import { apiRequest } from "../../api/http";
+import { fetchArtists } from "../../api/artists";
 
 const MAX_SELECT = 20;
 
-function buildQuery(paramsObj = {}) {
-  const params = new URLSearchParams();
-
-  Object.entries(paramsObj).forEach(([key, value]) => {
-    if (value === undefined || value === null) return;
-
-    if (Array.isArray(value)) {
-      value.forEach((v) => {
-        if (v === undefined || v === null) return;
-        params.append(key, String(v));
-      });
-    } else {
-      params.set(key, String(value));
-    }
-  });
-
-  const qs = params.toString();
-  return qs ? `?${qs}` : "";
-}
-
 function isLikelyJwt(token) {
   return typeof token === "string" && token.split(".").length === 3;
-}
-
-async function request(path, options = {}) {
-  const url = path.startsWith("/") ? path : `/${path}`;
-
-  console.log("[API]", options.method || "GET", url);
-
-  const res = await fetch(url, {
-    ...options,
-    headers: {
-      ...(options.headers || {}),
-      "Content-Type": "application/json",
-      "ngrok-skip-browser-warning": "true",
-    },
-  });
-
-  const contentType = res.headers.get("content-type") || "";
-  const text = await res.text();
-
-  if (!res.ok) {
-    console.error("[API] status:", res.status, "CT:", contentType);
-    console.error("[API] body head:", text.slice(0, 500));
-    throw new Error(`HTTP ${res.status} - ${text.slice(0, 200)}`);
-  }
-
-  if (!text) return null;
-  if (!contentType.includes("application/json")) return text;
-  return JSON.parse(text);
 }
 
 const Preference_artist = () => {
@@ -103,11 +57,14 @@ const Preference_artist = () => {
   const toggleArtist = (id) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else {
+
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
         if (next.size >= MAX_SELECT) return next;
         next.add(id);
       }
+
       return next;
     });
   };
@@ -124,7 +81,9 @@ const Preference_artist = () => {
 
     setSelected((prev) => {
       const next = new Set(prev);
-      incomingIds.forEach((id) => next.add(id));
+      incomingIds.forEach((id) => {
+        if (next.size < MAX_SELECT) next.add(id);
+      });
       return next;
     });
   }, [location.state?.selectedArtistIds]);
@@ -135,19 +94,19 @@ const Preference_artist = () => {
 
     setSelected((prev) => {
       const next = new Set(prev);
+
       if (!next.has(incoming.id)) {
         if (next.size >= MAX_SELECT) return next;
         next.add(incoming.id);
       }
+
       return next;
     });
   }, [location.state?.selectedArtist]);
 
   useEffect(() => {
-    const fetchArtists = async () => {
-      const queryGenres = selectedGenres;
-
-      if (!queryGenres.length) {
+    const run = async () => {
+      if (!selectedGenres.length) {
         setArtists([]);
         return;
       }
@@ -156,31 +115,19 @@ const Preference_artist = () => {
       setMsg("");
 
       try {
-        const qs = buildQuery({ genres: queryGenres });
-        const headers = {
-          Accept: "application/json",
-        };
-
-        if (signupDraft?.token && isLikelyJwt(signupDraft.token)) {
-          headers.Authorization = `Bearer ${signupDraft.token}`;
-        }
-
-        const data = await request(`/api/artists${qs}`, {
-          method: "GET",
-          headers,
+        const list = await fetchArtists({
+          genres: selectedGenres,
+          token:
+            signupDraft?.token && isLikelyJwt(signupDraft.token)
+              ? signupDraft.token
+              : undefined,
         });
 
-        const list = Array.isArray(data) ? data : data?.artists;
+        setArtists(list);
 
-        const normalized = (Array.isArray(list) ? list : [])
-          .map((a) => ({
-            id: a.artist_id ?? a.artistId ?? a.id,
-            name: a.name ?? a.artistName ?? a.artist_name,
-            imageUrl: a.image_url ?? a.imageUrl ?? a.image ?? a.profileImageUrl,
-          }))
-          .filter((a) => a.id != null);
-
-        setArtists(normalized);
+        if (list.length === 0) {
+          setMsg("표시할 아티스트가 없습니다.");
+        }
       } catch (e) {
         console.error("[artists] fetch error:", e);
         setArtists([]);
@@ -190,7 +137,7 @@ const Preference_artist = () => {
       }
     };
 
-    fetchArtists();
+    run();
   }, [selectedGenres, signupDraft?.token]);
 
   const handleSubmit = async () => {
@@ -239,14 +186,9 @@ const Preference_artist = () => {
         "";
 
       const refreshToken =
-        signupRes?.session?.refresh_token ||
-        signupRes?.refresh_token ||
-        "";
+        signupRes?.session?.refresh_token || signupRes?.refresh_token || "";
 
-      const userId =
-        signupRes?.session?.user?.id ||
-        signupRes?.user?.id ||
-        "";
+      const userId = signupRes?.session?.user?.id || signupRes?.user?.id || "";
 
       if (!isLikelyJwt(accessToken)) {
         throw new Error("회원가입 후 access token을 받지 못했습니다.");
@@ -255,13 +197,17 @@ const Preference_artist = () => {
       localStorage.setItem("access_token", accessToken);
       if (refreshToken) localStorage.setItem("refresh_token", refreshToken);
       if (userId) localStorage.setItem("user_id", userId);
-      if (signupDraft.username) localStorage.setItem("username", signupDraft.username);
-      if (signupDraft.email) localStorage.setItem("email", signupDraft.email);
+      if (signupDraft.username) {
+        localStorage.setItem("username", signupDraft.username);
+      }
+      if (signupDraft.email) {
+        localStorage.setItem("email", signupDraft.email);
+      }
 
       const payload = { favorite_genres, favorite_artists };
       console.log("[profile/preferences] payload:", payload);
 
-      await request("/api/profile/preferences", {
+      await apiRequest("/api/profile/preferences", {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${accessToken}`,

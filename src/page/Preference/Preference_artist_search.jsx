@@ -3,103 +3,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import PreferenceArtistCircle from "../../components/Preference/Preference_artist_circle";
 import PreferenceSelectBtn from "../../components/Preference/Preference_selectbtn";
 import searchicon from "../../assets/img/nav/search_g.svg";
+import { fetchArtists } from "../../api/artists";
 
 const DEFAULT_LIMIT = 20;
 const MAX_SELECT = 3;
-
-function buildQuery(paramsObj = {}) {
-  const params = new URLSearchParams();
-
-  Object.entries(paramsObj).forEach(([key, value]) => {
-    if (value === undefined || value === null) return;
-
-    if (Array.isArray(value)) {
-      value.forEach((v) => {
-        if (v === undefined || v === null) return;
-        const s = String(v).trim();
-        if (!s) return;
-        params.append(key, s);
-      });
-    } else {
-      const s = String(value).trim();
-      if (!s) return;
-      params.set(key, s);
-    }
-  });
-
-  const qs = params.toString();
-  return qs ? `?${qs}` : "";
-}
-
-async function requestJson(path, options = {}) {
-  const url = `${path.startsWith("/") ? "" : "/"}${path}`;
-  const res = await fetch(url, {
-    ...options,
-    headers: {
-      ...(options.headers || {}),
-      "Content-Type": "application/json",
-      "ngrok-skip-browser-warning": "true",
-    },
-  });
-
-  const contentType = res.headers.get("content-type") || "";
-  const text = await res.text();
-
-  if (!res.ok) throw new Error(`HTTP ${res.status} - ${text.slice(0, 200)}`);
-
-  if (!contentType.includes("application/json")) {
-    throw new Error(
-      `Non-JSON response (${contentType}). Body head: ${text.slice(0, 120)}`
-    );
-  }
-
-  return text ? JSON.parse(text) : null;
-}
-
-function pickImage(a) {
-  if (Array.isArray(a?.images) && a.images.length > 0) {
-    const first = a.images[0];
-    return typeof first === "string" ? first : first?.url;
-  }
-  return (
-    a.imageUrl ??
-    a.image_url ??
-    a.image ??
-    a.profileImageUrl ??
-    a.profile_image_url ??
-    a.thumbnail ??
-    a.thumbnailUrl ??
-    null
-  );
-}
-
-function normalizeArtists(payload) {
-  const list = Array.isArray(payload)
-    ? payload
-    : payload?.artists ??
-      payload?.items ??
-      payload?.results ??
-      payload?.data ??
-      payload?.artists?.items;
-
-  return (Array.isArray(list) ? list : []).map((a, idx) => {
-    const rawId =
-      a.id ??
-      a.artistId ??
-      a.artist_id ??
-      a.spotifyId ??
-      a.spotify_id ??
-      a.artistID ??
-      null;
-
-    const name =
-      a.name ?? a.artistName ?? a.artist_name ?? a.title ?? a.artist ?? "";
-
-    const id = rawId ?? `${name || "artist"}__${idx}`;
-
-    return { id, name, imageUrl: pickImage(a) };
-  });
-}
 
 function useDebouncedValue(value, delayMs) {
   const [debounced, setDebounced] = useState(value);
@@ -137,7 +44,6 @@ const Preference_artist_search = () => {
   const debouncedQ = useDebouncedValue(q, 300);
 
   const [indexChar] = useState(null);
-
   const [artists, setArtists] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -166,17 +72,16 @@ const Preference_artist_search = () => {
 
     const run = async () => {
       setLoading(true);
+
       try {
-        const qs = buildQuery({
+        const list = await fetchArtists({
           genres: selectedGenres,
           keyword,
           index_char: indexChar,
+          limit: DEFAULT_LIMIT,
         });
 
-        const data = await requestJson(`/api/artists${qs}`, { method: "GET" });
-
-        const normalized = normalizeArtists(data).slice(0, DEFAULT_LIMIT);
-        setArtists(normalized);
+        setArtists(list);
       } catch (e) {
         console.error("[artists search] error:", e);
         setArtists([]);
