@@ -31,6 +31,7 @@ import Music_songlyrics from "./page/Music/Music_songlyrics";
 import Preference_genre from "./page/Preference/Preference_genre";
 import Preference_artist from "./page/Preference/Preference_artist";
 import Preference_artist_search from "./page/Preference/Preference_artist_search";
+import Ai_Search_Onboarding from "./page/Ai_Search/Ai_Search_Onboarding";
 
 function App() {
   const location = useLocation();
@@ -60,6 +61,7 @@ function App() {
           <Route path="/home_search" element={<Home_search />} />
           <Route path="/home_trending_now" element={<Home_trending_now />} />
           <Route path="/ai_search" element={<Ai_Search />} />
+          <Route path="/aisearch/onboarding" element={<Ai_Search_Onboarding/>} />
 
           {/* ✅ AI DJ 진입 로직 수정 */}
           <Route 
