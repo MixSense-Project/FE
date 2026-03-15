@@ -5,7 +5,6 @@ import Nav from '../../components/Nav';
 import SubHeader from '../../components/SubHeader';
 import Searchbar from '../../components/Home/Searchbar';
 import Musiclist from '../../components/Home/Musiclist';
-import musicplaying_icon from '../../assets/img/home/musicplaying_icon.svg'
 
 const Ai_Dj_Trackselect = () => {
   const navigate = useNavigate();
@@ -18,23 +17,24 @@ const Ai_Dj_Trackselect = () => {
   const [pickedSong, setPickedSong] = useState(null); 
 
   const [playingId, setPlayingId] = useState(null);
-  const audioRef = useRef(null);
-  const isFetchingRef = useRef(false); // API 중복 호출 방지용
+  
+  // 🔥 핵심: 오디오 객체를 딱 하나만 만들어서 계속 재사용합니다.
+  const audioRef = useRef(new Audio()); 
+  const isFetchingRef = useRef(false);
 
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const token = localStorage.getItem('access_token');
 
-  // 오디오 정지 함수: 현재 소리를 완전히 죽이고 리소스를 해제함
+  // 오디오 정지 및 초기화
   const stopAudio = () => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.src = ""; 
-      audioRef.current.load(); // 메모리에서 소스 해제
-      audioRef.current = null;
+      // load를 해줘야 네트워크 연결이 확실히 끊깁니다.
+      audioRef.current.load(); 
     }
     setPlayingId(null);
     isFetchingRef.current = false;
-    console.log("오디오 완전 정지 및 리셋");
   };
 
   const fetchSourceTracks = useCallback(async (query) => {
@@ -49,7 +49,7 @@ const Ai_Dj_Trackselect = () => {
       });
       setResults(response.data.source_tracks || []);
     } catch (error) { 
-      console.error("데이터 로드 실패:", error); 
+      console.error("Data load failed:", error); 
     } finally { 
       setLoading(false); 
     }
@@ -57,23 +57,23 @@ const Ai_Dj_Trackselect = () => {
 
   useEffect(() => { 
     fetchSourceTracks(keyword); 
+    // 페이지를 떠날 때 오디오 정리
     return () => stopAudio(); 
   }, [keyword, fetchSourceTracks]);
 
-  // 토글 정지 핵심 로직
   const handlePreviewToggle = async (trackId) => {
-    // 1. 재생 중인 곡을 다시 누르면 즉시 정지
+    // 1. 같은 곡이면 정지
     if (playingId === trackId) {
-      console.log("동일 곡 클릭: 정지 실행");
       stopAudio();
       return;
     }
 
-    // 2. 이미 로딩 중이면 중복 클릭 방지
+    // 2. 다른 곡 재생 시 중복 요청 방지
     if (isFetchingRef.current) return;
 
     try {
-      stopAudio(); // 다른 곡 재생 전 기존 오디오 정리
+      // 재생 시도 전 기존 소리 정지
+      stopAudio(); 
       isFetchingRef.current = true;
 
       const response = await axios.get(`${BASE_URL}/api/ai/mix/source-tracks/${trackId}/preview`, {
@@ -86,16 +86,28 @@ const Ai_Dj_Trackselect = () => {
 
       const audioUrl = response.data.preview_audio_url;
 
-      // 만약 API 응답이 왔을 때 사용자가 이미 다른걸 눌러서 멈춘 상태라면 실행 안함
+      // API 응답이 왔을 때 사용자가 이미 정지 버튼을 눌렀다면 무시
       if (!isFetchingRef.current) return;
 
       if (audioUrl) {
-        const audio = new Audio(audioUrl);
-        audioRef.current = audio;
+        console.log("재생 시도:", audioUrl);
+        
+        // 🔥 객체를 새로 만들지 않고 기존 객체의 주소만 바꿉니다. (가장 안정적)
+        audioRef.current.src = audioUrl;
+        audioRef.current.crossOrigin = "anonymous";
+        
         setPlayingId(trackId);
 
-        audio.play().catch(e => console.error("Play Error:", e));
-        audio.onended = () => stopAudio();
+        // 재생 시도
+        audioRef.current.play().catch(e => {
+          console.error("재생 실패:", e);
+          // 실패 시 상태 초기화
+          setPlayingId(null);
+        });
+
+        audioRef.current.onended = () => {
+          setPlayingId(null);
+        };
       } else {
         alert("미리듣기 주소를 찾을 수 없습니다.");
         isFetchingRef.current = false;
@@ -106,18 +118,17 @@ const Ai_Dj_Trackselect = () => {
     }
   };
 
-  const handleItemClick = (track) => {
-    if (!track) return;
+  const handleItemClick = (item) => {
+    if (!item) return;
     
-    // 아티스트 필드 제외하고 곡 정보 저장
     setPickedSong({
-      id: track.mix_track_id, 
-      title: track.title || "No Title",
-      bpm: track.bpm_hint,
-      thumbnail: track.thumbnail || "" 
+      id: item.mix_track_id, 
+      title: item.title,
+      bpm: item.bpm_hint,
+      thumbnail: item.thumbnail 
     });
 
-    handlePreviewToggle(track.mix_track_id);
+    handlePreviewToggle(item.mix_track_id);
   };
 
   return (
@@ -128,7 +139,7 @@ const Ai_Dj_Trackselect = () => {
 
         <div className="scroll_container">
           {loading ? (
-            <p style={{ textAlign: 'center', color: '#fff', marginTop: '20px' }}>Loading...</p>
+            <p style={{ textAlign: 'center', color: '#fff' }}>Loading...</p>
           ) : (
             results.map((item) => {
               const isSelected = pickedSong?.id === item.mix_track_id;
@@ -141,10 +152,13 @@ const Ai_Dj_Trackselect = () => {
                   style={{ cursor: 'pointer' }}
                 >
                   <Musiclist 
-                    data={item} // 아티스트 필드 제외하고 전달
-                    onAdd={() => {}} 
+                    data={item} 
                     isSelected={isSelected}
                     isPlaying={isPlaying} 
+                    onAdd={(data, selected) => {
+                      if(selected) setPickedSong({ id: data.mix_track_id, title: data.title });
+                      else setPickedSong(null);
+                    }}
                   />
                 </div>
               );
