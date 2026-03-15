@@ -30,35 +30,42 @@ export function pickPlaylistId(created) {
   return null;
 }
 
-const BASE = "/api";
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+const BASE = `${API_BASE_URL}/api`;
+
+function buildHeaders(extraHeaders = {}) {
+  const headers = { ...extraHeaders };
+  const token = authHeader();
+
+  if (token) {
+    headers.Authorization = token;
+  }
+
+  return headers;
+}
 
 export async function createPlaylist({ title }) {
   const res = await fetch(`${BASE}/playlists`, {
     method: "POST",
-    headers: {
+    headers: buildHeaders({
       "Content-Type": "application/json",
-      Authorization: authHeader(),
-      "ngrok-skip-browser-warning": "true",
-    },
+    }),
     body: JSON.stringify({ title }),
   });
 
   const data = await readJson(res);
-  if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(data?.detail || data?.message || `HTTP ${res.status}`);
   return data;
 }
 
 export async function fetchMyPlaylists() {
   const res = await fetch(`${BASE}/playlists`, {
     method: "GET",
-    headers: {
-      Authorization: authHeader(),
-      "ngrok-skip-browser-warning": "true",
-    },
+    headers: buildHeaders(),
   });
 
   const data = await readJson(res);
-  if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(data?.detail || data?.message || `HTTP ${res.status}`);
   return data;
 }
 
@@ -71,11 +78,9 @@ export async function getPlaylistCoverUploadUrl({
 
   const res = await fetch(`${BASE}/playlists/${playlistId}/cover/upload-url`, {
     method: "POST",
-    headers: {
+    headers: buildHeaders({
       "Content-Type": "application/json",
-      Authorization: authHeader(),
-      "ngrok-skip-browser-warning": "true",
-    },
+    }),
     body: JSON.stringify({
       filename,
       content_type: safeContentType,
@@ -85,67 +90,63 @@ export async function getPlaylistCoverUploadUrl({
   });
 
   const data = await readJson(res);
-  if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(data?.detail || data?.message || `HTTP ${res.status}`);
   return data;
 }
 
 export async function uploadFileToSignedUrl({ signedUrl, file }) {
   const res = await fetch(signedUrl, {
     method: "PUT",
-    headers: { "Content-Type": file.type || "application/octet-stream" },
+    headers: {
+      "Content-Type": file.type || "application/octet-stream",
+    },
     body: file,
   });
 
   if (!res.ok) {
-    const t = await res.text().catch(() => "");
-    throw new Error(`Upload failed: HTTP ${res.status} ${t}`);
+    const text = await res.text().catch(() => "");
+    throw new Error(`Upload failed: HTTP ${res.status} ${text}`);
   }
+
   return true;
 }
 
 export async function setPlaylistCoverPath({ playlistId, coverPath }) {
   const res = await fetch(`${BASE}/playlists/${playlistId}/cover`, {
     method: "PATCH",
-    headers: {
+    headers: buildHeaders({
       "Content-Type": "application/json",
-      Authorization: authHeader(),
-      "ngrok-skip-browser-warning": "true",
-    },
+    }),
     body: JSON.stringify({ cover_path: coverPath }),
   });
 
   const data = await readJson(res);
-  if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(data?.detail || data?.message || `HTTP ${res.status}`);
   return data;
 }
 
 export async function deletePlaylist(playlistId) {
   const res = await fetch(`${BASE}/playlists/${playlistId}`, {
     method: "DELETE",
-    headers: {
-      Authorization: authHeader(),
-      "ngrok-skip-browser-warning": "true",
-    },
+    headers: buildHeaders(),
   });
 
   const data = await readJson(res);
-  if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(data?.detail || data?.message || `HTTP ${res.status}`);
   return data;
 }
 
 export async function updatePlaylistTitle({ playlistId, title }) {
   const res = await fetch(`${BASE}/playlists/${playlistId}`, {
     method: "PATCH",
-    headers: {
+    headers: buildHeaders({
       "Content-Type": "application/json",
-      Authorization: authHeader(),
-      "ngrok-skip-browser-warning": "true",
-    },
+    }),
     body: JSON.stringify({ title }),
   });
 
   const data = await readJson(res);
-  if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(data?.detail || data?.message || `HTTP ${res.status}`);
   return data;
 }
 
@@ -154,11 +155,9 @@ export async function addTrackToPlaylist({ playlistId, track }) {
 
   const res = await fetch(`${BASE}/playlists/${playlistId}/tracks`, {
     method: "POST",
-    headers: {
+    headers: buildHeaders({
       "Content-Type": "application/json",
-      Authorization: authHeader(),
-      "ngrok-skip-browser-warning": "true",
-    },
+    }),
     body: JSON.stringify({
       track_id: String(normalizedTrack.track_id),
       title: normalizedTrack.title ?? null,
@@ -179,24 +178,20 @@ export async function addTrackToPlaylist({ playlistId, track }) {
     data = text;
   }
 
-  if (!res.ok) throw new Error(data?.detail || text || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(data?.detail || data?.message || text || `HTTP ${res.status}`);
   return data;
 }
 
-// track + mix 통합 조회
 export async function fetchPlaylistTracks(playlistId) {
   if (!playlistId) throw new Error("playlistId is required");
 
   const res = await fetch(`${BASE}/playlists/${playlistId}/tracks`, {
     method: "GET",
-    headers: {
-      Authorization: authHeader(),
-      "ngrok-skip-browser-warning": "true",
-    },
+    headers: buildHeaders(),
   });
 
   const data = await readJson(res);
-  if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(data?.detail || data?.message || `HTTP ${res.status}`);
   return data;
 }
 
@@ -206,36 +201,28 @@ export async function removeTrackFromPlaylist({ playlistId, trackId }) {
 
   const res = await fetch(`${BASE}/playlists/${playlistId}/tracks/${trackId}`, {
     method: "DELETE",
-    headers: {
-      Authorization: authHeader(),
-      "ngrok-skip-browser-warning": "true",
-    },
+    headers: buildHeaders(),
   });
 
   const data = await readJson(res);
-  if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(data?.detail || data?.message || `HTTP ${res.status}`);
   return data;
 }
 
-// AI mix 삭제
 export async function removeMixFromPlaylist({ playlistId, mixId }) {
   if (!playlistId) throw new Error("playlistId is required");
   if (!mixId) throw new Error("mixId is required");
 
   const res = await fetch(`${BASE}/playlists/${playlistId}/mixes/${mixId}`, {
     method: "DELETE",
-    headers: {
-      Authorization: authHeader(),
-      "ngrok-skip-browser-warning": "true",
-    },
+    headers: buildHeaders(),
   });
 
   const data = await readJson(res);
-  if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(data?.detail || data?.message || `HTTP ${res.status}`);
   return data;
 }
 
-// item_type 따라 자동 삭제
 export async function removePlaylistItem({ playlistId, item }) {
   const itemType = item?.item_type;
 
