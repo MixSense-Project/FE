@@ -23,16 +23,24 @@ const Music_songplay = () => {
     const [busy, setBusy] = useState(false);
 
     const navigate = useNavigate();
-    const { currentTrack, isPlay, player } = useMusic(); 
+    
+    // [수정] next, setIsPlay 추가 추출
+    const { currentTrack, isPlay, setIsPlay, player, next } = useMusic(); 
     
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
 
-    const trackData = currentTrack?.track || currentTrack;
-    const t_id = String(trackData?.track_id || "");
-    const d_id = String(trackData?.id || "");
-    const v_id = String(trackData?.youtube_video_id || trackData?.video_id || "");
+    // 데이터 구조 정리
+    const item = currentTrack?.track || currentTrack;
+    const t_id = String(item?.track_id || "");
+    const d_id = String(item?.id || "");
+    const v_id = String(item?.youtube_video_id || item?.video_id || "");
+    
+    // AI Mix 여부 판단 (Musicplay와 동일 로직)
+    const mixAudioUrl = currentTrack?.mix_audio_url || currentTrack?.audio_url || item?.mix_audio_url || null;
+    const isAiMix = (!!mixAudioUrl && !v_id);
 
+    // 좋아요 동기화 로직
     useEffect(() => {
         const syncLikeStatus = async () => {
             const profileId = localStorage.getItem('profile_id');
@@ -41,7 +49,11 @@ const Music_songplay = () => {
 
             if (!profileId) return;
 
+            // 곡이 바뀔 때마다 일단 false로 초기화 (깜빡임 방지용)
+            setLiked(false);
+
             const myCurrentIds = [t_id, d_id, v_id].filter(id => id !== "");
+            if (myCurrentIds.length === 0) return;
 
             try {
                 const res = await axios.get(`${BASE_URL}/user/mylist/${profileId}`, {
@@ -53,8 +65,6 @@ const Music_songplay = () => {
 
                 const mylist = res.data.mylist || res.data; 
                 
-                console.log("동기화 시도 중 - 실제 리스트 데이터:", mylist);
-
                 if (Array.isArray(mylist)) {
                     const isFound = mylist.some(item => {
                         const itemTrackId = String(item.track_id || "");
@@ -66,7 +76,6 @@ const Music_songplay = () => {
                     });
                     
                     setLiked(isFound);
-                    console.log("최종 하트 상태:", isFound);
                 }
             } catch (error) {
                 console.error("좋아요 동기화 실패:", error);
@@ -74,7 +83,7 @@ const Music_songplay = () => {
         };
 
         syncLikeStatus();
-    }, [t_id, v_id]);
+    }, [t_id, v_id, d_id]); // d_id 추가하여 곡 변경 감지 강화
 
 
     const onClickHeart = async () => {
@@ -87,13 +96,9 @@ const Music_songplay = () => {
             const res = await toggleLike({ profileId, contentId });
             const status = (typeof res === "string" ? res : res?.status) || res?.data?.status;
 
-            if (status === "unliked") {
-                setLiked(false);
-            } else if (status === "liked") {
-                setLiked(true);
-            } else {
-                setLiked(!liked);
-            }
+            if (status === "unliked") setLiked(false);
+            else if (status === "liked") setLiked(true);
+            else setLiked(!liked);
         } catch (e) {
             console.error("좋아요 토글 에러", e);
         } finally {
@@ -101,19 +106,22 @@ const Music_songplay = () => {
         }
     };
 
-    // --- 유튜브 플레이어 및 포맷팅 로직 ---
+    // 재생 시간 업데이트 로직
     useEffect(() => {
         let timer;
-        if (player && isPlay) {
+        if (isPlay) {
             timer = setInterval(() => {
-                if (typeof player.getCurrentTime === 'function') {
+                if (!isAiMix && player && typeof player.getCurrentTime === 'function') {
                     setCurrentTime(player.getCurrentTime());
                     setDuration(player.getDuration());
+                } else if (isAiMix) {
+                    // AI Mix의 경우 Context에서 관리하는 오디오 객체나 전역 객체로부터 시간을 가져와야 함
+                    // (필요 시 Context에 currentTime 상태를 추가하여 공유하는 것이 좋습니다)
                 }
             }, 1000);
         }
         return () => clearInterval(timer);
-    }, [player, isPlay]);
+    }, [player, isPlay, isAiMix]);
 
     const formatTime = (time) => {
         if (!time) return "0:00";
@@ -122,7 +130,22 @@ const Music_songplay = () => {
         return `${min}:${sec < 10 ? '0' : ''}${sec}`;
     };
 
-    if (!v_id) return null;
+    // 재생/정지 토글 (Musicplay와 로직 통일)
+    const togglePlay = () => {
+        if (isAiMix) {
+            setIsPlay(!isPlay);
+        } else if (player) {
+            isPlay ? player.pauseVideo?.() : player.playVideo?.();
+            setIsPlay(!isPlay);
+        }
+    };
+
+    if (!currentTrack) return null;
+
+    // 커버 이미지 설정
+    const coverImage = isAiMix 
+        ? (item?.track_image_url || item?.cover_url || "")
+        : `https://img.youtube.com/vi/${v_id}/maxresdefault.jpg`;
 
     return (
         <div className="musicsongplay_wrap">
@@ -137,13 +160,13 @@ const Music_songplay = () => {
 
                 <div className="ms_main">
                     <div className="ms_cover">
-                        <img src={`https://img.youtube.com/vi/${v_id}/maxresdefault.jpg`} alt="cover" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }} />
+                        <img src={coverImage} alt="cover" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }} />
                     </div>
                     
                     <div className="ms_detail">
                         <div className="song_detail">
-                            <h1>{trackData?.title || trackData?.track_name || "제목 없음"}</h1>
-                            <p>{trackData?.artist || trackData?.artist_name || "아티스트 미상"}</p>
+                            <h1>{item?.title || item?.track_name || "제목 없음"}</h1>
+                            <p>{item?.artist || item?.artist_name || "아티스트 미상"}</p>
                         </div>
 
                         <div className="heart_btn" onClick={onClickHeart} style={{ cursor: 'pointer', opacity: busy ? 0.6 : 1 }}>
@@ -165,12 +188,19 @@ const Music_songplay = () => {
 
                 <div className="ms_btns">
                     <button className="btn"><img src={random_btn} alt="random" /></button>
+                    {/* 이전 곡 기능 필요 시 context에서 prev 가져와 연결 */}
                     <button className="btn"><img src={before_btn} alt="before" /></button>
-                    <button className="btn btn3" onClick={() => isPlay ? player.pauseVideo() : player.playVideo()}>
+                    
+                    <button className="btn btn3" onClick={togglePlay}>
                         <img src={isPlay ? music_play : music_stop} alt="play" />
                     </button>
-                    <button className="btn"><img src={next_btn} alt="next" /></button>
-                    <button className="btn" onClick={() => navigate("/music/songlyrics", { state: { trackId: t_id || v_id } })}>
+                    
+                    {/* [수정] 다음 곡 연동 */}
+                    <button className="btn" onClick={() => next()}>
+                        <img src={next_btn} alt="next" />
+                    </button>
+                    
+                    <button className="btn" onClick={() => navigate("/music/songlyrics", { state: { trackId: t_id || v_id || d_id } })}>
                         <img src={lyrics_btn} alt="lyrics" />
                     </button>
                 </div>
