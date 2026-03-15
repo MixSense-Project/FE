@@ -21,6 +21,7 @@ const Musicplay = () => {
 
   const coverImage = useMemo(() => {
     if (isAiMix) return currentTrack?.track_image_url || currentTrack?.cover_url || "";
+    // 유튜브 썸네일의 경우 기본적으로 4:3 비율이므로 hqdefault나 mqdefault를 사용하면 좋습니다.
     return videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : "";
   }, [isAiMix, currentTrack, videoId]);
 
@@ -54,7 +55,28 @@ const Musicplay = () => {
     <div id="Musicplay_Wrap" onClick={() => navigate("/music/songplay")}>
       <div className="musicplay_wrap">
         <div className="musiclist_container">
-          <div className="album_cover">{coverImage && <img src={coverImage} alt="cover" />}</div>
+          {/* 앨범 커버 컨테이너 스타일 수정 */}
+          <div className="album_cover" style={{ 
+            overflow: 'hidden', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            flexShrink: 0
+          }}>
+            {coverImage && (
+              <img 
+                src={coverImage} 
+                alt="cover" 
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'cover',   // 이미지를 비율 유지하며 꽉 채움
+                  objectPosition: 'center' // 이미지의 중심이 오도록 설정
+                }} 
+              />
+            )}
+          </div>
+
           <div className="music_info">
             <div className="title">{title}</div>
             <div className="artist">{artist}</div>
