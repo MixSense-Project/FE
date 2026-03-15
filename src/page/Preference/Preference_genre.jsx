@@ -12,6 +12,8 @@ const Preference_genre = () => {
   const location = useLocation();
 
   const signupDraft = location.state?.signupDraft || null;
+  const oauthUser = location.state?.oauthUser || null;
+
   const [selected, setSelected] = useState(() => new Set());
 
   const toggleGenre = (id) => {
@@ -36,7 +38,10 @@ const Preference_genre = () => {
   }, [selected]);
 
   const handleSubmit = () => {
-    if (!signupDraft) {
+    const hasSignupDraft = !!signupDraft;
+    const hasOauthUser = !!oauthUser;
+
+    if (!hasSignupDraft && !hasOauthUser) {
       navigate("/splash_signup", { replace: true });
       return;
     }
@@ -44,7 +49,9 @@ const Preference_genre = () => {
     navigate("/preference_artist", {
       state: {
         signupDraft,
+        oauthUser,
         selectedGenres: selectedGenreLabels,
+        selectedGenreIds: selectedIds,
         selectedArtistIds: [],
       },
     });

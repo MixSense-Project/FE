@@ -24,6 +24,7 @@ const Preference_artist_search = () => {
   const location = useLocation();
 
   const signupDraft = location.state?.signupDraft || null;
+  const oauthUser = location.state?.oauthUser || null;
 
   const selectedGenres = useMemo(() => {
     return location.state?.selectedGenres ?? [];
@@ -118,6 +119,7 @@ const Preference_artist_search = () => {
     navigate("/preference_artist", {
       state: {
         signupDraft,
+        oauthUser,
         selectedGenres,
         selectedArtistIds: mergedIds,
         selectedArtists: mergedArtists,
@@ -130,6 +132,7 @@ const Preference_artist_search = () => {
     navigate("/preference_artist", {
       state: {
         signupDraft,
+        oauthUser,
         selectedGenres,
         selectedArtistIds: baseSelectedIds,
         selectedArtists: baseSelectedArtists,

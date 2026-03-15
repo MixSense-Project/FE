@@ -20,6 +20,7 @@ const Preference_artist = () => {
   const location = useLocation();
 
   const signupDraft = location.state?.signupDraft || null;
+  const oauthUser = location.state?.oauthUser || null;
 
   const selectedGenres = useMemo(() => {
     return location.state?.selectedGenres ?? [];
@@ -115,12 +116,14 @@ const Preference_artist = () => {
       setMsg("");
 
       try {
+        const token =
+          signupDraft?.token && isLikelyJwt(signupDraft.token)
+            ? signupDraft.token
+            : undefined;
+
         const list = await fetchArtists({
           genres: selectedGenres,
-          token:
-            signupDraft?.token && isLikelyJwt(signupDraft.token)
-              ? signupDraft.token
-              : undefined,
+          token,
         });
 
         setArtists(list);
@@ -141,7 +144,10 @@ const Preference_artist = () => {
   }, [selectedGenres, signupDraft?.token]);
 
   const handleSubmit = async () => {
-    if (!signupDraft) {
+    const hasSignupDraft = !!signupDraft;
+    const hasOauthUser = !!oauthUser;
+
+    if (!hasSignupDraft && !hasOauthUser) {
       setMsg("회원가입 정보가 없습니다. 처음부터 다시 진행해주세요.");
       navigate("/splash_signup", { replace: true });
       return;
@@ -172,58 +178,94 @@ const Preference_artist = () => {
     setMsg("");
 
     try {
-      const signupRes = await signup({
-        email: signupDraft.email,
-        password: signupDraft.password,
-        username: signupDraft.username,
-        token: signupDraft.token,
-      });
-
-      const accessToken =
-        signupRes?.session?.access_token ||
-        signupRes?.access_token ||
-        signupDraft.token ||
-        "";
-
-      const refreshToken =
-        signupRes?.session?.refresh_token || signupRes?.refresh_token || "";
-
-      const userId = signupRes?.session?.user?.id || signupRes?.user?.id || "";
-
-      if (!isLikelyJwt(accessToken)) {
-        throw new Error("회원가입 후 access token을 받지 못했습니다.");
-      }
-
-      localStorage.setItem("access_token", accessToken);
-      if (refreshToken) localStorage.setItem("refresh_token", refreshToken);
-      if (userId) localStorage.setItem("user_id", userId);
-      if (signupDraft.username) {
-        localStorage.setItem("username", signupDraft.username);
-      }
-      if (signupDraft.email) {
-        localStorage.setItem("email", signupDraft.email);
-      }
-
       const payload = { favorite_genres, favorite_artists };
       console.log("[profile/preferences] payload:", payload);
 
-      await apiRequest("/api/profile/preferences", {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          Accept: "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      // 1) 이메일 회원가입 흐름
+      if (hasSignupDraft) {
+        const signupRes = await signup({
+          email: signupDraft.email,
+          password: signupDraft.password,
+          username: signupDraft.username,
+          token: signupDraft.token,
+        });
 
-      navigate("/splash_login", {
-        replace: true,
-        state: {
-          prefillEmail: signupDraft.email,
-        },
-      });
+        const accessToken =
+          signupRes?.session?.access_token ||
+          signupRes?.access_token ||
+          signupDraft.token ||
+          "";
+
+        const refreshToken =
+          signupRes?.session?.refresh_token || signupRes?.refresh_token || "";
+
+        const userId =
+          signupRes?.session?.user?.id || signupRes?.user?.id || "";
+
+        if (!isLikelyJwt(accessToken)) {
+          throw new Error("회원가입 후 access token을 받지 못했습니다.");
+        }
+
+        localStorage.setItem("access_token", accessToken);
+        if (refreshToken) localStorage.setItem("refresh_token", refreshToken);
+        if (userId) localStorage.setItem("user_id", userId);
+        if (signupDraft.username) {
+          localStorage.setItem("username", signupDraft.username);
+        }
+        if (signupDraft.email) {
+          localStorage.setItem("email", signupDraft.email);
+        }
+
+        await apiRequest("/api/profile/preferences", {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            Accept: "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        navigate("/splash_login", {
+          replace: true,
+          state: {
+            prefillEmail: signupDraft.email,
+          },
+        });
+
+        return;
+      }
+
+      // 2) 구글 로그인 흐름
+      if (hasOauthUser) {
+        const accessToken = localStorage.getItem("access_token") || "";
+
+        if (!isLikelyJwt(accessToken)) {
+          throw new Error("구글 로그인 토큰이 없습니다.");
+        }
+
+        if (oauthUser?.id) {
+          localStorage.setItem("user_id", oauthUser.id);
+        }
+        if (oauthUser?.username) {
+          localStorage.setItem("username", oauthUser.username);
+        }
+        if (oauthUser?.email) {
+          localStorage.setItem("email", oauthUser.email);
+        }
+
+        await apiRequest("/api/profile/preferences", {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            Accept: "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        navigate("/home", { replace: true });
+      }
     } catch (e) {
-      console.error("[signup + preferences] error:", e);
+      console.error("[signup/preferences] error:", e);
       setMsg("회원가입 또는 선호 저장에 실패했습니다.");
     } finally {
       setSaving(false);
@@ -242,6 +284,7 @@ const Preference_artist = () => {
             navigate("/preference_artist_search", {
               state: {
                 signupDraft,
+                oauthUser,
                 selectedGenres,
                 selectedArtistIds: selectedIds,
               },
