@@ -1,10 +1,19 @@
 import React from 'react';
 
-// 1. props에 onClick을 추가합니다.
 const Track = ({ img, onClick }) => {
   return (
-    // 2. id="Track_Wrap"인 div에 onClick 이벤트를 걸어줍니다.
-    <div id="Track_Wrap" onClick={onClick} style={{ cursor: 'pointer' }}>
+    <div 
+      id="Track_Wrap" 
+      onClick={onClick} 
+      style={{ 
+        // width: '114px', 
+        // height: '114px', 
+        overflow: 'hidden', 
+        cursor: 'pointer',
+        backgroundColor: '#222',
+        position: 'relative'
+      }}
+    >
       {img ? (
         <img 
           src={img} 
@@ -13,11 +22,14 @@ const Track = ({ img, onClick }) => {
             width: '100%', 
             height: '100%', 
             objectFit: 'cover', 
-            borderRadius: 3.21,
+            transform: 'scale(1.4)', 
+            
+            display: 'block'
           }} 
           onError={(e) => {
             console.log("이미지 로드 실패:", e.target.src);
             e.target.style.backgroundColor = '#333';
+            e.target.style.transform = 'none'; 
           }} 
         />
       ) : (
@@ -32,6 +44,7 @@ const Track = ({ img, onClick }) => {
             backgroundColor: '#222'
           }}
         >
+          {/* 이미지가 없을 때 보여줄 아이콘 등을 넣을 수 있습니다 */}
         </div>
       )}
     </div>
