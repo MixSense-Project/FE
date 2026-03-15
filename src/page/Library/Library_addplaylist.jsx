@@ -8,6 +8,7 @@ import Library_searchlist from "../../components/Library/Library_searchlist";
 
 import { addTrackToPlaylist } from "../../api/playlists";
 import { api } from "../../api/client";
+import { normalizeTrackData } from "../../utils/track";
 
 const NGROK_HEADERS = {
   "ngrok-skip-browser-warning": "69420",
@@ -41,74 +42,7 @@ const Library_addplaylist = () => {
     return p.startsWith("/api") ? p : `/api${p}`;
   };
 
-  const normalizeTrack = (t) => {
-    const title =
-      t?.title ??
-      t?.track_title ??
-      t?.track_name ??
-      t?.name ??
-      t?.song_title ??
-      t?.song_name ??
-      t?.track?.title ??
-      t?.track?.name ??
-      null;
-
-    const artist =
-      t?.artist ??
-      t?.artist_name ??
-      t?.artists_name ??
-      t?.singer ??
-      t?.artist?.name ??
-      (Array.isArray(t?.artists)
-        ? t.artists.map((a) => a?.name).filter(Boolean).join(", ")
-        : null) ??
-      t?.track?.artist ??
-      t?.track?.artist_name ??
-      null;
-
-    const track_image_url =
-      t?.track_image_url ??
-      t?.thumbnail_url ??
-      t?.image_url ??
-      t?.cover_url ??
-      t?.album_image_url ??
-      t?.album_cover_url ??
-      t?.album?.image_url ??
-      t?.album?.cover_url ??
-      t?.track?.track_image_url ??
-      t?.track?.thumbnail_url ??
-      t?.track?.image_url ??
-      null;
-
-    const track_id =
-      t?.track_id ??
-      t?.id ??
-      t?.trackId ??
-      t?.spotify_track_id ??
-      t?.spotifyId ??
-      t?.track?.track_id ??
-      t?.track?.id ??
-      null;
-
-    const youtube_video_id =
-      t?.youtube_video_id ??
-      t?.youtubeVideoId ??
-      t?.youtube_id ??
-      t?.youtubeId ??
-      t?.video_id ??
-      t?.videoId ??
-      t?.track?.youtube_video_id ??
-      null;
-
-    return {
-      ...t,
-      track_id,
-      title,
-      artist,
-      track_image_url,
-      youtube_video_id,
-    };
-  };
+  const normalizeTrack = (t) => normalizeTrackData(t);
 
   const STORAGE_KEY = useMemo(() => {
     return playlistId ? `playlist_added_${playlistId}` : null;
@@ -157,7 +91,6 @@ const Library_addplaylist = () => {
 
   useEffect(() => {
     fetchTrending();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchSearch = async (query) => {
@@ -191,7 +124,9 @@ const Library_addplaylist = () => {
       return;
     }
 
-    const trackId = track?.track_id || track?.id;
+    const normalizedTrack = normalizeTrack(track);
+    const trackId = normalizedTrack?.track_id || normalizedTrack?.id;
+
     if (!trackId) {
       alert(
         "track_id가 없어 추가할 수 없어. 응답에 track_id(id)가 있는지 확인해줘."
@@ -206,7 +141,7 @@ const Library_addplaylist = () => {
       return;
     }
 
-    if (!track?.youtube_video_id) {
+    if (!normalizedTrack?.youtube_video_id) {
       alert("이 곡은 YouTube 영상이 매핑되지 않아 추가할 수 없어.");
       return;
     }
@@ -219,12 +154,12 @@ const Library_addplaylist = () => {
     });
 
     try {
-      await addTrackToPlaylist({ playlistId, track });
+      await addTrackToPlaylist({ playlistId, track: normalizedTrack });
 
       setAddedTracks((prev) => {
         const exists = prev.some((t) => (t?.track_id || t?.id) === trackId);
         if (exists) return prev;
-        return [track, ...prev];
+        return [normalizedTrack, ...prev];
       });
     } catch (err) {
       console.error("플레이리스트 곡 추가 실패:", err);

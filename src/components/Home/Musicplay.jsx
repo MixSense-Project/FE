@@ -1,61 +1,86 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useMusic } from '../../context/MusicContext'; 
-import music_play from '../../assets/img/home/music_play.svg';
-import music_stop from '../../assets/img/home/music_stop.svg';
-import music_fast from '../../assets/img/home/music_fast.svg';
+import React, { useEffect, useMemo, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useMusic } from "../../context/MusicContext";
+import music_play from "../../assets/img/home/music_play.svg";
+import music_stop from "../../assets/img/home/music_stop.svg";
+import music_fast from "../../assets/img/home/music_fast.svg";
 
 const Musicplay = () => {
-    const { currentTrack, isPlay, player } = useMusic();
-    const navigate = useNavigate();
+  const { currentTrack, isPlay, setIsPlay, player, next } = useMusic();
+  const navigate = useNavigate();
+  const audioRef = useRef(null);
 
-    const trackData = currentTrack?.track || currentTrack;
-    const videoId = trackData?.youtube_video_id || trackData?.video_id;
+  // 데이터 추출
+  const item = currentTrack?.track || currentTrack;
+  const videoId = item?.youtube_video_id || item?.video_id || null;
+  const mixAudioUrl = currentTrack?.mix_audio_url || currentTrack?.audio_url || item?.mix_audio_url || null;
+  const isAiMix = (!!mixAudioUrl && !videoId);
 
-    if (!videoId) return null;
+  const title = item?.title || item?.track_name || "Unknown Title";
+  const artist = item?.artist || item?.artist_name || "Unknown Artist";
 
-    const togglePlay = (e) => {
-        e.stopPropagation();
-        if (!player) return;
-        isPlay ? player.pauseVideo() : player.playVideo();
-    };
+  const coverImage = useMemo(() => {
+    if (isAiMix) return currentTrack?.track_image_url || currentTrack?.cover_url || "";
+    return videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : "";
+  }, [isAiMix, currentTrack, videoId]);
 
-    return (
-        <div id="Musicplay_Wrap" onClick={() => navigate('/music/songplay')}>
-            <div className="musicplay_wrap">
-                <div className="musiclist_container">
-                    {/* 앨범 커버 이미지 비율 수정 */}
-                    <div className="album_cover" style={{ overflow: 'hidden', borderRadius: '8px' }}>
-                        <img 
-                            src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`} 
-                            alt="cover" 
-                            style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                objectFit: 'cover', // 핵심: 컨테이너 비율에 맞춰 꽉 채움
-                                display: 'block'
-                            }} 
-                        />
-                    </div>
-                    
-                    <div className="music_info">
-                        <div className="title">
-                            {trackData?.title || trackData?.track_name || "Unknown Title"}
-                        </div>
-                        <div className="artist">
-                            {trackData?.artist || trackData?.artist_name || "Unknown Artist"}
-                        </div>
-                    </div>
-                </div>
-                <div className="btn_container">
-                    <button className="play_btn" onClick={togglePlay}>
-                        <img src={isPlay ? music_play : music_stop} alt="play_stop" />
-                    </button>
-                    <button className="fast_btn"><img src={music_fast} alt="fast" /></button>
-                </div>
-            </div>
+  // 재생/정지 제어
+  useEffect(() => {
+    if (!isAiMix || !audioRef.current) return;
+    isPlay ? audioRef.current.play().catch(() => {}) : audioRef.current.pause();
+  }, [isPlay, isAiMix]);
+
+  useEffect(() => {
+    if (isAiMix && audioRef.current) {
+      audioRef.current.currentTime = 0;
+      if (isPlay) audioRef.current.play().catch(() => {});
+    }
+  }, [currentTrack, isAiMix]);
+
+  if (!videoId && !mixAudioUrl) return null;
+
+  const togglePlay = (e) => {
+    e.stopPropagation();
+    if (isAiMix) {
+      if (isPlay) { audioRef.current.pause(); setIsPlay(false); }
+      else { audioRef.current.play().catch(() => {}); setIsPlay(true); }
+    } else if (player) {
+      isPlay ? player.pauseVideo?.() : player.playVideo?.();
+      setIsPlay(!isPlay);
+    }
+  };
+
+  return (
+    <div id="Musicplay_Wrap" onClick={() => navigate("/music/songplay")}>
+      <div className="musicplay_wrap">
+        <div className="musiclist_container">
+          <div className="album_cover">{coverImage && <img src={coverImage} alt="cover" />}</div>
+          <div className="music_info">
+            <div className="title">{title}</div>
+            <div className="artist">{artist}</div>
+          </div>
         </div>
-    );
+
+        <div className="btn_container">
+          <button className="play_btn" onClick={togglePlay}>
+            <img src={isPlay ? music_play : music_stop} alt="play_toggle" />
+          </button>
+          <button className="fast_btn" onClick={(e) => { e.stopPropagation(); next(); }}>
+            <img src={music_fast} alt="next" />
+          </button>
+        </div>
+
+        {isAiMix && (
+          <audio 
+            ref={audioRef} 
+            src={mixAudioUrl} 
+            onEnded={() => { console.log("[Player] 재생 끝 -> 다음 곡 요청"); next(); }} 
+            style={{ display: "none" }} 
+          />
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Musicplay;

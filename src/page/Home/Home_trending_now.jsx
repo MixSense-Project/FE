@@ -1,14 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import SubHeader from '../../components/SubHeader';
 import Searchbar from '../../components/Home/Searchbar';
 import Musiclist from '../../components/Home/Musiclist';
 import Nav from '../../components/Nav';
+import Popup from '../Music/Popup'; // ✅ Popup 컴포넌트 추가
 import axios from 'axios';
-import { useMusic } from '../../context/MusicContext'; // 1. Context import 추가
+import { useMusic } from '../../context/MusicContext';
 
 const Home_trending_now = () => {
-  const { setCurrentTrack } = useMusic(); // 2. setCurrentTrack 함수 가져오기
+  const { setCurrentTrack } = useMusic();
   const [trendingTracks, setTrendingTracks] = useState([]);
+
+  // ✅ 팝업 관련 상태 추가
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState(null);
+  const [popupPos, setPopupPos] = useState({ x: 0, y: 0 });
+
+  // ✅ 팝업 핸들러 추가
+  const handleOpenPopup = (trackData, pos) => {
+    setSelectedTrack(trackData);
+    setPopupPos(pos);
+    setIsPopupOpen(true);
+  };
 
   const fetchTrending = async () => {
     try {
@@ -17,7 +30,6 @@ const Home_trending_now = () => {
         headers: { "ngrok-skip-browser-warning": "69420" }
       });
 
-      console.log("서버 데이터:", response.data);
       if (response.data && response.data.trending) {
         setTrendingTracks(response.data.trending);
       }
@@ -40,7 +52,9 @@ const Home_trending_now = () => {
               <Musiclist 
                 key={item.id} 
                 data={item} 
-                onPlay={() => setCurrentTrack(item)} // 3. onPlay 프롭스 연결
+                onPlay={() => setCurrentTrack(item)} 
+                // ✅ onAdd 연결 (좌표와 곡 정보 전달)
+                onAdd={handleOpenPopup} 
               />
             ))
           ) : (
@@ -49,6 +63,15 @@ const Home_trending_now = () => {
         </div>
       </div>
       <Nav />
+
+      {/* ✅ 팝업 렌더링 추가 */}
+      {isPopupOpen && (
+        <Popup 
+          onClose={() => setIsPopupOpen(false)} 
+          specificTrack={selectedTrack} 
+          position={popupPos} 
+        />
+      )}
     </div>
   );
 };

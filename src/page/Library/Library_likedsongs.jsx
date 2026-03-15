@@ -5,6 +5,7 @@ import Nav from "../../components/Nav";
 import Library_likesongs from "../../components/Library/Library_likesongs";
 import { getMyLikedSongs } from "../../api/like";
 import { api } from "../../api/client";
+import { normalizeTrackData } from "../../utils/track";
 
 const Library_likedsongs = () => {
   const navigate = useNavigate();
@@ -41,7 +42,32 @@ const Library_likedsongs = () => {
         setProfileId(String(pid));
 
         const data = await getMyLikedSongs(pid);
-        setSongs(data?.mylist ?? []);
+        const rawSongs = data?.mylist ?? [];
+
+        const normalizedSongs = rawSongs.map((item) => {
+          const trackBase = item?.track || {};
+          const merged = {
+            ...item,
+            ...trackBase,
+            track: trackBase,
+          };
+
+          const nt = normalizeTrackData(merged);
+
+          return {
+            ...item,
+            track_id: item?.track_id ?? nt?.track_id,
+            track: {
+              ...trackBase,
+              title: nt?.title ?? "Unknown",
+              artist: nt?.artist ?? "Unknown",
+              track_image_url: nt?.track_image_url ?? "",
+              youtube_video_id: nt?.youtube_video_id ?? null,
+            },
+          };
+        });
+
+        setSongs(normalizedSongs);
       } catch (e) {
         console.error(e);
         setErrMsg(e?.message || "좋아요 목록을 불러오지 못했어요.");
@@ -85,7 +111,7 @@ const Library_likedsongs = () => {
               <Library_likesongs
                 key={item?.track_id ?? `${idx}`}
                 profileId={profileId}
-                contentId={item?.track_id} 
+                contentId={item?.track_id}
                 title={item?.track?.title ?? "Unknown"}
                 artist={item?.track?.artist ?? "Unknown"}
                 coverUrl={item?.track?.track_image_url ?? ""}

@@ -1,32 +1,54 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useMusic } from '../../context/MusicContext';
 import add_btn from '../../assets/img/AIDJ/gray_add_btn.svg';
-import check_btn from '../../assets/img/home/check.svg';
+import musicplaying_icon from '../../assets/img/home/musicplaying_icon.svg';
+import check_icon from '../../assets/img/home/check.svg';
+import nocheck_icon from '../../assets/img/AIDJ/empty_circle.svg';
 
-const Musiclist = ({ data, onPlay }) => {
-  const [isAdd, setIsAdd] = useState(false);
+const Musiclist = ({ data, onPlay, onAdd, isSelected }) => {
+  const { currentTrack } = useMusic(); 
+  
+  // ID 추출 로직 (mix_track_id 우선 확인)
+  const trackId = data.mix_track_id || data.track?.youtube_video_id || data.youtube_video_id;
+  const currentPlayingId = currentTrack?.track?.youtube_video_id || currentTrack?.youtube_video_id;
+  const isPlayingNow = trackId && trackId === currentPlayingId;
 
-  const Addplaylist = (e) => {
-    e.stopPropagation(); // + 버튼 클릭 시 재생되는 것 방지
-    setIsAdd(!isAdd);
+  const handleIconClick = (e) => {
+    e.stopPropagation(); 
+    
+    if (onAdd) {
+      if (isSelected !== undefined) {
+        onAdd(data, !isSelected);
+      } else {
+        const pos = { x: e.clientX, y: e.clientY };
+        onAdd(data, pos);
+      }
+    }
   };
+
+  const thumbUrl = data.thumbnail || `https://img.youtube.com/vi/${data.track?.youtube_video_id || data.youtube_video_id}/mqdefault.jpg`;
 
   return (
     <div id="Musiclist_Wrap" onClick={onPlay} style={{ cursor: 'pointer' }}>
         <div className="musiclist_container">
             <div 
               className="album_cover"
-              style={{
-                // 유튜브 ID 기반 썸네일 우선 적용 (MixSense 설계 반영)
-                backgroundImage: `url('https://img.youtube.com/vi/${data.track?.youtube_video_id || data.youtube_video_id}/mqdefault.jpg')`,
-                backgroundSize: 'cover', 
-              }}
+              style={{ backgroundImage: `url('${thumbUrl}')`, backgroundSize: 'cover' }}
             ></div>
             <div className="music_info">
-                <div className="title">{data.track?.title || data.title}</div>
+                <div className="title" style={{ color: isPlayingNow ? 'var(--main)' : '', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    {isPlayingNow && <img src={musicplaying_icon} alt="playing" style={{ width: '20px', height: '20px' }} />}
+                    {data.track?.title || data.title}
+                </div>
                 <div className="artist">{data.track?.artist || data.artist}</div>
             </div>
         </div>
-        <img src={isAdd ? check_btn : add_btn} alt="" onClick={Addplaylist}/>
+
+        <img 
+          src={isSelected === undefined ? add_btn : (isSelected ? check_icon : nocheck_icon)} 
+          alt="icon" 
+          onClick={handleIconClick}
+        />
     </div>
   );
 };

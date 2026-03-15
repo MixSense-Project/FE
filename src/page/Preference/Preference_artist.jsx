@@ -5,6 +5,7 @@ import PreferenceArtistCircle from "../../components/Preference/Preference_artis
 import PreferenceSelectBtn from "../../components/Preference/Preference_selectbtn";
 import search_white from "../../assets/img/Header/search_white.svg";
 import { GENRES } from "../../data/Preference_genre";
+import { signup } from "../../api/auth";
 
 const MAX_SELECT = 20;
 
@@ -30,17 +31,6 @@ function buildQuery(paramsObj = {}) {
 
 function isLikelyJwt(token) {
   return typeof token === "string" && token.split(".").length === 3;
-}
-
-function getAccessToken() {
-  const token =
-    localStorage.getItem("access_token") ||
-    localStorage.getItem("accessToken") ||
-    localStorage.getItem("token") ||
-    "";
-
-  if (!token || token.split(".").length !== 3) return "";
-  return token.trim();
 }
 
 async function request(path, options = {}) {
@@ -75,6 +65,8 @@ const Preference_artist = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const signupDraft = location.state?.signupDraft || null;
+
   const selectedGenres = useMemo(() => {
     return location.state?.selectedGenres ?? [];
   }, [location.state]);
@@ -106,6 +98,7 @@ const Preference_artist = () => {
   const [selected, setSelected] = useState(() => new Set());
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState("");
 
   const toggleArtist = (id) => {
     setSelected((prev) => {
@@ -160,9 +153,22 @@ const Preference_artist = () => {
       }
 
       setLoading(true);
+      setMsg("");
+
       try {
         const qs = buildQuery({ genres: queryGenres });
-        const data = await request(`/api/artists${qs}`, { method: "GET" });
+        const headers = {
+          Accept: "application/json",
+        };
+
+        if (signupDraft?.token && isLikelyJwt(signupDraft.token)) {
+          headers.Authorization = `Bearer ${signupDraft.token}`;
+        }
+
+        const data = await request(`/api/artists${qs}`, {
+          method: "GET",
+          headers,
+        });
 
         const list = Array.isArray(data) ? data : data?.artists;
 
@@ -178,18 +184,19 @@ const Preference_artist = () => {
       } catch (e) {
         console.error("[artists] fetch error:", e);
         setArtists([]);
+        setMsg("아티스트 목록을 불러오지 못했습니다.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchArtists();
-  }, [selectedGenres]);
+  }, [selectedGenres, signupDraft?.token]);
 
   const handleSubmit = async () => {
-    const token = getAccessToken();
-    if (!isLikelyJwt(token)) {
-      console.error("[profile/preferences] invalid or missing access token");
+    if (!signupDraft) {
+      setMsg("회원가입 정보가 없습니다. 처음부터 다시 진행해주세요.");
+      navigate("/splash_signup", { replace: true });
       return;
     }
 
@@ -209,28 +216,69 @@ const Preference_artist = () => {
       )
     );
 
-    const payload = { favorite_genres, favorite_artists };
-    console.log("[profile/preferences] payload:", payload);
-
     if (favorite_genres.length === 0 || favorite_artists.length === 0) {
-      console.warn("[profile/preferences] empty payload - abort", payload);
+      setMsg("장르와 아티스트를 선택해주세요.");
       return;
     }
 
     setSaving(true);
+    setMsg("");
+
     try {
+      const signupRes = await signup({
+        email: signupDraft.email,
+        password: signupDraft.password,
+        username: signupDraft.username,
+        token: signupDraft.token,
+      });
+
+      const accessToken =
+        signupRes?.session?.access_token ||
+        signupRes?.access_token ||
+        signupDraft.token ||
+        "";
+
+      const refreshToken =
+        signupRes?.session?.refresh_token ||
+        signupRes?.refresh_token ||
+        "";
+
+      const userId =
+        signupRes?.session?.user?.id ||
+        signupRes?.user?.id ||
+        "";
+
+      if (!isLikelyJwt(accessToken)) {
+        throw new Error("회원가입 후 access token을 받지 못했습니다.");
+      }
+
+      localStorage.setItem("access_token", accessToken);
+      if (refreshToken) localStorage.setItem("refresh_token", refreshToken);
+      if (userId) localStorage.setItem("user_id", userId);
+      if (signupDraft.username) localStorage.setItem("username", signupDraft.username);
+      if (signupDraft.email) localStorage.setItem("email", signupDraft.email);
+
+      const payload = { favorite_genres, favorite_artists };
+      console.log("[profile/preferences] payload:", payload);
+
       await request("/api/profile/preferences", {
         method: "PATCH",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
           Accept: "application/json",
         },
         body: JSON.stringify(payload),
       });
 
-      navigate("/home");
+      navigate("/splash_login", {
+        replace: true,
+        state: {
+          prefillEmail: signupDraft.email,
+        },
+      });
     } catch (e) {
-      console.error("[profile/preferences] save error:", e);
+      console.error("[signup + preferences] error:", e);
+      setMsg("회원가입 또는 선호 저장에 실패했습니다.");
     } finally {
       setSaving(false);
     }
@@ -247,8 +295,9 @@ const Preference_artist = () => {
           onRightClick={() =>
             navigate("/preference_artist_search", {
               state: {
+                signupDraft,
                 selectedGenres,
-                selectedArtistIds: selectedIds, // ✅ 현재 선택 전달(유지)
+                selectedArtistIds: selectedIds,
               },
             })
           }
@@ -283,6 +332,12 @@ const Preference_artist = () => {
             ))}
           </div>
         </div>
+
+        {msg && (
+          <p style={{ color: "white", marginTop: 12, textAlign: "center" }}>
+            {msg}
+          </p>
+        )}
 
         <PreferenceSelectBtn
           disabled={selected.size === 0 || saving}

@@ -6,6 +6,7 @@ import searchicon from '../../assets/img/nav/search_g.svg';
 import Searchedlist from '../../components/Home/Searchedlist';
 import Searchlist from '../../components/Home/Searchlist';
 import Nav from '../../components/Nav';
+import Popup from '../Music/Popup'; // ✅ Popup 추가
 
 const Home_search = () => {
   const { setCurrentTrack } = useMusic(); 
@@ -13,8 +14,20 @@ const Home_search = () => {
   const [results, setResults] = useState([]);
   const [history, setHistory] = useState([]); 
 
+  // ✅ 팝업 관련 상태 추가
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState(null);
+  const [popupPos, setPopupPos] = useState({ x: 0, y: 0 });
+
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const token = localStorage.getItem('access_token');
+
+  // ✅ 팝업 열기 핸들러
+  const handleOpenPopup = (trackData, pos) => {
+    setSelectedTrack(trackData);
+    setPopupPos(pos);
+    setIsPopupOpen(true);
+  };
 
   const fetchHistory = useCallback(async () => {
     try {
@@ -28,7 +41,6 @@ const Home_search = () => {
 
   useEffect(() => { if(token) fetchHistory(); }, [fetchHistory, token]);
 
-  // 검색 실행 및 결과 로그 확인
   const fetchSearch = async (query) => {
     if (!query.trim()) { setResults([]); return; }
     try {
@@ -36,35 +48,47 @@ const Home_search = () => {
         params: { query, limit: 15 },
         headers: { "Authorization": `Bearer ${token}`, "ngrok-skip-browser-warning": "69420" }
       });
-      console.log("🔍 [Search API 결과]:", response.data);
       setResults(response.data.results || response.data);
     } catch (error) { console.error("검색 실패:", error); }
   };
 
   const handleTrackClick = async (e, track) => {
     if (e) { e.preventDefault(); e.stopPropagation(); }
-        console.log("[클릭한 트랙 원본 데이터]:", track);
-
     if (!track) return;
+
+    const trackTitle = track.title || track.track?.title || track.keyword;
+    const trackVideoId = track.youtube_video_id || track.track?.youtube_video_id || track.video_id || track.id;
 
     const normalizedTrack = {
       ...track,
-      youtube_video_id: track.youtube_video_id || track.track?.youtube_video_id || track.video_id || track.id,
-      title: track.title || track.track?.title || track.keyword || "Unknown Title",
+      youtube_video_id: trackVideoId,
+      title: trackTitle || "Unknown Title",
       artist: track.artist || track.track?.artist || "Unknown Artist"
     };
-
-    console.log("✨ [정규화된 트랙 데이터]:", normalizedTrack);
 
     setCurrentTrack(normalizedTrack); 
 
     try {
+      const existingItem = history.find(item => {
+        const itemVideoId = item.youtube_video_id || item.track?.youtube_video_id;
+        return itemVideoId === trackVideoId;
+      });
+
+      if (existingItem && existingItem.search_history_id) {
+        await axios.delete(`${BASE_URL}/api/search/history/${existingItem.search_history_id}`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+      }
+
       await axios.post(`${BASE_URL}/api/search/history`, 
         { keyword: normalizedTrack.title }, 
         { headers: { "Authorization": `Bearer ${token}` } }
       );
+      
       fetchHistory();
-    } catch (error) { console.error("히스토리 저장 실패", error); }
+    } catch (error) { 
+      console.error("히스토리 처리 실패", error); 
+    }
   };
 
   const handleDeleteHistory = async (id) => {
@@ -78,6 +102,15 @@ const Home_search = () => {
 
   return (
     <div className="home_search_wrap">
+      {/* ✅ 팝업을 최상단에 배치하여 가려짐 방지 */}
+      {isPopupOpen && (
+        <Popup 
+          onClose={() => setIsPopupOpen(false)} 
+          specificTrack={selectedTrack} 
+          position={popupPos} 
+        />
+      )}
+
       <div className="container">
         <div className="search">
           <div className="searchbar">
@@ -111,6 +144,7 @@ const Home_search = () => {
                 key={item.track_id || idx} 
                 data={item} 
                 onPlay={(e) => handleTrackClick(e, item)} 
+                onAdd={handleOpenPopup} // ✅ Searchlist에 핸들러 전달
               />
             ))
           )}

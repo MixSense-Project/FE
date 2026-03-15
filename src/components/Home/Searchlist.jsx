@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import add_btn from '../../assets/img/AIDJ/gray_add_btn.svg';
-import check_btn from '../../assets/img/home/check.svg';
+import check_btn from '../../assets/img/home/check.svg'; // ✅ 체크 아이콘 추가
 
-const Searchlist = ({ data, onPlay }) => { // onPlay로 프롭스 이름 변경
-  const [isAdd, setIsAdd] = useState(false);
-
-  const Addplaylist = (e) => {
-    e.stopPropagation(); // + 버튼 클릭 시 재생 방지
-    setIsAdd(!isAdd);
-  };
-
-  // 비디오 ID 추출 로직
+const Searchlist = ({ data, onPlay, onAdd, isAdded }) => { // ✅ isAdded 프롭 추가
   const videoId = data.track?.youtube_video_id || data.youtube_video_id;
+
+  const handleAddClick = (e) => {
+    e.stopPropagation(); 
+    const pos = { x: e.clientX, y: e.clientY };
+    if (onAdd) {
+      onAdd(data, pos);
+    }
+  };
 
   return (
     <div id="Searchlist_Wrap" onClick={onPlay} style={{ cursor: 'pointer' }}>
@@ -30,10 +30,11 @@ const Searchlist = ({ data, onPlay }) => { // onPlay로 프롭스 이름 변경
                 <div className="artist">{data.track?.artist || data.artist || "Unknown Artist"}</div>
             </div>
         </div>
+        {/* ✅ isAdded 분기 처리 */}
         <img 
-          src={isAdd ? check_btn : add_btn} 
+          src={isAdded ? check_btn : add_btn} 
           alt="add" 
-          onClick={Addplaylist} 
+          onClick={handleAddClick}
           style={{ width: '22px', height: '22px' }}
         />
     </div> 

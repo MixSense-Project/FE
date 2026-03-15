@@ -230,7 +230,7 @@
                     margin-left: calc(50% - 107px);
                     width: 207px;
                     height: 45px;
-                    background-color: var(--gray02);
+                    background-color: var(--main);
                     
                     display: flex;
                     align-items: center;
@@ -267,13 +267,104 @@
     }
 }
 
-//Ai_Dj_Trackselct
-#Ai_Dj_Trackselect {
+
+// Ai_Dj_Result.jsx 관련 SCSS
+.aidjresult_wrap {
+    position: relative;
     height: 852px;
     display: flex;
     flex-direction: column;
 
     .container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+
+        // ... 기존 step, result_header, result_song, btn_container 스타일 유지
+    }
+
+    .bottomsheet_wrap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        display: flex;
+        align-items: flex-end; 
+
+        #sheet_container {
+            position: relative;
+            width: 100%;
+            height: 800px; 
+            background-color: var(--black);
+            border-radius: 30px 30px 0 0; 
+            overflow-y: auto; 
+
+            &::-webkit-scrollbar { display: none; }
+            scrollbar-width: none;
+
+            header {
+                margin: 24px 0 24px 16px;
+                display: flex;
+                justify-content: flex-start;
+                gap: 98px;
+                img { width: 22px; height: 22px; }
+                p { color: var(--white); font-size: 18px; }
+            }
+
+            main {
+                padding: 0 16px; 
+                padding-bottom: 100px; 
+
+                .playlist_item_container {
+                    width: 100%;
+                    border-radius: 5px; 
+                    border: 2px solid transparent; 
+                    box-sizing: border-box;
+                    overflow: hidden;
+                    transition: border 0.2s ease;
+                    margin-bottom: 8px;
+                    padding: 0 !important; 
+
+                    // 선택되었을 때 보라색 테두리
+                    &.selected {
+                        border: 2px solid var(--main);
+                    }
+
+                    & > div {
+                        margin-bottom: 0 !important;
+                    }
+                }
+            }
+
+            .select_btn {
+                position: fixed;
+                bottom: 40px;
+                left: calc(50% - 90px);
+                width: 180px;
+                height: 45px;
+                background-color: var(--main);
+                border-radius: 50px;
+                color: var(--white);
+                font-size: 18px;
+                font-weight: bold;
+                z-index: 10;
+            }
+        }
+    }
+}
+
+//Ai_Dj_Trackselct
+#Ai_Dj_Trackselect {
+    width: 393px;
+    height: 852px;
+    display: flex;
+    flex-direction: column;
+
+    .container {
+        position: relative;
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -290,6 +381,17 @@
 
             scrollbar-width: none;
             -ms-overflow-style: none;
+        }
+
+        .select_btn{
+            position: absolute;
+            top: 85%;
+            left: calc(50% - 103.5px);
+            width: 207px;
+            height: 44px;
+            background-color: var(--main);
+            color: var(--white);
+            border-radius: 50px;
         }
 
     }
@@ -446,9 +548,6 @@
             background-color: var(--black);
             border-radius: 30px 30px 0 0; 
             overflow-y: auto; 
-            padding-left: 16px;
-            padding-right: 16px;
-
             &::-webkit-scrollbar {
                 display: none;
             }
@@ -457,7 +556,9 @@
             -ms-overflow-style: none;
 
             header{
-                margin: 24px 0px;
+                margin-top: 24px;
+                margin-bottom: 24px;
+                margin-left: 16px;
                 display: flex;
                 justify-content: flex-start;
                 gap: 98px;
@@ -585,6 +686,7 @@
             }
 
             main{
+                margin-top: 50px;
                 width: 100%;
                 display: flex;
                 flex-direction: column;

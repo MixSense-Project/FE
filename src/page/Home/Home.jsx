@@ -7,6 +7,7 @@ import Track from '../../components/Home/Track';
 import Musiclist from '../../components/Home/Musiclist';
 import more_btn from '../../assets/img/home/more_btn.svg';
 import banner_img from '../../assets/img/home/banner.png';
+import Popup from '../Music/Popup'; 
 import axios from 'axios';
 
 const Home = () => {
@@ -16,6 +17,17 @@ const Home = () => {
   const [trendingTracks, setTrendingTracks] = useState([]);
   const scrollRef = useRef(null);
 
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState(null);
+  const [popupPos, setPopupPos] = useState({ x: 0, y: 0 }); // ✅ 위치 상태 추가
+
+  // ✅ 데이터와 위치를 동시에 받는 핸들러
+  const handleOpenPopup = (trackData, pos) => {
+    setSelectedTrack(trackData);
+    setPopupPos(pos);
+    setIsPopupOpen(true);
+  };
+
   const fetchRecommend = async () => {
     try {
       const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -24,9 +36,7 @@ const Home = () => {
       const response = await axios.get(`${BASE_URL}/api/ai/recommend/home`, {
         headers: { "ngrok-skip-browser-warning": "69420", "Authorization": `Bearer ${token}` }
       });
-      if (response.data && response.data.home) {
-        setRecommendTracks(response.data.home);
-      }
+      if (response.data && response.data.home) { setRecommendTracks(response.data.home); }
     } catch (error) { console.error("추천 로드 실패:", error); }
   };
 
@@ -36,9 +46,7 @@ const Home = () => {
       const response = await axios.get(`${BASE_URL}/api/trending?limit=4`, {
         headers: { "ngrok-skip-browser-warning": "69420" }
       });
-      if (response.data && response.data.trending) {
-        setTrendingTracks(response.data.trending);
-      }
+      if (response.data && response.data.trending) { setTrendingTracks(response.data.trending); }
     } catch (error) { console.error("트렌딩 로드 실패:", error); }
   };
 
@@ -56,33 +64,21 @@ const Home = () => {
       <div className="container">
         <Header />
         <div className="scroll_container">
-          <Link to='/ai_dj'>
+          <Link to='/ai_dj_onboarding'>
             <div className="banner"><img src={banner_img} alt="banner" /></div>
           </Link>
           <div className="Recommend_track">
+            {/* 기존 Recommend_track 코드 유지 */}
             <div className="text">Recommend Track</div>
             <div className="track_container" ref={scrollRef} onScroll={handleScroll}>
               {[0, 1].map((pageIndex) => (
                 <div className="track_page" key={pageIndex}>
-                  {recommendTracks.length > 0 ? (
-                    recommendTracks.slice(pageIndex * 9, (pageIndex + 1) * 9).map((item, i) => {
-                      const videoId = item.youtube_video_id || item.track?.youtube_video_id;
-                      return (
-                        <Track 
-                          key={item.track_id || i} 
-                          img={videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null}
-                          onClick={() => setCurrentTrack(item)} 
-                        />
-                      );
-                    })
-                  ) : (
-                    // 데이터 로딩 전 보여줄 빈 칸들
-                    Array.from({ length: 9 }).map((_, i) => <Track key={i} />)
-                  )}
+                  {recommendTracks.slice(pageIndex * 9, (pageIndex + 1) * 9).map((item, i) => (
+                    <Track key={i} img={item.youtube_video_id ? `https://img.youtube.com/vi/${item.youtube_video_id}/hqdefault.jpg` : null} onClick={() => setCurrentTrack(item.track || item)} />
+                  ))}
                 </div>
               ))}
             </div>
-            {/* 인디케이터(점) 로직 유지 */}
             <div className="indicator_container">
               <div className={`dot ${activeIndex === 0 ? 'active' : ''}`}></div>
               <div className={`dot ${activeIndex === 1 ? 'active' : ''}`}></div>
@@ -90,27 +86,21 @@ const Home = () => {
           </div>
 
           <div className="Trending_now">
-            <Link to='/home_trending_now'>
-              <div className="text_container">
-                <div className="text">Trending Now</div>
-                <img src={more_btn} alt="more" />
-              </div>
-            </Link>
-            {trendingTracks.length > 0 ? (
-              trendingTracks.map((item) => (
-                <Musiclist 
-                  key={item.id} 
-                  data={item} 
-                  onPlay={() => setCurrentTrack(item)} 
-                />
-              ))
-            ) : (
-              <p style={{ textAlign: 'center', padding: '20px' }}>Loading trending...</p>
-            )}
+            <Link to='/home_trending_now'><div className="text_container"><div className="text">Trending Now</div><img src={more_btn} alt="more" /></div></Link>
+            {trendingTracks.map((item) => (
+              <Musiclist 
+                key={item.id} 
+                data={item} 
+                onPlay={() => setCurrentTrack(item)} 
+                onAdd={handleOpenPopup} // ✅ 좌표를 함께 전달받음
+              />
+            ))}
           </div>
         </div>
       </div>
       <Nav/>
+      {/* ✅ 팝업에 위치(position) 정보 전달 */}
+      {isPopupOpen && <Popup onClose={() => setIsPopupOpen(false)} specificTrack={selectedTrack} position={popupPos} />}
     </div>
   );
 };

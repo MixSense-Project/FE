@@ -1,4 +1,4 @@
-import { api } from "./client";
+import { normalizeTrackData } from "../utils/track";
 
 function authHeader() {
   const token = localStorage.getItem("access_token");
@@ -62,7 +62,11 @@ export async function fetchMyPlaylists() {
   return data;
 }
 
-export async function getPlaylistCoverUploadUrl({ playlistId, filename, contentType }) {
+export async function getPlaylistCoverUploadUrl({
+  playlistId,
+  filename,
+  contentType,
+}) {
   const safeContentType = contentType || "application/octet-stream";
 
   const res = await fetch(`${BASE}/playlists/${playlistId}/cover/upload-url`, {
@@ -74,7 +78,6 @@ export async function getPlaylistCoverUploadUrl({ playlistId, filename, contentT
     },
     body: JSON.stringify({
       filename,
-      // ✅ 백엔드 구현 차이 흡수: 둘 다 보냄
       content_type: safeContentType,
       contentType: safeContentType,
       mime_type: safeContentType,
@@ -115,6 +118,7 @@ export async function setPlaylistCoverPath({ playlistId, coverPath }) {
   if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
   return data;
 }
+
 export async function deletePlaylist(playlistId) {
   const res = await fetch(`${BASE}/playlists/${playlistId}`, {
     method: "DELETE",
@@ -128,8 +132,9 @@ export async function deletePlaylist(playlistId) {
   if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
   return data;
 }
+
 export async function updatePlaylistTitle({ playlistId, title }) {
-  const res = await fetch(`/api/playlists/${playlistId}`, {
+  const res = await fetch(`${BASE}/playlists/${playlistId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -143,10 +148,11 @@ export async function updatePlaylistTitle({ playlistId, title }) {
   if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
   return data;
 }
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function addTrackToPlaylist({ playlistId, track }) {
-  const res = await fetch(`/api/playlists/${playlistId}/tracks`, {
+  const normalizedTrack = normalizeTrackData(track);
+
+  const res = await fetch(`${BASE}/playlists/${playlistId}/tracks`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -154,11 +160,11 @@ export async function addTrackToPlaylist({ playlistId, track }) {
       "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({
-      track_id: String(track.track_id),
-      title: track.title ?? null,
-      artist: track.artist ?? null,
-      track_image_url: track.track_image_url ?? null,
-      youtube_video_id: track.youtube_video_id ?? null,
+      track_id: String(normalizedTrack.track_id),
+      title: normalizedTrack.title ?? null,
+      artist: normalizedTrack.artist ?? null,
+      track_image_url: normalizedTrack.track_image_url ?? null,
+      youtube_video_id: normalizedTrack.youtube_video_id ?? null,
     }),
   });
 
@@ -167,16 +173,21 @@ export async function addTrackToPlaylist({ playlistId, track }) {
   console.log("[addTrackToPlaylist] body:", text);
 
   let data;
-  try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = text;
+  }
 
   if (!res.ok) throw new Error(data?.detail || text || `HTTP ${res.status}`);
   return data;
 }
 
+// track + mix 통합 조회
 export async function fetchPlaylistTracks(playlistId) {
   if (!playlistId) throw new Error("playlistId is required");
 
-  const res = await fetch(`/api/playlists/${playlistId}/tracks`, {
+  const res = await fetch(`${BASE}/playlists/${playlistId}/tracks`, {
     method: "GET",
     headers: {
       Authorization: authHeader(),
@@ -189,7 +200,6 @@ export async function fetchPlaylistTracks(playlistId) {
   return data;
 }
 
-// ✅ DELETE /api/playlists/{playlist_id}/tracks/{track_id}
 export async function removeTrackFromPlaylist({ playlistId, trackId }) {
   if (!playlistId) throw new Error("playlistId is required");
   if (!trackId) throw new Error("trackId is required");
@@ -205,4 +215,35 @@ export async function removeTrackFromPlaylist({ playlistId, trackId }) {
   const data = await readJson(res);
   if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
   return data;
+}
+
+// AI mix 삭제
+export async function removeMixFromPlaylist({ playlistId, mixId }) {
+  if (!playlistId) throw new Error("playlistId is required");
+  if (!mixId) throw new Error("mixId is required");
+
+  const res = await fetch(`${BASE}/playlists/${playlistId}/mixes/${mixId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: authHeader(),
+      "ngrok-skip-browser-warning": "true",
+    },
+  });
+
+  const data = await readJson(res);
+  if (!res.ok) throw new Error(data?.detail || `HTTP ${res.status}`);
+  return data;
+}
+
+// item_type 따라 자동 삭제
+export async function removePlaylistItem({ playlistId, item }) {
+  const itemType = item?.item_type;
+
+  if (itemType === "mix") {
+    const mixId = item?.mix_id ?? item?.id;
+    return removeMixFromPlaylist({ playlistId, mixId });
+  }
+
+  const trackId = item?.track_id ?? item?.id;
+  return removeTrackFromPlaylist({ playlistId, trackId });
 }
