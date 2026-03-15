@@ -6,35 +6,37 @@ import logo_img from "../../assets/img/logo.svg";
 import chat_btn from "../../assets/img/AISearch/chat_btn.svg";
 import { aiSearch } from "../../api/ai";
 import Musiclist from "../../components/Ai_Search/Aisearch_musiclist";
+import { useMusic } from "../../context/MusicContext";
 
 const DEFAULT_K = 5;
 
 const Ai_Search = () => {
   const location = useLocation();
+  const { playQueue } = useMusic();
 
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // ✅ 메시지: text 또는 tracks 를 담을 수 있게 확장
-  // { id, type: "text"|"xtracks", text?, tracks? }
   const [messages, setMessages] = useState([]);
 
   const bottomRef = useRef(null);
 
-  // ✅ 재진입(다시 들어올 때)만 리셋
   useEffect(() => {
     setInput("");
     setLoading(false);
     setMessages([]);
   }, [location.key]);
 
-  // 아래로 자동 스크롤
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
   const pushMessage = (msg) => {
     setMessages((prev) => [...prev, { id: crypto.randomUUID(), ...msg }]);
+  };
+
+  const handlePlayTrack = (tracks, index) => {
+    if (!Array.isArray(tracks) || tracks.length === 0) return;
+    playQueue(tracks, index);
   };
 
   const send = async () => {
@@ -52,23 +54,24 @@ const Ai_Search = () => {
         seed_track_id: null,
       });
 
-      // 여기부터는 res만 쓰기 (data 같은 이름 충돌 방지)
       const mode = res?.mode;
       const list = Array.isArray(res?.results) ? res.results : [];
 
-      // 1) clarify
       if (mode === "clarify" && res?.clarification_question) {
-        pushMessage({ role: "ai", type: "text", text: res.clarification_question });
+        pushMessage({
+          role: "ai",
+          type: "text",
+          text: res.clarification_question,
+        });
         return;
       }
 
-      // 2) external
       if (mode === "external") {
         pushMessage({
           role: "ai",
           type: "text",
           text:
-            "내 데이터에서 확실히 매칭되는 곡을 못 찾았어."+
+            "내 데이터에서 확실히 매칭되는 곡을 못 찾았어." +
             "아래 링크로 바로 검색해볼래?",
         });
 
@@ -83,14 +86,17 @@ const Ai_Search = () => {
         return;
       }
 
-      // 3) base (또는 그 외)
       if (list.length > 0) {
         pushMessage({
           role: "ai",
           type: "text",
           text: `추천 곡 ${list.length}개를 찾았어!`,
         });
-        pushMessage({ role: "ai", type: "tracks", tracks: list });
+        pushMessage({
+          role: "ai",
+          type: "tracks",
+          tracks: list,
+        });
       } else {
         pushMessage({
           role: "ai",
@@ -129,7 +135,6 @@ const Ai_Search = () => {
         <div className="ai_chat_area">
           <div className="ai_messages">
             {messages.map((m) => {
-              // ✅ 텍스트 말풍선 (유저/AI 질문/답변)
               if (m.type === "text") {
                 return (
                   <div
@@ -141,7 +146,6 @@ const Ai_Search = () => {
                 );
               }
 
-              // 링크
               if (m.type === "link") {
                 return (
                   <a
@@ -156,17 +160,18 @@ const Ai_Search = () => {
                 );
               }
 
-              // 트랙 리스트
               if (m.type === "tracks") {
                 return (
                   <div key={m.id} className="ai_track_list">
-                    {m.tracks.map((t) => (
+                    {m.tracks.map((t, idx) => (
                       <Musiclist
-                        key={t.track_id}
+                        key={t.track_id || t.id || `${m.id}-${idx}`}
+                        track={t}
+                        trackId={t.track_id || t.id}
                         title={t.title}
                         artist={t.artist}
                         thumbnail={t.thumbnail_url || t.track_image_url}
-                        onAdd={() => console.log("추가된 트랙:", t.track_id)}
+                        onPlay={() => handlePlayTrack(m.tracks, idx)}
                       />
                     ))}
                   </div>
@@ -177,7 +182,6 @@ const Ai_Search = () => {
             })}
 
             {loading && <div className="ai_bubble ai">Searching...</div>}
-
             <div ref={bottomRef} />
           </div>
         </div>

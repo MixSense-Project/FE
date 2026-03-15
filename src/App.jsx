@@ -42,7 +42,7 @@ function App() {
   const hideBottomBar = [
     "/", "/splash_account", "/splash_login", "/splash_signup",
     "/ai_dj_loading", "/preference_genre", "/preference_artist",
-    "/preference_artist_search", "/ai_search",
+    "/preference_artist_search", "/ai_search","/aisearch/onboarding",
     "/ai_dj", "/ai_dj_trackselect", "/ai_dj_loading", "/ai_dj_onboarding", "/ai_dj_result",
     "/music/songplay", "/music/songlyrics", "/mypage"
   ].includes(location.pathname);
