@@ -108,54 +108,62 @@
 
 //Ai_Search.jsx
 .Ai_Search_Wrap {
-  height: 852px;
-  display: flex;
-  flex-direction: column;
-  max-width: 393px;
-  margin: 0 auto;
-  overflow: hidden;
-
-  .container {
-    flex: 1;
+    height: 852px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    width: 100%;
     max-width: 393px;
-    min-width: 0;
+    margin: 0 auto;
+    overflow: hidden;
 
-    header {
-      margin-top: 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        width: 100%;
+        max-width: 393px;
+        min-width: 0;
 
-      img { width: 27px; }
-      p { color: var(--white); }
-    }
+        header {
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
 
-    // ✅ 스크롤은 여기만 (입력칸 아래로는 스크롤 X)
-    .ai_chat_area {
-      flex: 1;
-      min-height: 0;
-      overflow-y: auto;
+            img {
+                width: 27px;
+            }
 
-      // ✅ padding-bottom 제거 (이게 입력칸 아래로 스크롤되는 느낌의 원인)
-      padding-bottom: 0;
+            p {
+                color: var(--white);
+            }
+        }
 
-      // ✅ 스크롤바 숨김 (스크롤은 됨)
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-      &::-webkit-scrollbar { display: none; }
-    }
+        // ✅ 스크롤은 여기만 (입력칸 아래로는 스크롤 X)
+        .ai_chat_area {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
 
-    .ai_messages {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      // 원하면 아래 패딩으로 메시지 영역 여백만 주기
-      padding: 0 0 12px 0;
-    }
+            // ✅ padding-bottom 제거 (이게 입력칸 아래로 스크롤되는 느낌의 원인)
+            padding-bottom: 0;
+
+            // ✅ 스크롤바 숨김 (스크롤은 됨)
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+        }
+
+        .ai_messages {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            // 원하면 아래 패딩으로 메시지 영역 여백만 주기
+            padding: 0 0 12px 0;
+        }
 
 
         .ai_bubble {
@@ -252,54 +260,57 @@
             font-size: 14px;
         }
 
- // ✅ 입력칸은 flex의 마지막 요소로 고정 (스크롤 영향 X)
-    .chat {
-      width: 361px;
-      height: 55px;
+        // ✅ 입력칸은 flex의 마지막 요소로 고정 (스크롤 영향 X)
+        .chat {
+            width: 361px;
+            height: 55px;
 
-      position: static;   // ✅ absolute 제거
-      margin: 0 auto;
-      margin-bottom: 16px; // 기존 bottom 느낌
+            position: static; // ✅ absolute 제거
+            margin: 0 auto;
+            margin-bottom: 16px; // 기존 bottom 느낌
 
-      z-index: 2;
+            z-index: 2;
 
-      .chat_btn {
-        position: absolute;
-        z-index: 1;
-        top: calc(50% - 18px);
-        right: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        background-color: var(--main);
-        border-radius: 50%;
+            .chat_btn {
+                position: absolute;
+                z-index: 1;
+                top: calc(50% - 18px);
+                right: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+                background-color: var(--main);
+                border-radius: 50%;
 
-        img { width: 15px; height: 15px; }
+                img {
+                    width: 15px;
+                    height: 15px;
+                }
 
-        &:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
+                &:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+            }
+
+            // ✅ chat_btn이 absolute라서 기준 잡아줘야 함
+            position: relative;
+
+            input {
+                width: 100%;
+                height: 50px;
+                background-color: var(--black);
+                border-radius: 20px;
+                padding-left: 15px;
+                padding-right: 48px;
+                color: var(--white);
+                font-size: 14px;
+                border: 1px solid var(--gray02);
+            }
         }
-      }
-
-      // ✅ chat_btn이 absolute라서 기준 잡아줘야 함
-      position: relative;
-
-      input {
-        width: 100%;
-        height: 50px;
-        background-color: var(--black);
-        border-radius: 20px;
-        padding-left: 15px;
-        padding-right: 48px;
-        color: var(--white);
-        font-size: 14px;
-        border: 1px solid var(--gray02);
-      }
     }
-  }
 }
 
 //Musiclist.jsx
@@ -326,6 +337,12 @@
             height: 40px;
             background-color: var(--gray01);
             border-radius: 3px;
+
+            img {
+                width: 40px;
+                height: 40px;
+                object-fit: cover;
+            }
         }
 
         .music_info {
@@ -344,17 +361,10 @@
                 font-weight: 300;
             }
         }
-
     }
 
     .plus_btn {
         width: 22px;
         height: 22px;
     }
-
-    img {
-        width: 40px;
-        height: 40px;
-    }
-
 }
