@@ -35,7 +35,7 @@ const Splash_Signup = () => {
     return (
       form.username.trim().length > 0 &&
       form.email.trim().length > 0 &&
-      form.password.trim().length > 0 &&
+      form.password.trim().length >= 6 &&
       isVerified &&
       !!accessToken
     );
@@ -81,7 +81,7 @@ const Splash_Signup = () => {
       await sendOtp({ email, type: "signup" });
       setOtpSent(true);
     } catch (err) {
-      console.error("[send otp] error:", err);
+      console.error("[send otp] error:", err?.response?.data || err);
       setOtpSent(false);
     } finally {
       setLoading((p) => ({ ...p, send: false }));
@@ -106,7 +106,7 @@ const Splash_Signup = () => {
       try {
         setLoading((p) => ({ ...p, verify: true }));
 
-        const res = await verifyOtp({ email, token, type: "email" });
+        const res = await verifyOtp({ email, token, type: "signup" });
 
         if (res?.session?.access_token) {
           setAccessToken(res.session.access_token);
@@ -221,6 +221,21 @@ const Splash_Signup = () => {
               placeholder="Password"
               autoComplete="new-password"
             />
+
+            <div style={{ minHeight: "18px", marginTop: "6px" }}>
+              {form.password.length > 0 && form.password.length < 6 && (
+                <p
+                  style={{
+                    color: "var(--main)",
+                    fontSize: "12px",
+                    margin: 0,
+                    lineHeight: 1.4,
+                  }}
+                >
+                  비밀번호는 6자리 이상 입력해주세요
+                </p>
+              )}
+            </div>
           </label>
 
           <button
