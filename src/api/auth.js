@@ -1,7 +1,7 @@
 import { api } from "./client";
 
-export const sendOtp = ({ email }) =>
-  api.post("/auth/send-otp", { email }).then((res) => res.data);
+export const sendOtp = ({ email, type = "signup" }) =>
+  api.post("/auth/send-otp", { email, type }).then((res) => res.data);
 
 export const verifyOtp = ({ email, token, type = "email" }) =>
   api.post("/auth/verify", { email, token, type }).then((res) => res.data);
