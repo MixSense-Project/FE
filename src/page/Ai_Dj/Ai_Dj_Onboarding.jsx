@@ -33,21 +33,21 @@ function Ai_Dj_Onboarding() {
                     <main>
                         <p className='p1'>
                             Beyond simple playback,<br />
-                            AI Agent guides your mixing journey.
+                            an AI guides your mixing journey.
                         </p>
                         <p className='p2'>
-                            AI analyzes the song's BPM and beat to suggest <br />
+                            AI analyzes BPM and beats to suggest<br />
                             natural transitions and tempo changes.
                         </p>
                         <p className="p3">
-                            Seamless Flow, AI-Designed Mixing Plans<br />
-                            Mix your songs right now
+                            Seamless flow, AI-designed mixing<br />
+                            Start your mix now
                         </p>
                         <img src={gotodj} alt="" className="gotodj" />
                         
                         {/* ✅ 버튼 클릭 시 handleStart 실행 */}
                         <button className="aidj_btn" onClick={handleStart}>
-                            Go to AI DJ
+                            Start AI DJ
                         </button>
                     </main>
                 </div>
